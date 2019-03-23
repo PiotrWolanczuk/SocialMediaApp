@@ -12,7 +12,12 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="forgotPass">Zapomniane hasło?</string>
+    <string name="forgot_password">Zapomniane hasło?</string>
+    <string name="action_sign_in_fb">Zaloguj sie przez fb</string>
+    <string name="action_sign_in_email">Zaloguj sie przez email</string>
+    <string name="create_account">Rejestracja</string>
+
+    <!-- String related to register -->
     <string name="prompt_login">Login</string>
     <string name="prompt_name">Imię</string>
     <string name="prompt_surname">Nazwisko</string>
