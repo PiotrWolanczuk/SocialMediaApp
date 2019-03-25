@@ -103,7 +103,7 @@
                 android:id="@+id/signUpText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="setUpNewPassword"
+                android:onClick="startRegistration"
                 android:text="@string/create_account" />
 
         </LinearLayout>
