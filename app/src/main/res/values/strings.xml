@@ -2,20 +2,20 @@
     <string name="app_name">ProjectSI</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Hasło</string>
-    <string name="action_sign_in">Zaloguj</string>
-    <string name="action_sign_in_short">Zaloguj</string>
-    <string name="error_invalid_email">Ten adres email jest nie dozwolony</string>
-    <string name="error_invalid_password">Hasło jest za krótkie</string>
-    <string name="error_incorrect_password">Hasło jest nie poprawne</string>
-    <string name="error_field_required">To wymagane pole</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This address email is not allow</string>
+    <string name="error_invalid_password">Too short</string>
+    <string name="error_incorrect_password">Wrong password</string>
+    <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="forgot_password">Zapomniane hasło?</string>
-    <string name="action_sign_in_fb">Zaloguj sie przez fb</string>
-    <string name="action_sign_in_email">Zaloguj sie przez email</string>
-    <string name="create_account">Rejestracja</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="action_sign_in_fb">Sign in with FB</string>
+    <string name="action_sign_in_email">Sign in with E-mail</string>
+    <string name="create_account">Sign up</string>
 
     <!-- String related to register -->
     <string name="prompt_login">Login</string>
