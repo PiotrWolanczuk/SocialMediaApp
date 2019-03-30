@@ -24,4 +24,5 @@
     <string name="prompt_re_password">Potwierdź Hasło</string>
     <string name="prompt_accept_terms">Akceptuję regulamin</string>
     <string name="prompt_create_account">Zalóż konto</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
