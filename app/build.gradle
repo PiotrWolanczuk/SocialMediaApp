@@ -31,4 +31,7 @@ dependencies {
     androidTestImplementation "com.android.support.test:rules:1.0.2"
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
+    testImplementation 'org.robolectric:robolectric:3.2.2'
+    testImplementation 'org.mockito:mockito-core:2.6.8'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.2.0'
 }

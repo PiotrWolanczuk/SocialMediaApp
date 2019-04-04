@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,7 +26,6 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-import wat.projectsi.MainActivity;
 import wat.projectsi.R;
 import wat.projectsi.RegisterActivity;
 
@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private ProgressDialog progressDialog;
-    String url = "https://44f6c2fb-103e-4d1e-b979-4578d72db19c.mock.pstmn.io";
+    String url = "http://localhost:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,14 +77,12 @@ public class LoginActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password)){
             mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
@@ -92,20 +90,15 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView.requestFocus();
+            progressDialog.cancel();
         } else {
             consumeAPI(email, password);
-//            Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-
-//            startActivity(mainIntent);
-
         }
     }
 
     private void consumeAPI(final String email, final String password) {
-        String urlAPI = "/auth/";
+        String urlAPI = "/api/auth/signin";
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
         StringRequest MyStringRequest = new StringRequest(Request.Method.POST, url + urlAPI, new Response.Listener<String>() {
@@ -113,14 +106,15 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 progressDialog.cancel();
                 Toast.makeText(LoginActivity.this, response, Toast.LENGTH_LONG).show();
-                //This code is executed if the server responds, whether or not the response contains data.
-                //The String 'response' contains the server's response.
+                //TODO: Go to next activity
             }
-        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.cancel();
-                //This code is executed if there is an error.
+                Log.e("APIResponse", error.toString());
+                System.out.println(error.toString());
+                Toast.makeText(LoginActivity.this, "Something is wrong.", Toast.LENGTH_SHORT).show();
             }
         }) {
             protected Map<String, String> getParams() {
