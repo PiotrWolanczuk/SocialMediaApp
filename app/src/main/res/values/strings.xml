@@ -3,12 +3,14 @@
     <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
+    <string name="error_field_required">To wymagane pole</string>
+    <string name="error_invalid_password">Hasło jest nie dozwolone</string>
+
 
     <!-- Strings related to login -->
     <string name="action_sign_in">Zaloguj</string>
     <string name="action_sign_in_short">Zaloguj</string>
     <string name="error_invalid_email">Ten adres email jest nie dozwolony</string>
-    <string name="error_invalid_password">Hasło jest za krótkie</string>
     <string name="error_incorrect_password">Hasło jest nie poprawne</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
@@ -25,6 +27,25 @@
     <string name="prompt_re_password">Potwierdź Hasło</string>
     <string name="prompt_accept_terms">Akceptuję regulamin</string>
     <string name="prompt_create_account">Zarejestruj</string>
-    <string name="error_field_required">To wymagane pole</string>
     <string name="prompt_terms">Regulamin</string>
+    <string name="prompt_back">Powrót</string>
+    <string name="error_repassword_password_not_same">Hasło i potwierdzenie hasła nie są identyczne</string>
+    <string name="error_user_exist">Użytkownik już isttnieje</string>
+    <string name="error_not_accepted_terms">Wymagane jest zakceptowanie regulaminu</string>
+    <string name="error_invalid_characters">Zawiera nie dozwolone znaki</string>
+    <string name="error_used_login">Login już wykorzystywany</string>
+    <string name="error_used_email">Email już wykorzystywany</string>
+
+    <!--Terms -->
+    <string name="terms_text">
+        1.	O naszej stronie internetowej się nie mówi.
+        2.	O naszej aplikacji mobilnej się nie mówi.
+        3.	Ktoś ma dość, słabnie, pęka, koniec dramy.
+        4.	Rozmawia tylko dwóch (w czacie).
+        5.	Tylko jedna drama naraz.
+        6.	Bez notatek, bez Google’a.
+        7.	Dramy trwają tak długo, ile trzeba.
+        8.	Jeśli to jest twoja pierwsza noc na naszej stronie – musisz brać udział w dramie.
+    </string>
+
 </resources>
