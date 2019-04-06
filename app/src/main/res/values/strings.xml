@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProjectSI</string>
+    <string name="app_name">Artemis Mobile</string>
     <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
@@ -29,12 +29,14 @@
     <string name="prompt_create_account">Zarejestruj</string>
     <string name="prompt_terms">Regulamin</string>
     <string name="prompt_back">Powrót</string>
+    <string name="prompt_sign_up_in">W trakcie rejestracji...</string>
     <string name="error_repassword_password_not_same">Hasło i potwierdzenie hasła nie są identyczne</string>
     <string name="error_user_exist">Użytkownik już isttnieje</string>
     <string name="error_not_accepted_terms">Wymagane jest zakceptowanie regulaminu</string>
     <string name="error_invalid_characters">Zawiera nie dozwolone znaki</string>
     <string name="error_used_login">Login już wykorzystywany</string>
     <string name="error_used_email">Email już wykorzystywany</string>
+    <string name="error_no_network_available">Sieć nie dostępna</string>
 
     <!--Terms -->
     <string name="terms_text">

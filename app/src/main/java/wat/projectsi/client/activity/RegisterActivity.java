@@ -7,14 +7,11 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.app.ProgressDialog;
 import android.content.CursorLoader;
 import android.content.Loader;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -86,15 +83,30 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         int IS_PRIMARY = 1;
     }
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-
     private UserRegisterTask mRegTask = null;
 
     private static final String URL = "http://localhost:8080";
     private static final String URL_Signup = URL +"/api/auth/signup";
+
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            if (error instanceof NetworkError) {
+                Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
+                progressDialog.cancel();
+                return;
+            }
+
+            progressDialog.cancel();
+            Log.e("APIResponse", error.toString());
+            System.out.println(error.toString());
+
+
+            Toast.makeText(RegisterActivity.this, error.getMessage().equals("Fail -> Email is already in use!") ?
+                    getString(R.string.error_used_email) : getString(R.string.error_used_login), Toast.LENGTH_SHORT).show();
+        }
+
+    };
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -115,7 +127,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
         // Set up the register form.
         mEmailView = findViewById(R.id.email);
-        populateAutoComplete();
 
         mPasswordView = findViewById(R.id.password);
         mRePasswordView = findViewById(R.id.re_password);
@@ -145,51 +156,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                         attemptRegistration();
                     }
                 });
-
-
-    }
-
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return;
-        }
-
-        getLoaderManager().initLoader(0, null, this);
-    }
-
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
     }
 
     /**
@@ -281,7 +247,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
     private void attemptRegistration()
     {
-        progressDialog.setMessage("Signnup in...");
+        progressDialog.setMessage(getString(R.string.action_sign_in));
         progressDialog.show();
 
         mPasswordView.setError(null);
@@ -352,6 +318,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         if (cancel) {
             // There was an error; don't attempt register and focus the first
             // form field with an error.
+            progressDialog.hide();
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
@@ -371,6 +338,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
      */
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
+        //private int error_code;
+
         private final String mEmail;
         private final String mPassword;
         private final String mName;
@@ -386,10 +355,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt registration against a network service.
-            registerRequest(mEmail, mEmail, mPassword, mName, mSurname, new Date().toString());
+            return registerRequest(mEmail, mEmail, mPassword, mName, mSurname, new Date().toString());
 
-           // backToLoginActivity();
-            return true;
         }
 
         @Override
@@ -398,7 +365,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             showProgress(false);
 
             if (success) {
-                finish();
+                backToLoginActivity();
             } else {
                 mEmailView.setError(getString(R.string.error_user_exist));
                 mEmailView.requestFocus();
@@ -411,7 +378,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             showProgress(false);
         }
 
-        public void registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate) {
+        private boolean registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate) {
             RequestQueue requestQueue = Volley.newRequestQueue(RegisterActivity.this);
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_Signup, new Response.Listener<String>() {
@@ -422,28 +389,11 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
                     backToLoginActivity();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    if (error instanceof NetworkError) {
-                        Toast.makeText(getApplicationContext(), "No network available", Toast.LENGTH_LONG).show();
-                        progressDialog.cancel();
-                        return;
-                    }
-
-                    progressDialog.cancel();
-                    Log.e("APIResponse", error.toString());
-                    System.out.println(error.toString());
-
-
-                    Toast.makeText(RegisterActivity.this, error.getMessage().equals("Fail -> Email is already in use!") ?
-                            getString(R.string.error_used_email) : getString(R.string.error_used_login), Toast.LENGTH_SHORT).show();
-                }
-
-            }) {
+            }, errorListener) {
                 protected Map<String, String> getParams() {
                     Map<String, String> data = new HashMap<>();
                     //Add the data you'd like to send to the server.
+                    //TODO : birthDate, login
                     data.put("login", login);
                     data.put("email", email);
                     data.put("password", password);
@@ -454,6 +404,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 }
             };
             requestQueue.add(stringRequest);
+
+            return false;
         }
     }
 }
