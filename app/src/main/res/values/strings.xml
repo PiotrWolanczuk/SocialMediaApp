@@ -37,6 +37,7 @@
     <string name="error_used_login">Login już wykorzystywany</string>
     <string name="error_used_email">Email już wykorzystywany</string>
     <string name="error_no_network_available">Sieć nie dostępna</string>
+    <string name="error_unknown">Nieznany błąd</string>
 
     <!--Terms -->
     <string name="terms_text">

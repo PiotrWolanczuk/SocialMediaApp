@@ -37,6 +37,7 @@
     <string name="error_used_login">Login is already taken</string>
     <string name="error_used_email">Email is already in use</string>
     <string name="error_no_network_available">No network available</string>
+    <string name="error_unknown">Unknown error</string>
 
     <!--Terms -->
     <string name="terms_text">

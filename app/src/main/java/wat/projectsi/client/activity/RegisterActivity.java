@@ -31,8 +31,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,9 +45,8 @@ import java.util.List;
 import java.util.Map;
 
 import wat.projectsi.R;
+import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Validator;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 
 /*
@@ -85,13 +88,11 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
     private UserRegisterTask mRegTask = null;
 
-    private static final String URL = "http://localhost:8080";
-    private static final String URL_Signup = URL +"/api/auth/signup";
-
     Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             if (error instanceof NetworkError) {
+                Log.e("NetworkError", error.toString());
                 Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
                 progressDialog.cancel();
                 return;
@@ -99,11 +100,38 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
             progressDialog.cancel();
             Log.e("APIResponse", error.toString());
-            System.out.println(error.toString());
+            System.out.println("Kod " + error.networkResponse.statusCode);
 
+            switch (error.networkResponse.statusCode) {
+//                case 200://"OK"
+//                    break;
+//                case 201://"Created"
+//                    break;
+                case 400://"Bad Request"
+                    switch(error.getMessage()!=null? error.getMessage(): "")
+                    {
+                        case "Fail -> Email is already in use!":
+                            Toast.makeText(RegisterActivity.this, getString(R.string.error_used_email),Toast.LENGTH_SHORT ).show( );
+                            break;
+                        case "Fail -> Username is already taken!":
+                            Toast.makeText(RegisterActivity.this, getString(R.string.error_used_login), Toast.LENGTH_SHORT).show();
+                            break;
 
-            Toast.makeText(RegisterActivity.this, error.getMessage().equals("Fail -> Email is already in use!") ?
-                    getString(R.string.error_used_email) : getString(R.string.error_used_login), Toast.LENGTH_SHORT).show();
+                        default:
+                            Toast.makeText(RegisterActivity.this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show();
+                    }
+
+                    break;
+//                case 401://"Unauthorized"
+//                    break;
+//                case 403://"Forbidden"
+//                    break;
+//                case 404://"Not Found"
+//                    break;
+//                case 415://"Unsupported Media Type" ->"BadJason"
+//                    break;
+                default: break;
+            }
         }
 
     };
@@ -381,29 +409,30 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         private boolean registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate) {
             RequestQueue requestQueue = Volley.newRequestQueue(RegisterActivity.this);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_Signup, new Response.Listener<String>() {
+            JSONObject data = new JSONObject();
+            try {
+                //TODO : birthDate, login
+                data.put("login", login);
+                data.put("email", email);
+                data.put("password", password);
+                data.put("name", name);
+                data.put("surname", surname);
+                data.put("birthDate", birthDate);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Signup, data, new Response.Listener<JSONObject>() {
                 @Override
-                public void onResponse(String response) {
+                public void onResponse(JSONObject response) {
                     progressDialog.cancel();
-                    Toast.makeText(RegisterActivity.this, response, Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterActivity.this, response.toString(), Toast.LENGTH_LONG).show();
 
                     backToLoginActivity();
                 }
-            }, errorListener) {
-                protected Map<String, String> getParams() {
-                    Map<String, String> data = new HashMap<>();
-                    //Add the data you'd like to send to the server.
-                    //TODO : birthDate, login
-                    data.put("login", login);
-                    data.put("email", email);
-                    data.put("password", password);
-                    data.put("name", name);
-                    data.put("surname", surname);
-                    data.put("birthDate", birthDate);
-                    return data;
-                }
-            };
-            requestQueue.add(stringRequest);
+            }, errorListener);
+            requestQueue.add(request);
 
             return false;
         }
