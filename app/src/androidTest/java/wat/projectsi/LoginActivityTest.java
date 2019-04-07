@@ -2,6 +2,7 @@ package wat.projectsi;
 
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.filters.Suppress;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Rule;
@@ -26,9 +27,9 @@ public class LoginActivityTest {
     public IntentsTestRule<LoginActivity> mLoginIntentsTestRule =
             new IntentsTestRule<>(LoginActivity.class);
 
-
+    @Suppress
     @Test
-    public void clickLoginButton_openMainActivity() throws IOException {
+    public void clickLoginButton_openMainActivity() {
         onView(withId(R.id.email)).perform(ViewActions.clearText())
                 .perform(ViewActions.typeText("example@gmail.com"));
         onView(withId(R.id.password)).perform(ViewActions.clearText())
@@ -38,6 +39,7 @@ public class LoginActivityTest {
         intended(toPackage("wat.projectsi"));
         intended(hasComponent("wat.projectsi.MainActivity"));
     }
+
 
     @Test
     public void clickLoginButton_withoutEmail(){

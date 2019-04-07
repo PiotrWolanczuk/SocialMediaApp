@@ -21,9 +21,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private ProgressDialog progressDialog;
-    String url = "http://localhost:8080";
+    String url = "http://10.0.2.2:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,13 +101,23 @@ public class LoginActivity extends AppCompatActivity {
         String urlAPI = "/api/auth/signin";
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
-        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,url + urlAPI,null, new Response.Listener<JSONObject>() {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("login",  email);
+            jsonRequest.put("password",  password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,url + urlAPI,jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 progressDialog.cancel();
                 Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_LONG).show();
                 //TODO: Go to next activity
+//                Intent mainIntent = new Intent(this, MainActivity.class);
+//                startActivity(mainIntent);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -117,14 +127,7 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println(error.toString());
                 Toast.makeText(LoginActivity.this, "Something is wrong.", Toast.LENGTH_SHORT).show();
             }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> MyData = new HashMap<String, String>();
-                MyData.put("email", email); //Add the data you'd like to send to the server.
-                MyData.put("password", password);
-                return MyData;
-            }
-        };
+        });
         MyRequestQueue.add(MyJsonRequest);
     }
 
