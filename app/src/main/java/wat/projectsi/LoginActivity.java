@@ -1,4 +1,4 @@
-package wat.projectsi.client;
+package wat.projectsi;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -20,14 +20,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import wat.projectsi.R;
-import wat.projectsi.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -101,11 +101,12 @@ public class LoginActivity extends AppCompatActivity {
         String urlAPI = "/api/auth/signin";
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
-        StringRequest MyStringRequest = new StringRequest(Request.Method.POST, url + urlAPI, new Response.Listener<String>() {
+        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,url + urlAPI,null, new Response.Listener<JSONObject>() {
+
             @Override
-            public void onResponse(String response) {
+            public void onResponse(JSONObject response) {
                 progressDialog.cancel();
-                Toast.makeText(LoginActivity.this, response, Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_LONG).show();
                 //TODO: Go to next activity
             }
         }, new Response.ErrorListener() {
@@ -119,11 +120,12 @@ public class LoginActivity extends AppCompatActivity {
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> MyData = new HashMap<String, String>();
-                MyData.put(email, password); //Add the data you'd like to send to the server.
+                MyData.put("email", email); //Add the data you'd like to send to the server.
+                MyData.put("password", password);
                 return MyData;
             }
         };
-        MyRequestQueue.add(MyStringRequest);
+        MyRequestQueue.add(MyJsonRequest);
     }
 
 
