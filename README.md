@@ -1,4 +1,6 @@
-# Mobile
+Artemis Mobile
+Project of android application for Artemis.
 
-dupa
+Prerequisites
 
+Android SDK 28
