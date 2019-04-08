@@ -1,17 +1,7 @@
 package wat.projectsi.client.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.app.ProgressDialog;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,7 +9,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -32,88 +21,63 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Validator;
 
 
-/*
-Oznaczenie	PU1
-Nazwa	Zarejestrowanie
-Opis	Założenie nowego konta użytkownika w portalu.
-Aktorzy	Gość
-Warunki wstępne	Kliknięcie przycisku „Zarejestruj”
-Rezultat	Utworzenie nowego konta
-
-Scenariusz
-1.	Wybranie opcji rejestracji
-2.	Wypełnienie formularza (Imię, Nazwisko, e-mail, hasło, potwierdzenie hasła)
-3.	Zaakceptowanie regulaminu strony
-4.	Potwierdzenie rejestracji
-5.	Udane zakończenie procesu rejestracji
-
-Scenariusz alternatywny	2.1 Błędne wypełnienie formularza (niezgodne hasła, niepoprawny email)
-2.2. Wyświetlenie okienka z informacją “Nieprawidłowe dane”
-3.1 Niezaakceptowanie regulaminu strony
-3.2 Wyświetlenie okienka z informacją “Zaakceptuj regulamin”
-
- */
-
 /**
  * A register screen that offers register by fill email, password, name surname.
  */
-public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class RegisterActivity extends AppCompatActivity {
 
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
-    }
-
-    private UserRegisterTask mRegTask = null;
-
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
+    private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             if (error instanceof NetworkError) {
                 Log.e("NetworkError", error.toString());
                 Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
-                progressDialog.cancel();
+                mProgressDialog.cancel();
+                return;
+            }
+            else if(error ==null)
+            {
+                Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
+                mProgressDialog.cancel();
                 return;
             }
 
-            progressDialog.cancel();
+            if(error.networkResponse==null)
+            {
+                Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
+                mProgressDialog.cancel();
+                return;
+            }
+
+            mProgressDialog.cancel();
             Log.e("APIResponse", error.toString());
             System.out.println("Kod " + error.networkResponse.statusCode);
 
             switch (error.networkResponse.statusCode) {
 //                case 200://"OK"
-//                    break;
 //                case 201://"Created"
 //                    break;
                 case 400://"Bad Request"
                     switch(error.getMessage()!=null? error.getMessage(): "")
                     {
                         case "Fail -> Email is already in use!":
-                            Toast.makeText(RegisterActivity.this, getString(R.string.error_used_email),Toast.LENGTH_SHORT ).show( );
+                            mEmailView.setError(getString(R.string.error_used_email));
+                            mEmailView.requestFocus();
                             break;
                         case "Fail -> Username is already taken!":
+                            //TODO: Login
                             Toast.makeText(RegisterActivity.this, getString(R.string.error_used_login), Toast.LENGTH_SHORT).show();
                             break;
 
@@ -143,9 +107,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     private EditText mNameView;
     private EditText mSurnameView;
     private CheckBox mAcceptTermsView;
-    private View mProgressView;
-    private View mRegisterFormView;
-    private ProgressDialog progressDialog;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,13 +120,12 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
         mPasswordView = findViewById(R.id.password);
         mRePasswordView = findViewById(R.id.re_password);
-        mRegisterFormView = findViewById(R.id.register_form);
-        mProgressView = findViewById(R.id.register_progress);
         mNameView = findViewById(R.id.name);
         mSurnameView = findViewById(R.id.surname);
         mAcceptTermsView = findViewById(R.id.acceptTerms);
 
-        progressDialog = new ProgressDialog(this);
+        mProgressDialog = new ProgressDialog(this);
+
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -186,97 +147,19 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 });
     }
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mRegisterFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-    }
-
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-
-        addEmailsToAutoComplete(emails);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(RegisterActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
     public void startTermActivity(View view) {
         //TODO: After create termsActivity
 //        RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, TermsActivity.class));
     }
 
-    public void backToLoginActivity() {
+    private void backToLoginActivity() {
         finish();
     }
 
     private void attemptRegistration()
     {
-        progressDialog.setMessage(getString(R.string.action_sign_in));
-        progressDialog.show();
+        mProgressDialog.setMessage(getString(R.string.action_sign_in));
+        mProgressDialog.show();
 
         mPasswordView.setError(null);
         mRePasswordView.setError(null);
@@ -346,95 +229,47 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         if (cancel) {
             // There was an error; don't attempt register and focus the first
             // form field with an error.
-            progressDialog.hide();
+            mProgressDialog.hide();
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user registration attempt.
-            showProgress(true);
 
-            mRegTask = new UserRegisterTask(email, password,
-                    mNameView.getText().toString(), mSurnameView.getText().toString());
-            mRegTask.execute((Void) null);
+            mProgressDialog.show();
 
+            //TODO: Login, birthdate
+           registerRequest(email,email, password,
+                   mNameView.getText().toString(), mSurnameView.getText().toString(), new Date().toString()
+           );
         }
     }
 
-    /**
-     * Represents an asynchronous registration task used to register
-     * the user.
-     */
-    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
+    private boolean registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate) {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        //private int error_code;
-
-        private final String mEmail;
-        private final String mPassword;
-        private final String mName;
-        private final String mSurname;
-
-        UserRegisterTask(String email, String password, String name, String surname) {
-            mEmail = email;
-            mPassword = password;
-            mName = name;
-            mSurname = surname;
+        JSONObject data = new JSONObject();
+        try {
+            //TODO : birthDate, login
+            data.put("login", login);
+            data.put("email", email);
+            data.put("password", password);
+            data.put("name", name);
+            data.put("surname", surname);
+            data.put("birthDate", birthDate);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt registration against a network service.
-            return registerRequest(mEmail, mEmail, mPassword, mName, mSurname, new Date().toString());
 
-        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Signup, data, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                mProgressDialog.cancel();
+                Toast.makeText(RegisterActivity.this, response.toString(), Toast.LENGTH_LONG).show();
 
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mRegTask = null;
-            showProgress(false);
-
-            if (success) {
                 backToLoginActivity();
-            } else {
-                mEmailView.setError(getString(R.string.error_user_exist));
-                mEmailView.requestFocus();
             }
-        }
+        },errorListener);
+        requestQueue.add(request);
 
-        @Override
-        protected void onCancelled() {
-            mRegTask = null;
-            showProgress(false);
-        }
-
-        private boolean registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate) {
-            RequestQueue requestQueue = Volley.newRequestQueue(RegisterActivity.this);
-
-            JSONObject data = new JSONObject();
-            try {
-                //TODO : birthDate, login
-                data.put("login", login);
-                data.put("email", email);
-                data.put("password", password);
-                data.put("name", name);
-                data.put("surname", surname);
-                data.put("birthDate", birthDate);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Signup, data, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    progressDialog.cancel();
-                    Toast.makeText(RegisterActivity.this, response.toString(), Toast.LENGTH_LONG).show();
-
-                    backToLoginActivity();
-                }
-            }, errorListener);
-            requestQueue.add(request);
-
-            return false;
-        }
+        return false;
     }
 }
