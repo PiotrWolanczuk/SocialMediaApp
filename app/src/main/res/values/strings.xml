@@ -6,6 +6,8 @@
     <string name="error_field_required">To wymagane pole</string>
     <string name="error_invalid_password">Hasło jest nie dozwolone</string>
 
+    <string name="title_activity_main">MainActivity</string>
+
 
     <!-- Strings related to login -->
     <string name="action_sign_in">Zaloguj</string>
