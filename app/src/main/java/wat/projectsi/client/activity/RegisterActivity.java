@@ -1,7 +1,7 @@
 package wat.projectsi.client.activity;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import wat.projectsi.R;
@@ -47,16 +50,13 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
                 mProgressDialog.cancel();
                 return;
-            }
-            else if(error ==null)
-            {
+            } else if (error == null) {
                 Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
                 mProgressDialog.cancel();
                 return;
             }
 
-            if(error.networkResponse==null)
-            {
+            if (error.networkResponse == null) {
                 Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
                 mProgressDialog.cancel();
                 return;
@@ -71,8 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
 //                case 201://"Created"
 //                    break;
                 case 400://"Bad Request"
-                    switch(error.getMessage()!=null? error.getMessage(): "")
-                    {
+                    switch (error.getMessage() != null ? error.getMessage() : "") {
                         case "Fail -> Email is already in use!":
                             mEmailView.setError(getString(R.string.error_used_email));
                             mEmailView.requestFocus();
@@ -95,7 +94,8 @@ public class RegisterActivity extends AppCompatActivity {
 //                    break;
 //                case 415://"Unsupported Media Type" ->"BadJason"
 //                    break;
-                default: break;
+                default:
+                    break;
             }
         }
 
@@ -107,8 +107,10 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mRePasswordView;
     private EditText mNameView;
     private EditText mSurnameView;
+    private EditText mLoginView;
     private CheckBox mAcceptTermsView;
     private ProgressDialog mProgressDialog;
+    private TextView mDateView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +125,9 @@ public class RegisterActivity extends AppCompatActivity {
         mRePasswordView = findViewById(R.id.re_password);
         mNameView = findViewById(R.id.name);
         mSurnameView = findViewById(R.id.surname);
+        mLoginView = findViewById(R.id.login);
         mAcceptTermsView = findViewById(R.id.acceptTerms);
+        mDateView = findViewById(R.id.date);
 
         mProgressDialog = new ProgressDialog(this);
 
@@ -146,6 +150,23 @@ public class RegisterActivity extends AppCompatActivity {
                         attemptRegistration();
                     }
                 });
+
+        final Calendar c = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                c.set(Calendar.YEAR, year);
+                c.set(Calendar.MONTH, monthOfYear);
+                c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                SimpleDateFormat sdf = new SimpleDateFormat(Validator.dateFormat,  getResources().getConfiguration().locale);
+                mDateView.setText(sdf.format(c.getTime()));
+            }
+        };
+
+        mDateView.setText(new SimpleDateFormat(Validator.dateFormat,  getResources().getConfiguration().locale).format(c.getTime()));
     }
 
     public void startTermActivity(View view) {
@@ -157,8 +178,7 @@ public class RegisterActivity extends AppCompatActivity {
         finish();
     }
 
-    private void attemptRegistration()
-    {
+    private void attemptRegistration() {
         mProgressDialog.setMessage(getString(R.string.action_sign_in));
         mProgressDialog.show();
 
@@ -174,19 +194,32 @@ public class RegisterActivity extends AppCompatActivity {
         String rePassword = mRePasswordView.getText().toString();
         String name = mNameView.getText().toString();
         String surname = mSurnameView.getText().toString();
+        String login = mLoginView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check if usser type valid characters
-        if(!Validator.isNameValid(name)){
+        if (!Validator.isNameValid(name)) {
             mNameView.setError(getString(R.string.error_invalid_characters));
             focusView = mNameView;
             cancel = true;
         }
-        if(!Validator.isNameValid(surname)){
+        if (!Validator.isNameValid(surname)) {
             mSurnameView.setError(getString(R.string.error_invalid_characters));
             focusView = mSurnameView;
+            cancel = true;
+        }
+
+        if (!Validator.isNameValid(surname)) {
+            mSurnameView.setError(getString(R.string.error_invalid_characters));
+            focusView = mSurnameView;
+            cancel = true;
+        }
+
+        if (!Validator.isLoginValid(login)) {
+            mLoginView.setError(getString(R.string.error_invalid_login));
+            focusView = mLoginView;
             cancel = true;
         }
 
@@ -195,15 +228,14 @@ public class RegisterActivity extends AppCompatActivity {
             mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
             cancel = true;
-        }
-        else if ( !Validator.isPasswordValid(password)) {
+        } else if (!Validator.isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
 
         //check retyped password if same as password
-       else if ( !password.contentEquals(rePassword)) {
+        else if (!password.contentEquals(rePassword)) {
             mRePasswordView.setError(getString(R.string.error_repassword_password_not_same));
             focusView = mRePasswordView;
             cancel = true;
@@ -236,10 +268,9 @@ public class RegisterActivity extends AppCompatActivity {
 
             mProgressDialog.show();
 
-            //TODO: Login, birthdate
-           registerRequest(email,email, password,
-                   mNameView.getText().toString(), mSurnameView.getText().toString(), new Date().toString()
-           );
+            registerRequest(login, email, password,
+                    mNameView.getText().toString(), mSurnameView.getText().toString(), mDateView.getText().toString()
+            );
         }
     }
 
@@ -248,7 +279,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         JSONObject data = new JSONObject();
         try {
-            //TODO : birthDate, login
             data.put("login", login);
             data.put("email", email);
             data.put("password", password);
@@ -268,9 +298,43 @@ public class RegisterActivity extends AppCompatActivity {
 
                 backToLoginActivity();
             }
-        },errorListener);
+        }, errorListener);
         requestQueue.add(request);
 
         return false;
+    }
+
+    public void showDatePickerDialog(View view) {
+        final Calendar c = Calendar.getInstance();
+        final int mYear = c.get(Calendar.YEAR);
+        final int mMonth = c.get(Calendar.MONTH);
+        final int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+        // Launch Date Picker Dialog
+        DatePickerDialog dpd = new DatePickerDialog(RegisterActivity.this,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        // Display Selected date in textbox
+
+                        if (year > mYear)
+                            view.updateDate(mYear, mMonth, mDay);
+
+                        if (monthOfYear > mMonth && year == mYear)
+                            view.updateDate(mYear, mMonth, mDay);
+
+                        if (dayOfMonth > mDay && year == mYear && monthOfYear == mMonth)
+                            view.updateDate(mYear, mMonth, mDay);
+
+                        mDateView.setText(dayOfMonth + "-"
+                                + (monthOfYear + 1) + "-" + year);
+
+                    }
+                }, mYear, mMonth, mDay);
+        dpd.getDatePicker().setMinDate(System.currentTimeMillis());
+        dpd.show();
+
     }
 }

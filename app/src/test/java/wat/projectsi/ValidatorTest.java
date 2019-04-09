@@ -37,4 +37,14 @@ public class ValidatorTest {
     public void passwordValidatorGood() {
         Assert.assertTrue(Validator.isPasswordValid("12345"));
     }
+
+    @Test
+    public void loginValidatorBad() {
+        Assert.assertFalse(Validator.isLoginValid("a"));
+    }
+    @Test
+    public void loginValidatorGood() {
+        Assert.assertTrue(Validator.isLoginValid("Karol"));
+    }
+
 }

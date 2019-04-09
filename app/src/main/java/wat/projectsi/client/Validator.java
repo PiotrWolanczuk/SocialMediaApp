@@ -11,6 +11,8 @@ public class Validator {
     private static final Pattern VALID_NAME_REGEX =
             Pattern.compile("[A-Z]+", Pattern.CASE_INSENSITIVE);
 
+    public static final String dateFormat = "yyyy-MM-dd";
+
     public static boolean isEmailValid(String emailStr) {
         return VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr).matches();
     }
@@ -19,6 +21,9 @@ public class Validator {
         return passStr.length() > 3;
     }
 
+    public static boolean isLoginValid(String loginStr) {
+        return loginStr.length() > 3;
+    }
 
     public static boolean isNameValid(String nameStr) {
         return VALID_NAME_REGEX.matcher(nameStr).matches();

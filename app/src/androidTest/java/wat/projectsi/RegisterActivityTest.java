@@ -35,6 +35,7 @@ public class RegisterActivityTest {
 //
 //        onView(withId(R.id.name)).perform(typeText("Anna"));
 //        onView(withId(R.id.surname)).perform(typeText("Annowska"));
+//        onView(withId(R.id.login)).perform(typeText("Anna12"));
 //        onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
 //        onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
 //              .perform(typeText("password"));
@@ -56,6 +57,7 @@ public class RegisterActivityTest {
 
         onView(withId(R.id.name)).perform(typeText("Anna12"));
         onView(withId(R.id.surname)).perform(typeText("Annowska"));
+        onView(withId(R.id.login)).perform(typeText("Anna12"));
         onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
         onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
                 .perform(typeText("password"));
@@ -78,6 +80,7 @@ public class RegisterActivityTest {
 
         onView(withId(R.id.name)).perform(typeText("Anna"));
         onView(withId(R.id.surname)).perform(typeText("Annowska43"));
+        onView(withId(R.id.login)).perform(typeText("Anna12"));
         onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
         onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
                 .perform(typeText("password"));
@@ -94,12 +97,13 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void clickRegisterButton_BadEmail()
+    public void clickRegisterButton_BadLogin()
     {
         rule.launchActivity(new Intent());
 
         onView(withId(R.id.name)).perform(typeText("Anna"));
         onView(withId(R.id.surname)).perform(typeText("Annowska"));
+        onView(withId(R.id.login)).perform(typeText("An"));
         onView(withId(R.id.email)).perform(typeText("anna@"));
         onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
                 .perform(typeText("password"));
@@ -109,7 +113,7 @@ public class RegisterActivityTest {
 
         onView(withId(R.id.registerButton)).perform(scrollTo()).perform(click());
 
-        onView(withId(R.id.email)).check(matches(hasErrorText( rule.getActivity().getString (R.string.error_invalid_email))));
+        onView(withId(R.id.login)).check(matches(hasErrorText( rule.getActivity().getString (R.string.error_invalid_login))));
 
         rule.finishActivity();
 
@@ -122,6 +126,7 @@ public class RegisterActivityTest {
 
         onView(withId(R.id.name)).perform(typeText("Anna"));
         onView(withId(R.id.surname)).perform(typeText("Annowska"));
+        onView(withId(R.id.login)).perform(typeText("Anna12"));
         onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
         onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
                 .perform(typeText("p"));
@@ -144,6 +149,7 @@ public class RegisterActivityTest {
 
         onView(withId(R.id.name)).perform(typeText("Anna"));
         onView(withId(R.id.surname)).perform(typeText("Annowska"));
+        onView(withId(R.id.login)).perform(typeText("Anna12"));
         onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
         onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
                 .perform(typeText("password"));
@@ -160,12 +166,36 @@ public class RegisterActivityTest {
     }
 
     @Test
+    public void clickRegisterButton_BadEmail()
+    {
+        rule.launchActivity(new Intent());
+
+        onView(withId(R.id.name)).perform(typeText("Anna"));
+        onView(withId(R.id.surname)).perform(typeText("Annowska"));
+        onView(withId(R.id.login)).perform(typeText("Anna12"));
+        onView(withId(R.id.email)).perform(typeText("anna@"));
+        onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
+                .perform(typeText("password"));
+        onView(withId(R.id.re_password)).perform(scrollTo()).perform(clearText())
+                .perform(typeText("password"));
+        onView(withId(R.id.acceptTerms)).perform(scrollTo()).perform(click());
+
+        onView(withId(R.id.registerButton)).perform(scrollTo()).perform(click());
+
+        onView(withId(R.id.email)).check(matches(hasErrorText( rule.getActivity().getString (R.string.error_invalid_email))));
+
+        rule.finishActivity();
+
+    }
+
+    @Test
     public void clickRegisterButton_NotCheckedTerms()
     {
         rule.launchActivity(new Intent());
 
         onView(withId(R.id.name)).perform(typeText("Anna"));
         onView(withId(R.id.surname)).perform(typeText("Annowska"));
+        onView(withId(R.id.login)).perform(typeText("Anna12"));
         onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
         onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
                 .perform(typeText("password"));
@@ -188,6 +218,7 @@ public class RegisterActivityTest {
 
         onView(withId(R.id.name)).perform(typeText("Anna"));
         onView(withId(R.id.surname)).perform(typeText("Annowska"));
+        onView(withId(R.id.login)).perform(typeText("Anna12"));
         onView(withId(R.id.email)).perform(typeText(""));
         onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
                 .perform(typeText("password"));
@@ -210,6 +241,7 @@ public class RegisterActivityTest {
 
         onView(withId(R.id.name)).perform(typeText("Anna"));
         onView(withId(R.id.surname)).perform(typeText("Annowska"));
+        onView(withId(R.id.login)).perform(typeText("Anna12"));
         onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
         onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
                 .perform(typeText(""));
@@ -220,6 +252,28 @@ public class RegisterActivityTest {
         onView(withId(R.id.registerButton)).perform(scrollTo()).perform(click());
 
         onView(withId(R.id.password)).check(matches(hasErrorText( rule.getActivity().getString (R.string.error_field_required))));
+
+        rule.finishActivity();
+    }
+
+    @Test
+    public void clickRegisterButton_EmptyLogin()
+    {
+        rule.launchActivity(new Intent());
+
+        onView(withId(R.id.name)).perform(typeText("Anna"));
+        onView(withId(R.id.surname)).perform(typeText("Annowska"));
+        onView(withId(R.id.login)).perform(typeText(""));
+        onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
+        onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
+                .perform(typeText("password"));
+        onView(withId(R.id.re_password)).perform(scrollTo()).perform(clearText())
+                .perform(typeText("password"));
+        onView(withId(R.id.acceptTerms)).perform(scrollTo()).perform(click());
+
+        onView(withId(R.id.registerButton)).perform(scrollTo()).perform(click());
+
+        onView(withId(R.id.login)).check(matches(hasErrorText( rule.getActivity().getString (R.string.error_field_required))));
 
         rule.finishActivity();
     }

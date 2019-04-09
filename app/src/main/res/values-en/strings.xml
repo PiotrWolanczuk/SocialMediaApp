@@ -31,10 +31,12 @@
     <string name="prompt_terms">Terms</string>
     <string name="prompt_back">Back</string>
     <string name="prompt_sign_up_in">Sign up in…</string>
+    <string name="prompt_pickup_date">Pickup Date</string>
     <string name="error_repassword_password_not_same">Password and it confirmation are not same</string>
     <string name="error_user_exist">User exist</string>
     <string name="error_not_accepted_terms">Require is accept terms</string>
     <string name="error_invalid_characters">Contains invalid characters</string>
+    <string name="error_invalid_login">Invalid login</string>
     <string name="error_used_login">Login is already taken</string>
     <string name="error_used_email">Email is already in use</string>
     <string name="error_no_network_available">No network available</string>
