@@ -19,6 +19,7 @@ import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -41,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            if (error instanceof NetworkError) {
+            if (error instanceof NetworkError || error instanceof TimeoutError) {
                 Log.e("NetworkError", error.toString());
                 Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
                 mProgressDialog.cancel();
