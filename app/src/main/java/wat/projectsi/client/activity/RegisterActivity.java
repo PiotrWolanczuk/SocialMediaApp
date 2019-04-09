@@ -2,6 +2,7 @@ package wat.projectsi.client.activity;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -28,9 +29,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
@@ -117,7 +116,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-
         // Set up the register form.
         mEmailView = findViewById(R.id.email);
 
@@ -151,22 +149,21 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
 
-        final Calendar c = Calendar.getInstance();
+        final Calendar c = Calendar.getInstance(getResources().getConfiguration().locale);
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                // TODO Auto-generated method stub
+
                 c.set(Calendar.YEAR, year);
                 c.set(Calendar.MONTH, monthOfYear);
                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                SimpleDateFormat sdf = new SimpleDateFormat(Validator.dateFormat,  getResources().getConfiguration().locale);
-                mDateView.setText(sdf.format(c.getTime()));
+                mDateView.setText(Validator.dateFormat.format(c.getTime()));
             }
         };
 
-        mDateView.setText(new SimpleDateFormat(Validator.dateFormat,  getResources().getConfiguration().locale).format(c.getTime()));
+        mDateView.setText(Validator.dateFormat.format(c.getTime()));
     }
 
     public void startTermActivity(View view) {
@@ -305,7 +302,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void showDatePickerDialog(View view) {
-        final Calendar c = Calendar.getInstance();
+        final Calendar c = Calendar.getInstance(getResources().getConfiguration().locale);
         final int mYear = c.get(Calendar.YEAR);
         final int mMonth = c.get(Calendar.MONTH);
         final int mDay = c.get(Calendar.DAY_OF_MONTH);
@@ -333,7 +330,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                     }
                 }, mYear, mMonth, mDay);
-        dpd.getDatePicker().setMinDate(System.currentTimeMillis());
+        dpd.getDatePicker().setMinDate(Validator.minDate);
+        dpd.getDatePicker().setMaxDate(Validator.maxDate);
         dpd.show();
 
     }
