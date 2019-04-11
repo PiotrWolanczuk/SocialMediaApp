@@ -63,5 +63,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Ustawienia</string>
+    <string name="log_out">Wyloguj</string>
+    <string name="profile">Profil</string>
+    <string name="gallery">Galeria</string>
 
 </resources>
