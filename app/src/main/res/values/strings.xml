@@ -1,21 +1,26 @@
 <resources>
-    <string name="app_name">ProjectSI</string>
-    <!-- Strings related to login -->
+    <string name="app_name">Artemis Mobile</string>
+    <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This address email is not allow</string>
-    <string name="error_invalid_password">Too short</string>
-    <string name="error_incorrect_password">Wrong password</string>
-    <string name="error_field_required">This field is required</string>
+    <string name="prompt_password">Hasło</string>
+    <string name="error_field_required">To wymagane pole</string>
+    <string name="error_invalid_password">Hasło jest nie dozwolone</string>
+
+    <string name="title_activity_main">MainActivity</string>
+
+
+    <!-- Strings related to login -->
+    <string name="action_sign_in">Zaloguj</string>
+    <string name="action_sign_in_short">Zaloguj</string>
+    <string name="error_invalid_email">Ten adres email jest nie dozwolony</string>
+    <string name="error_incorrect_password">Hasło jest nie poprawne</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="forgot_password">Forgot password?</string>
-    <string name="action_sign_in_fb">Sign in with FB</string>
-    <string name="action_sign_in_email">Sign in with E-mail</string>
-    <string name="create_account">Sign up</string>
+    <string name="forgot_password">Zapomniane hasło?</string>
+    <string name="action_sign_in_fb">Zaloguj sie przez fb</string>
+    <string name="action_sign_in_email">Zaloguj sie przez email</string>
+    <string name="create_account">Rejestracja</string>
 
     <!-- String related to register -->
     <string name="prompt_login">Login</string>
@@ -23,6 +28,34 @@
     <string name="prompt_surname">Nazwisko</string>
     <string name="prompt_re_password">Potwierdź Hasło</string>
     <string name="prompt_accept_terms">Akceptuję regulamin</string>
-    <string name="prompt_create_account">Zalóż konto</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="prompt_create_account">Zarejestruj</string>
+    <string name="prompt_terms">Regulamin</string>
+    <string name="prompt_back">Powrót</string>
+    <string name="prompt_sign_up_in">W trakcie rejestracji…</string>
+    <string name="prompt_pickup_date">Wybierz Datę</string>
+    <string name="prompt_gender">Płeć</string>
+    <string name="prompt_gender_woman">Kobieta</string>
+    <string name="prompt_gender_man">Mężczyzna</string>
+    <string name="error_repassword_password_not_same">Hasło i potwierdzenie hasła nie są identyczne</string>
+    <string name="error_user_exist">Użytkownik już isttnieje</string>
+    <string name="error_not_accepted_terms">Wymagane jest zakceptowanie regulaminu</string>
+    <string name="error_invalid_characters">Zawiera nie dozwolone znaki</string>
+    <string name="error_invalid_login">Niedozwolony login</string>
+    <string name="error_used_login">Login już wykorzystywany</string>
+    <string name="error_used_email">Email już wykorzystywany</string>
+    <string name="error_no_network_available">Sieć nie dostępna</string>
+    <string name="error_unknown">Nieznany błąd</string>
+
+    <!--Terms -->
+    <string name="terms_text">
+        1.	O naszej stronie internetowej się nie mówi.
+        2.	O naszej aplikacji mobilnej się nie mówi.
+        3.	Ktoś ma dość, słabnie, pęka, koniec dramy.
+        4.	Rozmawia tylko dwóch (w czacie).
+        5.	Tylko jedna drama naraz.
+        6.	Bez notatek, bez Google’a.
+        7.	Dramy trwają tak długo, ile trzeba.
+        8.	Jeśli to jest twoja pierwsza noc na naszej stronie – musisz brać udział w dramie.
+    </string>
+
 </resources>

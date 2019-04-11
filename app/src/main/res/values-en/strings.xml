@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Artemis Mobile</string>
+    <!-- Strings related to login and register-->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="error_field_required">This require field</string>
+    <string name="error_invalid_password">Password is invalid</string>
+
+    <string name="title_activity_main">MainActivity</string>
+
+    <!-- Strings related to login -->
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sing in</string>
+    <string name="error_invalid_email">This email is invalid</string>
+    <string name="error_incorrect_password">Password is incorred</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="action_sign_in_fb">Sign in by fb</string>
+    <string name="action_sign_in_email">Sign in by email</string>
+    <string name="create_account">Create account</string>
+
+    <!-- String related to register -->
+    <string name="prompt_login">Login</string>
+    <string name="prompt_name">Name</string>
+    <string name="prompt_surname">Surname</string>
+    <string name="prompt_re_password">Retype password</string>
+    <string name="prompt_accept_terms">Accepted terms</string>
+    <string name="prompt_create_account">Create account</string>
+    <string name="prompt_terms">Terms</string>
+    <string name="prompt_back">Back</string>
+    <string name="prompt_sign_up_in">Sign up in…</string>
+    <string name="prompt_pickup_date">Pickup Date</string>
+    <string name="prompt_gender">Gender</string>
+    <string name="prompt_gender_woman">Woman</string>
+    <string name="prompt_gender_man">Man</string>
+    <string name="error_repassword_password_not_same">Password and it confirmation are not same</string>
+    <string name="error_user_exist">User exist</string>
+    <string name="error_not_accepted_terms">Require is accept terms</string>
+    <string name="error_invalid_characters">Contains invalid characters</string>
+    <string name="error_invalid_login">Invalid login</string>
+    <string name="error_used_login">Login is already taken</string>
+    <string name="error_used_email">Email is already in use</string>
+    <string name="error_no_network_available">No network available</string>
+    <string name="error_unknown">Unknown error</string>
+
+    <!--Terms -->
+    <string name="terms_text">
+        1.	O naszej stronie internetowej się nie mówi.
+        2.	O naszej aplikacji mobilnej się nie mówi.
+        3.	Ktoś ma dość, słabnie, pęka, koniec dramy.
+        4.	Rozmawia tylko dwóch (w czacie).
+        5.	Tylko jedna drama naraz.
+        6.	Bez notatek, bez Google’a.
+        7.	Dramy trwają tak długo, ile trzeba.
+        8.	Jeśli to jest twoja pierwsza noc na naszej stronie – musisz brać udział w dramie.
+    </string>
+
+</resources>
