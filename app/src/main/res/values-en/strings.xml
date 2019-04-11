@@ -32,6 +32,9 @@
     <string name="prompt_back">Back</string>
     <string name="prompt_sign_up_in">Sign up in…</string>
     <string name="prompt_pickup_date">Pickup Date</string>
+    <string name="prompt_gender">Gender</string>
+    <string name="prompt_gender_woman">Woman</string>
+    <string name="prompt_gender_man">Man</string>
     <string name="error_repassword_password_not_same">Password and it confirmation are not same</string>
     <string name="error_user_exist">User exist</string>
     <string name="error_not_accepted_terms">Require is accept terms</string>

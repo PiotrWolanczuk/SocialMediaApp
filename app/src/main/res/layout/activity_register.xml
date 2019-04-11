@@ -79,6 +79,14 @@
                 android:onClick="showDatePickerDialog"
                 android:text="@string/prompt_pickup_date" />
 
+            <Switch
+                android:id="@+id/genderSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layoutDirection="rtl"
+                android:text="@string/prompt_gender_woman"
+                app:switchPadding="8dp" />
+
             <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">

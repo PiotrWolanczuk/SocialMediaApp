@@ -33,6 +33,9 @@
     <string name="prompt_back">Powrót</string>
     <string name="prompt_sign_up_in">W trakcie rejestracji…</string>
     <string name="prompt_pickup_date">Wybierz Datę</string>
+    <string name="prompt_gender">Płeć</string>
+    <string name="prompt_gender_woman">Kobieta</string>
+    <string name="prompt_gender_man">Mężczyzna</string>
     <string name="error_repassword_password_not_same">Hasło i potwierdzenie hasła nie są identyczne</string>
     <string name="error_user_exist">Użytkownik już isttnieje</string>
     <string name="error_not_accepted_terms">Wymagane jest zakceptowanie regulaminu</string>

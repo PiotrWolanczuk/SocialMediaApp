@@ -3,9 +3,6 @@ package wat.projectsi.client;
 import java.text.DateFormat;
 import java.util.regex.Pattern;
 
-/**
- * A class help check expressions: login, email
- */
 public class Validator {
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);

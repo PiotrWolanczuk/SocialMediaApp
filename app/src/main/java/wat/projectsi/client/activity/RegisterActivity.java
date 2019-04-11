@@ -2,7 +2,6 @@ package wat.projectsi.client.activity;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,8 +11,10 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,10 +37,10 @@ import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Validator;
 
 
-/**
- * A register screen that offers register by fill email, password, name surname.
- */
 public class RegisterActivity extends AppCompatActivity {
+
+    private static final String manStr="man";
+    private static final String womanStr="woman";
 
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
@@ -91,10 +92,12 @@ public class RegisterActivity extends AppCompatActivity {
 //                    break;
 //                case 404://"Not Found"
 //                    break;
-//                case 415://"Unsupported Media Type" ->"BadJason"
+//                case 415://"Unsupported Media Type" ->BadJason
+//                    break;
+//                case 500://"Fail! -> Cause: User Role not find."
 //                    break;
                 default:
-                    break;
+                    Toast.makeText(RegisterActivity.this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -110,6 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
     private CheckBox mAcceptTermsView;
     private ProgressDialog mProgressDialog;
     private TextView mDateView;
+    private Switch mGenderView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +132,19 @@ public class RegisterActivity extends AppCompatActivity {
         mDateView = findViewById(R.id.date);
 
         mProgressDialog = new ProgressDialog(this);
+        mGenderView = findViewById(R.id.genderSwitch);
+
+        mGenderView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    mGenderView.setText(R.string.prompt_gender_man);
+                }
+                else {
+                    mGenderView.setText(R.string.prompt_gender_woman);
+                }
+            }
+        });
 
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -266,12 +283,12 @@ public class RegisterActivity extends AppCompatActivity {
             mProgressDialog.show();
 
             registerRequest(login, email, password,
-                    mNameView.getText().toString(), mSurnameView.getText().toString(), mDateView.getText().toString()
+                    mNameView.getText().toString(), mSurnameView.getText().toString(), mDateView.getText().toString(), mGenderView.isChecked()
             );
         }
     }
 
-    private boolean registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate) {
+    private boolean registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate, boolean isMan) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JSONObject data = new JSONObject();
@@ -282,6 +299,7 @@ public class RegisterActivity extends AppCompatActivity {
             data.put("name", name);
             data.put("surname", surname);
             data.put("birthDate", birthDate);
+            data.put("gender", isMan? manStr:womanStr);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -28,28 +28,6 @@ public class RegisterActivityTest {
     @Rule
     public ActivityTestRule rule = new ActivityTestRule(RegisterActivity.class, true, false);
 
-//    @Test
-//    public void clickRegisterButton_Good()
-//    {
-//        rule.launchActivity(new Intent());
-//
-//        onView(withId(R.id.name)).perform(typeText("Anna"));
-//        onView(withId(R.id.surname)).perform(typeText("Annowska"));
-//        onView(withId(R.id.login)).perform(typeText("Anna12"));
-//        onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
-//        onView(withId(R.id.password)).perform(scrollTo()).perform(clearText())
-//              .perform(typeText("password"));
-//        onView(withId(R.id.re_password)).perform(scrollTo()).perform(scrollTo()).perform(clearText())
-//              .perform(typeText("password"));
-//        onView(withId(R.id.acceptTerms)).perform(scrollTo()).perform(click());
-//
-//        onView(withId(R.id.registerButton)).perform(scrollTo()).perform(click());
-//
-////        Assert.assertTrue();
-//
-//
-//    }
-
     @Test
     public void clickRegisterButton_BadName()
     {
