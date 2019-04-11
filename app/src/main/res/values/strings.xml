@@ -58,4 +58,10 @@
         8.	Jeśli to jest twoja pierwsza noc na naszej stronie – musisz brać udział w dramie.
     </string>
 
+    <!-- String related to register -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Ustawienia</string>
+
 </resources>
