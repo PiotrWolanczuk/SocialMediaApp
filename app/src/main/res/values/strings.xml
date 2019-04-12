@@ -67,4 +67,11 @@
     <string name="profile">Profil</string>
     <string name="gallery">Galeria</string>
 
+
+    <!-- Strings related to new post activity -->
+    <string name="send">Wyslij</string>
+    <string name="add_photo">Dodaj zdjecie</string>
+    <string name="write_here">Pisz tutaj…</string>
+
+
 </resources>

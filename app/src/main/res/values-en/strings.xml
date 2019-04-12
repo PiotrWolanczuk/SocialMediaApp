@@ -65,4 +65,9 @@
     <string name="log_out">Log out</string>
     <string name="profile">Profile</string>
     <string name="gallery">Gallery</string>
+
+    <!-- Strings related to new post activity -->
+    <string name="send">Send</string>
+    <string name="add_photo">Add photo</string>
+    <string name="write_here">Write here…</string>
 </resources>
