@@ -11,15 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/buttons_panel"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/message_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="top"
             android:hint="@string/write_here"
-            android:textSize="20sp"
-            android:gravity="top" />
+            android:textSize="20sp" />
+
     </LinearLayout>
 
 
@@ -27,25 +29,41 @@
         android:id="@+id/buttons_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/send_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/send"
-            tools:ignore="ButtonStyle"
-            android:onClick="send_new_post"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/new_photo"
+                android:layout_width="match_parent"
+                android:layout_height="60sp" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/add_photo_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/add_photo"
-            tools:ignore="ButtonStyle"
-            android:onClick="add_photo_from_gallery"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/send_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="send_new_post"
+                android:text="@string/send"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/add_photo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="add_photo_from_gallery"
+                android:text="@string/add_photo"
+                tools:ignore="ButtonStyle" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>
