@@ -97,7 +97,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void consumeAPI(final String email, final String password) {
-        String urlAPI = "/api/auth/signin";
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
         JSONObject jsonRequest = new JSONObject();

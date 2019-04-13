@@ -7,13 +7,26 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import wat.projectsi.R;
+import wat.projectsi.client.ConnectingURL;
 
 public class NewPostActivity extends AppCompatActivity {
 
@@ -23,23 +36,22 @@ public class NewPostActivity extends AppCompatActivity {
     ImageView imageView;
 
     private static int RESULT_LOAD_IMAGE = 1;
+    private String hashcode = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
-//        sendButton = findViewById(R.id.send_button);
+        sendButton = findViewById(R.id.send_button);
         addPhoto = findViewById(R.id.add_photo_button);
-//        newPostText = findViewById(R.id.message_text);
+        newPostText = findViewById(R.id.message_text);
 
 
     }
 
     public void send_new_post(View view) {
-        StringBuilder messageText = new StringBuilder();
-
-        messageText.append(newPostText.getText());
+        consumeNewPostAPI(String.valueOf(newPostText.getText()), hashcode);
     }
 
     public void add_photo_from_gallery(View view) {
@@ -55,7 +67,38 @@ public class NewPostActivity extends AppCompatActivity {
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             imageView.setImageURI(selectedImage);
-            // String picturePath contains the path of selected Image
         }
+    }
+
+    private void consumeNewPostAPI(final String text, final String imageHashcode) {
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("text",  text);
+            jsonRequest.put("hashcode",  imageHashcode);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //TODO: change connecting url
+        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,
+                ConnectingURL.URL_Signin,jsonRequest, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                finish();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                finish();// usunac
+                Log.e("APIResponse", error.toString());
+                Toast.makeText(NewPostActivity.this,
+                        getApplicationContext().getResources().getString(R.string.message_wrong),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+        MyRequestQueue.add(MyJsonRequest);
     }
 }
