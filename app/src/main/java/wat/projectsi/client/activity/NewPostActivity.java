@@ -20,6 +20,7 @@ public class NewPostActivity extends AppCompatActivity {
     Button sendButton;
     Button addPhoto;
     EditText newPostText;
+    ImageView imageView;
 
     private static int RESULT_LOAD_IMAGE = 1;
 
@@ -28,9 +29,9 @@ public class NewPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
-        sendButton = findViewById(R.id.send_button);
+//        sendButton = findViewById(R.id.send_button);
         addPhoto = findViewById(R.id.add_photo_button);
-        newPostText = findViewById(R.id.message_text);
+//        newPostText = findViewById(R.id.message_text);
 
 
     }
@@ -42,6 +43,7 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     public void add_photo_from_gallery(View view) {
+        imageView = findViewById(R.id.new_photo);
         Intent gallery = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(gallery, RESULT_LOAD_IMAGE);
     }
@@ -52,18 +54,7 @@ public class NewPostActivity extends AppCompatActivity {
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            ImageView imageView = (ImageView) findViewById(R.id.new_photo);
-            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            imageView.setImageURI(selectedImage);
             // String picturePath contains the path of selected Image
         }
     }

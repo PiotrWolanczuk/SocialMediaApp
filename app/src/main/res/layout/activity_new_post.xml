@@ -38,7 +38,7 @@
             <ImageView
                 android:id="@+id/new_photo"
                 android:layout_width="match_parent"
-                android:layout_height="60sp" />
+                android:layout_height="200dp" />
         </LinearLayout>
 
         <LinearLayout
