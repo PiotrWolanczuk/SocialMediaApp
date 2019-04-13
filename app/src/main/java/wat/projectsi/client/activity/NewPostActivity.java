@@ -75,15 +75,14 @@ public class NewPostActivity extends AppCompatActivity {
 
         JSONObject jsonRequest = new JSONObject();
         try {
-            jsonRequest.put("text",  text);
-            jsonRequest.put("hashcode",  imageHashcode);
+            jsonRequest.put("pictureEntityCollection",  imageHashcode);
+            jsonRequest.put("postContent",  text);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        //TODO: change connecting url
         JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,
-                ConnectingURL.URL_Signin,jsonRequest, new Response.Listener<JSONObject>() {
+                ConnectingURL.URL_AddPost,jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
