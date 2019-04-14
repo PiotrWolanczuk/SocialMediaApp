@@ -65,4 +65,5 @@
     <string name="log_out">Log out</string>
     <string name="profile">Profile</string>
     <string name="gallery">Gallery</string>
+    <string name="users">Users</string>
 </resources>

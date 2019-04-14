@@ -10,6 +10,7 @@ public class ConnectingURL {
     private static final String DOC_URL = "http://10.0.0.42:8080";      //Docker    //TODO: check if is
     public static final String URL_Signup = getURL() +"/api/auth/signup";
     public static final String URL_Signin = getURL() +"/api/auth/signin";
+    public static final String URL_Users = getURL() +"/users";
 
     public static String getURL()
     {
