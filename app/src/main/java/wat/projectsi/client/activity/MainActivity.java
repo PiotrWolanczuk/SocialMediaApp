@@ -1,5 +1,6 @@
 package wat.projectsi.client.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -95,5 +96,10 @@ public class MainActivity extends AppCompatActivity
 
     public void logOut(MenuItem item) {
         //TODO: Log out - W_funk_03
+    }
+
+    public void notificationView(MenuItem item) {
+        Intent notificationsIntent = new Intent(MainActivity.this, NotificationActivity.class);
+        startActivity(notificationsIntent);
     }
 }

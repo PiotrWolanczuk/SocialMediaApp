@@ -113,17 +113,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 progressDialog.cancel();
-                Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_LONG).show();
-                //TODO: Go to next activity
-//                Intent mainIntent = new Intent(this, MainActivity.class);
-//                startActivity(mainIntent);
+                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(mainIntent);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.cancel();
                 Log.e("APIResponse", error.toString());
-                System.out.println(error.toString());
                 Toast.makeText(LoginActivity.this, "Something is wrong.", Toast.LENGTH_SHORT).show();
             }
         });
