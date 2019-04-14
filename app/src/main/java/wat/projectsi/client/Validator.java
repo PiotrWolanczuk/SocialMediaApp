@@ -1,6 +1,7 @@
 package wat.projectsi.client;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
 public class Validator {
@@ -9,7 +10,9 @@ public class Validator {
     private static final Pattern VALID_NAME_REGEX =
             Pattern.compile("[A-Z]+", Pattern.CASE_INSENSITIVE);
 
-    public static final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
+    public static final DateFormat viewDateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
+    public static final DateFormat viewPostDateFormat = DateFormat.getDateInstance();
+    public static final DateFormat apiDateFormat=new SimpleDateFormat("yyyy-MM-dd");
     public static final long maxDate = System.currentTimeMillis();
     public static final long minDate = System.currentTimeMillis() - 1000L * 360L * 24L * 365L * 3600L;
 

@@ -30,7 +30,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
@@ -176,11 +178,11 @@ public class RegisterActivity extends AppCompatActivity {
                 c.set(Calendar.MONTH, monthOfYear);
                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                mDateView.setText(Validator.dateFormat.format(c.getTime()));
+                mDateView.setText(Validator.viewDateFormat.format(c.getTime()));
             }
         };
 
-        mDateView.setText(Validator.dateFormat.format(c.getTime()));
+        mDateView.setText( Validator.viewDateFormat.format(c.getTime()));
     }
 
     public void startTermActivity(View view) {
@@ -282,9 +284,15 @@ public class RegisterActivity extends AppCompatActivity {
 
             mProgressDialog.show();
 
-            registerRequest(login, email, password,
-                    mNameView.getText().toString(), mSurnameView.getText().toString(), mDateView.getText().toString(), mGenderView.isChecked()
-            );
+            try {
+                registerRequest(login, email, password,
+                        mNameView.getText().toString(), mSurnameView.getText().toString(),
+                        Validator.apiDateFormat.format( Validator.viewDateFormat.parse(mDateView.getText().toString())),
+                        mGenderView.isChecked()
+                );
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -309,7 +317,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 mProgressDialog.cancel();
-                Toast.makeText(RegisterActivity.this, response.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, getText(R.string.prompt_register_success), Toast.LENGTH_LONG).show();
 
                 backToLoginActivity();
             }

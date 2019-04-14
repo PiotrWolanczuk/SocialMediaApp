@@ -35,6 +35,7 @@
     <string name="prompt_gender">Gender</string>
     <string name="prompt_gender_woman">Woman</string>
     <string name="prompt_gender_man">Man</string>
+    <string name="prompt_register_success">Registration successful</string>
     <string name="error_repassword_password_not_same">Password and it confirmation are not same</string>
     <string name="error_user_exist">User exist</string>
     <string name="error_not_accepted_terms">Require is accept terms</string>
@@ -57,7 +58,7 @@
         8.	Jeśli to jest twoja pierwsza noc na naszej stronie – musisz brać udział w dramie.
     </string>
 
-    <!-- String related to register -->
+    <!-- String related to mainActivity -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -65,4 +66,8 @@
     <string name="log_out">Log out</string>
     <string name="profile">Profile</string>
     <string name="gallery">Gallery</string>
+
+    <!-- String related to posts -->
+    <string name="prompt_report">Zgłoś</string>
+    <string name="prompt_reply">Odpowiedz</string>
 </resources>
