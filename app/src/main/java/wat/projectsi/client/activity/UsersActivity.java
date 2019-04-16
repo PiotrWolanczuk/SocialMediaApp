@@ -2,6 +2,9 @@ package wat.projectsi.client.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,26 +25,35 @@ import java.util.List;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.User;
+import wat.projectsi.client.UserAdapter;
 
 public class UsersActivity extends AppCompatActivity {
 
-    ListView peopleListView;
-    List<String> listOfUser;
-    ArrayAdapter adapter;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private List<User> userList = new ArrayList<>();
+    private ArrayList<Object> listOfUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
-        peopleListView = findViewById(R.id.list_of_people);
+        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        layoutManager = new LinearLayoutManager(this);
 
-        showPeople();
-        peopleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                clickOnUser();
-            }
-        });
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+
+        mAdapter = new UserAdapter(userList);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
+//        showPeople();
+userList.add(new  User("Piotr", "Wolanczk"));
+userList.add(new  User("zbych", "Pawlowski"));
+userList.add(new  User("Yxq", "Xyz"));
 
     }
 
@@ -58,10 +70,12 @@ public class UsersActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(JSONObject response) {
-                listOfUser.add(response.toString());
-                adapter = new ArrayAdapter <>
-                        (UsersActivity.this, android.R.layout.simple_list_item_1, listOfUser);
-                peopleListView.setAdapter(adapter);
+                System.out.println("dupa");
+                System.out.println(response.toString());
+//                adapter = new ArrayAdapter <>
+//                        (UsersActivity.this, android.R.layout.simple_list_item_1, listOfUser);
+//                peopleListView.setAdapter(adapter);
+
             }
         }, new Response.ErrorListener() {
             @Override
