@@ -120,10 +120,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.cancel();
                 Log.e("APIResponse", error.toString());
-                //TODO: delete this
                 Toast.makeText(LoginActivity.this, "Something is wrong", Toast.LENGTH_SHORT).show();
-                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(mainIntent);
             }
         });
         MyRequestQueue.add(MyJsonRequest);
