@@ -1,9 +1,11 @@
 package wat.projectsi.client.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -95,6 +97,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void logOut(MenuItem item) {
-        //TODO: Log out - W_funk_03
+        SharedPreferences myPrefs = getSharedPreferences("token",
+                MODE_PRIVATE);
+        SharedPreferences.Editor editor = myPrefs.edit();
+        editor.clear();
+        editor.commit();
+        //Log.d(TAG, "Now log out and start the activity login");
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

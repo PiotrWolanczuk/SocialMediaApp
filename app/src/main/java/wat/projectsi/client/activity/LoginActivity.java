@@ -1,7 +1,9 @@
 package wat.projectsi.client.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,15 +34,20 @@ import wat.projectsi.client.ConnectingURL;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String PREFERENCES_NAME = "myPreferences";
+
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private ProgressDialog progressDialog;
 
+    private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // Set up the login form.
+
+        preferences = getSharedPreferences(PREFERENCES_NAME, Activity.MODE_PRIVATE);
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         progressDialog = new ProgressDialog(this);
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -112,6 +120,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 progressDialog.cancel();
+                try {
+                    saveToken(response.getString("token"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(mainIntent);
             }
@@ -120,10 +133,17 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.cancel();
                 Log.e("APIResponse", error.toString());
-                Toast.makeText(LoginActivity.this, "Something is wrong", Toast.LENGTH_SHORT).show();
+                System.out.println(error.toString());
+                Toast.makeText(LoginActivity.this, "Something is wrong.", Toast.LENGTH_SHORT).show();
             }
         });
         MyRequestQueue.add(MyJsonRequest);
+    }
+
+    private void saveToken(String token){
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("token", token);
+        editor.commit();
     }
 
 
