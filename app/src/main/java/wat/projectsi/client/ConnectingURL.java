@@ -7,7 +7,7 @@ public class ConnectingURL {
     private static final String AVD_URL = "http://10.0.2.2:8080";       //Android Studio
     private static final String GEN_URL = "http://10.0.3.2:8080";       //Genymotion
     private static final String VBX_URL = "http://192.168.56.1:8080";   //VirtualBox Studio
-    private static final String NOX_URL= "http://172.31.176.1:8080";    //NOX
+    private static final String NOX_URL= "http://172.17.100.2:8080";    //NOX
     private static final String DOC_URL = "http://10.0.0.42:8080";      //Docker    //TODO: check if is
 
     public static final String URL_Signup = getURL() +"/api/auth/signup";

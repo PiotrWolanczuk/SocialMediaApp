@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="320dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="25dp"
     android:elevation="15dp"
     >
@@ -11,7 +11,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/posts_card_view"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:clickable="true"
         android:focusable="true"
@@ -22,46 +22,64 @@
             android:layout_height="wrap_content"
             android:background="@drawable/border">
 
-            <ImageView
-                android:id="@+id/postImage"
-                android:layout_width="fill_parent"
-                android:layout_height="200dp"
+            <TextView
+                android:id="@+id/namePost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:scaleType="centerCrop"
-                card_view:srcCompat="@android:color/transparent" />
+                android:background="@drawable/border"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/imageRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:scrollbars="horizontal"
+                android:layout_below="@id/namePost"/>
+
 
             <TextView
                 android:id="@+id/postContent"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:layout_above="@id/reply_button"
-                android:layout_below="@+id/postImage"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageRecyclerView"
+                android:background="@drawable/border"
                 android:paddingStart="10dp"
-                android:text="comment" />
-
-            <Button
-                android:id="@+id/report_button"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/sendPostDate"
-                android:onClick="reportRequest"
-                android:text="@string/prompt_report" />
-
-            <Button
-                android:id="@+id/reply_button"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/sendPostDate"
-                android:layout_toEndOf="@+id/report_button"
-                android:onClick="replyRequest"
-                android:text="@string/prompt_reply" />
+                android:paddingEnd="10dp" />
 
             <TextView
                 android:id="@+id/sendPostDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:text="Date" />
+                android:layout_below="@id/postContent"
+                />
+
+            <LinearLayout
+                android:id="@+id/buttonsLayout"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:background="@drawable/border"
+                android:layout_below="@id/sendPostDate"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/report_button"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="reportRequest"
+                    android:text="@string/prompt_report" />
+
+                <Button
+                    android:id="@+id/comment_button"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="commentRequest"
+                    android:text="@string/prompt_comment" />
+            </LinearLayout>
 
         </RelativeLayout>
 

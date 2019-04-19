@@ -70,7 +70,7 @@
 
     <!-- String related to posts -->
     <string name="prompt_report">Zgłoś</string>
-    <string name="prompt_reply">Odpowiedz</string>
+    <string name="prompt_comment">Skomentuj</string>
 
 
 </resources>

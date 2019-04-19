@@ -31,10 +31,9 @@ import org.json.JSONObject;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Misc;
 
 public class LoginActivity extends AppCompatActivity {
-
-    private static final String PREFERENCES_NAME = "myPreferences";
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -46,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        preferences = getSharedPreferences(PREFERENCES_NAME, Activity.MODE_PRIVATE);
+        preferences = getSharedPreferences(Misc.PREFERENCES_NAME, Activity.MODE_PRIVATE);
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         progressDialog = new ProgressDialog(this);
