@@ -32,14 +32,15 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
-        <LinearLayout
+
+        <GridView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/new_photo"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
-        </LinearLayout>
+            android:layout_height="0dp"
+            android:id="@+id/gv"
+            android:numColumns="3"
+            android:layout_weight="1">
+        </GridView>
+
 
         <LinearLayout
             android:layout_width="match_parent"

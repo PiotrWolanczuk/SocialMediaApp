@@ -1,4 +1,4 @@
-package wat.projectsi.client.activity;
+package wat.projectsi.client;
 
 import android.content.Context;
 import android.content.SharedPreferences;
