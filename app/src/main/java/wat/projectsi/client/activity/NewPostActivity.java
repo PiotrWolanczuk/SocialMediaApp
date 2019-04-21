@@ -13,23 +13,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,10 +94,11 @@ public class NewPostActivity extends AppCompatActivity {
 
                     Uri mImageUri=data.getData();
 
-                    // Get the cursor
+                    images.add(mImageUri.hashCode());
+                    hashcodes.add(Integer.toString(images.get(images.size() - 1)));
+
                     Cursor cursor = getContentResolver().query(mImageUri,
                             filePathColumn, null, null, null);
-                    // Move to first row
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -126,10 +122,12 @@ public class NewPostActivity extends AppCompatActivity {
 
                             ClipData.Item item = mClipData.getItemAt(i);
                             Uri uri = item.getUri();
+
+                            //images.add(uri.hashCode());
+                            hashcodes.add(Integer.toString(uri.hashCode()));
+
                             mArrayUri.add(uri);
-                            // Get the cursor
                             Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
-                            // Move to first row
                             cursor.moveToFirst();
 
                             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -143,9 +141,7 @@ public class NewPostActivity extends AppCompatActivity {
                             ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) gvGallery
                                     .getLayoutParams();
                             mlp.setMargins(0, gvGallery.getHorizontalSpacing(), 0, 0);
-
                         }
-                        Log.v("LOG_TAG", "Selected Images" + mArrayUri.size());
                     }
                 }
             } else {
@@ -160,47 +156,18 @@ public class NewPostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    private void addImagesToThegallery() {
-//        LinearLayout imageGallery = (LinearLayout) findViewById(R.id.imageGallery);
-//        for (Integer uriImage : images) {
-//        imageGallery.addView(getImageView(uriImage));
-//        }
-//    }
-//
-//    private View getImageView(Integer image) {
-//        ImageView imageView = new ImageView(getApplicationContext());
-//        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams
-//                (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//        lp.setMargins(0, 0, 10, 0);
-//        imageView.setLayoutParams(lp);
-//        imageView.setImageResource(image);
-//        return imageView;
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-//            Uri selectedImage = data.getData();
-//            imageView.setImageURI(selectedImage);
-//            images.add(selectedImage.hashCode());
-//            hashcodes.add(Integer.toString(images.get(images.size() - 1)));
-//            addImagesToThegallery();
-//        }
-//    }
-
     private void consumeNewPostAPI(final String text, final ArrayList imageHashcodes) {
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
-        JSONObject jsonRequest = new JSONObject();
+        final JSONObject jsonRequest = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         JSONObject listElement = new JSONObject();
         try {
             for (int i = 0; i < imageHashcodes.size(); i++) {
+                System.out.println(imageHashcodes.get(i));
                 listElement.put("hashCode", imageHashcodes.get(i));
+                jsonArray.put(listElement);
             }
-            jsonArray.put(listElement);
 
             jsonRequest.put("pictureEntityCollection", jsonArray);
             jsonRequest.put("postContent", text);
@@ -213,6 +180,7 @@ public class NewPostActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(JSONObject response) {
+                System.out.println(jsonRequest);
                 finish();
             }
         }, new Response.ErrorListener() {
