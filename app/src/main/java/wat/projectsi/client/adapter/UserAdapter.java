@@ -1,4 +1,4 @@
-package wat.projectsi.client;
+package wat.projectsi.client.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,9 +10,19 @@ import android.widget.TextView;
 import java.util.List;
 
 import wat.projectsi.R;
+import wat.projectsi.client.model.User;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> {
-    private List<User> userList;
+
+    private User user;
+
+    public UserAdapter(User user) {
+        this.user = user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, surname;
@@ -26,27 +36,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         }
     }
 
-    public UserAdapter(List<User> userList) {
-        this.userList = userList;
-    }
 
     @Override
     public UserAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.user_list_row, parent, false);
-        return new MyViewHolder(itemView);
+        return new MyViewHolder(LayoutInflater.from(parent.getContext()).
+                inflate(R.layout.user_list_row, parent, false));
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-       User user = userList.get(position);
        holder.name.setText(user.getName());
        holder.surname.setText(user.getSurname());
-       //holder.profile.setIma
+       holder.profile.setImageBitmap(user.getProfileImage());
     }
 
     @Override
-    public int getItemCount() {
-        return userList.size();
-    }
+    public int getItemCount() { return 0; }
 }

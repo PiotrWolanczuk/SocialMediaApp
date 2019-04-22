@@ -113,10 +113,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 progressDialog.cancel();
-                Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_LONG).show();
-                //TODO: Go to next activity
-//                Intent mainIntent = new Intent(this, MainActivity.class);
-//                startActivity(mainIntent);
+                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(mainIntent);
             }
         }, new Response.ErrorListener() {
             @Override

@@ -1,14 +1,12 @@
 package wat.projectsi.client.activity;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,12 +19,16 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.User;
-import wat.projectsi.client.UserAdapter;
+import wat.projectsi.client.GsonRequest;
+import wat.projectsi.client.adapter.UserListAdapter;
+import wat.projectsi.client.model.User;
+import wat.projectsi.client.adapter.UserAdapter;
 
 public class UsersActivity extends AppCompatActivity {
 
@@ -35,6 +37,9 @@ public class UsersActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private List<User> userList = new ArrayList<>();
     private ArrayList<Object> listOfUser;
+
+    private UserListAdapter mUserListAdapter;
+    private List<User> mUserList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,42 +52,34 @@ public class UsersActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
 
-        mAdapter = new UserAdapter(userList);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
-//        showPeople();
-userList.add(new  User("Piotr", "Wolanczk"));
-userList.add(new  User("zbych", "Pawlowski"));
-userList.add(new  User("Yxq", "Xyz"));
-
+//        mAdapter = new UserAdapter(userList);
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setAdapter(mAdapter);
+        showPeople();
     }
 
-    private void clickOnUser() {
+    private void showPeople(){
+        mUserList = new ArrayList<>();
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-    }
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization","Bearer "+ getSharedPreferences("MyPreferences", Activity.MODE_PRIVATE).getString("token",""));
 
-    private void showPeople() {
-        listOfUser = new ArrayList<>();
-        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
-
-        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.GET,
-                ConnectingURL.URL_Users,null, new Response.Listener<JSONObject>() {
-
+        GsonRequest<User[]> request = new GsonRequest<>( ConnectingURL.URL_Users, User[].class, headers, new Response.Listener<User[]>() {
             @Override
-            public void onResponse(JSONObject response) {
-                System.out.println("dupa");
-                System.out.println(response.toString());
-//                adapter = new ArrayAdapter <>
-//                        (UsersActivity.this, android.R.layout.simple_list_item_1, listOfUser);
-//                peopleListView.setAdapter(adapter);
-
+            public void onResponse(User[] response) {
+                mUserList.addAll(Arrays.asList(response));
+                recyclerView.setAdapter(mUserListAdapter = new UserListAdapter(mUserList, UsersActivity.this) );
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(UsersActivity.this, "Something is wrong.", Toast.LENGTH_SHORT).show();
+                Log.e("APIResponse", error.toString());
+                error.printStackTrace();
             }
         });
-        MyRequestQueue.add(MyJsonRequest);
+        requestQueue.add(request);
+
     }
 }
