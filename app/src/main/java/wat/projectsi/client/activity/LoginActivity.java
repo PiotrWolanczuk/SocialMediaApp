@@ -31,10 +31,10 @@ import org.json.JSONObject;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.SharedOurPreferences;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String PREFERENCES_NAME = "myPreferences";
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -45,8 +45,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        preferences = getSharedPreferences(PREFERENCES_NAME, Activity.MODE_PRIVATE);
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         progressDialog = new ProgressDialog(this);
@@ -61,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+//        mEmailView.setText("user1");
+//        mPasswordView.setText("UserPass1");
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -115,13 +115,15 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,ConnectingURL.URL_Signin,jsonRequest, new Response.Listener<JSONObject>() {
+        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,
+                ConnectingURL.URL_Signin,jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 progressDialog.cancel();
                 try {
-                    saveToken(response.getString("token"));
+                    SharedOurPreferences.setDefaults("token", response.getString("token"),
+                            LoginActivity.this);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -138,13 +140,6 @@ public class LoginActivity extends AppCompatActivity {
         });
         MyRequestQueue.add(MyJsonRequest);
     }
-
-    private void saveToken(String token){
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("token", token);
-        editor.commit();
-    }
-
 
     public void setUpNewPassword(View view) {
     }
