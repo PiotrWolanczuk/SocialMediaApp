@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Artemis Mobile</string>
+
+    <string name="message_wrong">Cos poszlo nie tak</string>
     <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
@@ -36,6 +38,7 @@
     <string name="prompt_gender">Płeć</string>
     <string name="prompt_gender_woman">Kobieta</string>
     <string name="prompt_gender_man">Mężczyzna</string>
+    <string name="prompt_register_success">Rejestracja udana</string>
     <string name="error_repassword_password_not_same">Hasło i potwierdzenie hasła nie są identyczne</string>
     <string name="error_user_exist">Użytkownik już isttnieje</string>
     <string name="error_not_accepted_terms">Wymagane jest zakceptowanie regulaminu</string>
@@ -58,7 +61,7 @@
         8.	Jeśli to jest twoja pierwsza noc na naszej stronie – musisz brać udział w dramie.
     </string>
 
-    <!-- String related to register -->
+    <!-- String related to mainActivity -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -66,5 +69,15 @@
     <string name="log_out">Wyloguj</string>
     <string name="profile">Profil</string>
     <string name="gallery">Galeria</string>
+
+    <!-- String related to posts -->
+    <string name="prompt_report">Zgłoś</string>
+    <string name="prompt_comment">Skomentuj</string>
+
+    <!-- Strings related to sending posts -->
+    <string name="send">Wyslij</string>
+    <string name="add_photo">Dodaj zdjecie</string>
+    <string name="write_here">Pisz tutaj…</string>
+
 
 </resources>

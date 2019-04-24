@@ -30,10 +30,12 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.Calendar;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.DateFormatter;
 import wat.projectsi.client.Validator;
 
 
@@ -77,7 +79,6 @@ public class RegisterActivity extends AppCompatActivity {
                             mEmailView.requestFocus();
                             break;
                         case "Fail -> Username is already taken!":
-                            //TODO: Login
                             Toast.makeText(RegisterActivity.this, getString(R.string.error_used_login), Toast.LENGTH_SHORT).show();
                             break;
 
@@ -176,11 +177,11 @@ public class RegisterActivity extends AppCompatActivity {
                 c.set(Calendar.MONTH, monthOfYear);
                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                mDateView.setText(Validator.dateFormat.format(c.getTime()));
+                mDateView.setText(DateFormatter.viewDateFormat().format(c.getTime()));
             }
         };
 
-        mDateView.setText(Validator.dateFormat.format(c.getTime()));
+        mDateView.setText( DateFormatter.viewDateFormat().format(c.getTime()));
     }
 
     public void startTermActivity(View view) {
@@ -283,12 +284,13 @@ public class RegisterActivity extends AppCompatActivity {
             mProgressDialog.show();
 
             registerRequest(login, email, password,
-                    mNameView.getText().toString(), mSurnameView.getText().toString(), mDateView.getText().toString(), mGenderView.isChecked()
-            );
+                    mNameView.getText().toString(), mSurnameView.getText().toString(),
+                    DateFormatter.convertToApi(mDateView.getText().toString()),
+                    mGenderView.isChecked());
         }
     }
 
-    private boolean registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate, boolean isMan) {
+    private void registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate, boolean isMan) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JSONObject data = new JSONObject();
@@ -309,14 +311,13 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 mProgressDialog.cancel();
-                Toast.makeText(RegisterActivity.this, response.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, getText(R.string.prompt_register_success), Toast.LENGTH_LONG).show();
 
                 backToLoginActivity();
             }
         }, errorListener);
         requestQueue.add(request);
 
-        return false;
     }
 
     public void showDatePickerDialog(View view) {
@@ -348,8 +349,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                     }
                 }, mYear, mMonth, mDay);
-        dpd.getDatePicker().setMinDate(Validator.minDate);
-        dpd.getDatePicker().setMaxDate(Validator.maxDate);
+        dpd.getDatePicker().setMinDate(DateFormatter.minDate);
+        dpd.getDatePicker().setMaxDate(DateFormatter.maxDate);
         dpd.show();
 
     }

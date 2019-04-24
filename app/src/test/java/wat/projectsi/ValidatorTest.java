@@ -23,7 +23,9 @@ public class ValidatorTest {
     }
 
     @Test
-    public void nameValidatorBad() { Assert.assertFalse(Validator.isNameValid("12abc")); }
+    public void nameValidatorBad() {
+        Assert.assertFalse(Validator.isNameValid("12abc"));
+    }
 
     @Test
     public void nameValidatorGood() {
@@ -31,7 +33,9 @@ public class ValidatorTest {
     }
 
     @Test
-    public void passwordValidatorBad() { Assert.assertFalse(Validator.isPasswordValid("12"));  }
+    public void passwordValidatorBad() {
+        Assert.assertFalse(Validator.isPasswordValid("12"));
+    }
 
     @Test
     public void passwordValidatorGood() {
@@ -42,9 +46,34 @@ public class ValidatorTest {
     public void loginValidatorBad() {
         Assert.assertFalse(Validator.isLoginValid("a"));
     }
+
     @Test
     public void loginValidatorGood() {
         Assert.assertTrue(Validator.isLoginValid("Karol"));
     }
+
+    @Test
+    public void postContentValidatorBad() {
+        Assert.assertFalse(Validator.isPostContentValid(genRandomString(10001)));
+    }
+
+    @Test
+    public void postContentValidatorGood() {
+        Assert.assertTrue(Validator.isPostContentValid(genRandomString(100)));
+    }
+
+    private static String genRandomString(int count) {
+        final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder builder = new StringBuilder();
+
+        while (count-- != 0) {
+            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
+            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+        }
+        return builder.toString();
+    }
+
+
+
 
 }
