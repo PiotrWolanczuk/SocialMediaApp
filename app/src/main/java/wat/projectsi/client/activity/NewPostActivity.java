@@ -32,7 +32,7 @@ import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.GalleryAdapter;
+import wat.projectsi.client.adapter.GalleryAdapter;
 import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.VolleyJsonRequest;
 
@@ -59,7 +59,7 @@ public class NewPostActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_button);
         addPhoto = findViewById(R.id.add_photo_button);
         newPostText = findViewById(R.id.message_text);
-        gvGallery = (GridView)findViewById(R.id.gv);
+        gvGallery = findViewById(R.id.gv);
     }
 
     public void send_new_post(View view) {
@@ -176,7 +176,7 @@ public class NewPostActivity extends AppCompatActivity {
         }
 
         VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.POST,
-                ConnectingURL.URL_AddPost, jsonRequest, new Response.Listener<JSONObject>() {
+                ConnectingURL.URL_Posts, jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {

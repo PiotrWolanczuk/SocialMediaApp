@@ -46,7 +46,7 @@ public class UsersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
-        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recyclerView =  findViewById(R.id.my_recycler_view);
         layoutManager = new LinearLayoutManager(this);
 
         recyclerView.setHasFixedSize(true);

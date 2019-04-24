@@ -24,11 +24,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         this.user = user;
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, surname;
-        public ImageView profile;
+    static class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView name, surname;
+        ImageView profile;
 
-        public MyViewHolder(View v) {
+        MyViewHolder(View v) {
             super(v);
             name = v.findViewById(R.id.name);
             surname = v.findViewById(R.id.surname);

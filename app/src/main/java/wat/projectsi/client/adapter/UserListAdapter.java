@@ -41,9 +41,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
         return 0;
     }
 
-    public class UserListViewHolder extends RecyclerView.ViewHolder {
+    class UserListViewHolder extends RecyclerView.ViewHolder {
         private RecyclerView mRecycleView;
-        public UserListViewHolder(@NonNull View itemView) {
+        UserListViewHolder(@NonNull View itemView) {
             super(itemView);
             mRecycleView = itemView.findViewById(R.id.my_recycler_view);
         }
