@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Artemis Mobile</string>
+
+    <string name="message_wrong">Something is wrong</string>
     <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -70,4 +72,9 @@
     <!-- String related to posts -->
     <string name="prompt_report">Report</string>
     <string name="prompt_comment">Comment</string>
+
+    <!-- Strings related to sending posts -->
+    <string name="send">Send</string>
+    <string name="add_photo">Add photo</string>
+    <string name="write_here">Write here…</string>
 </resources>
