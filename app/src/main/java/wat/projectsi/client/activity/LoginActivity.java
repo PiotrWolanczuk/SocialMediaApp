@@ -1,7 +1,9 @@
 package wat.projectsi.client.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -29,7 +32,11 @@ import org.json.JSONObject;
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 
+import wat.projectsi.client.Misc;
+import wat.projectsi.client.SharedOurPreferences;
+
 public class LoginActivity extends AppCompatActivity {
+
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -53,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+//        mEmailView.setText("user1");
+//        mPasswordView.setText("UserPass1");
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -97,7 +106,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void consumeAPI(final String email, final String password) {
-        String urlAPI = "/api/auth/signin";
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
         JSONObject jsonRequest = new JSONObject();
@@ -108,11 +116,18 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,ConnectingURL.URL_Signin,jsonRequest, new Response.Listener<JSONObject>() {
+        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,
+                ConnectingURL.URL_Signin,jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 progressDialog.cancel();
+                try {
+                    SharedOurPreferences.setDefaults("token", response.getString("token"),
+                            LoginActivity.this);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(mainIntent);
             }
@@ -121,13 +136,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.cancel();
                 Log.e("APIResponse", error.toString());
-                System.out.println(error.toString());
                 Toast.makeText(LoginActivity.this, "Something is wrong.", Toast.LENGTH_SHORT).show();
             }
         });
         MyRequestQueue.add(MyJsonRequest);
     }
-
 
     public void setUpNewPassword(View view) {
     }
