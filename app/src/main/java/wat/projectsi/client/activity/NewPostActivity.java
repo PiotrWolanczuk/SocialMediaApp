@@ -176,7 +176,7 @@ public class NewPostActivity extends AppCompatActivity {
         }
 
         VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.POST,
-                ConnectingURL.URL_AddPost, jsonRequest, new Response.Listener<JSONObject>() {
+                ConnectingURL.URL_Posts, jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
