@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-        progressDialog.setMessage("Siging in...");
+        progressDialog.setMessage(getResources().getString(R.string.message_progress));
         progressDialog.show();
         // Reset errors.
         mEmailView.setError(null);
@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.cancel();
                 Log.e("APIResponse", error.toString());
-                Toast.makeText(LoginActivity.this, "Something is wrong.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
             }
         });
         MyRequestQueue.add(MyJsonRequest);

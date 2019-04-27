@@ -1,84 +1,114 @@
 package wat.projectsi.client.activity;
 
-import android.app.Activity;
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.GsonRequest;
+import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.adapter.UserListAdapter;
 import wat.projectsi.client.model.User;
-import wat.projectsi.client.adapter.UserAdapter;
 
 public class UsersActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private TextView emptyView;
     private List<User> userList = new ArrayList<>();
-    private ArrayList<Object> listOfUser;
 
     private UserListAdapter mUserListAdapter;
-    private List<User> mUserList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
-        recyclerView =  findViewById(R.id.my_recycler_view);
-        layoutManager = new LinearLayoutManager(this);
+        recyclerView = findViewById(R.id.my_recycler_view);
+        emptyView = findViewById(R.id.empty_view);
 
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-//        mAdapter = new UserAdapter(userList);
-//        recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView.setAdapter(mAdapter);
-        showPeople();
+        recyclerView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+
+        Bundle name = getIntent().getExtras();
+        String userName = name.getString("name");
+
+
+        showPeople(userName);
     }
 
-    private void showPeople(){
-        mUserList = new ArrayList<>();
+    private void showPeople(String userName) {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getResources().getString(R.string.message_progress));
+        progressDialog.show();
+
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization","Bearer "+ getSharedPreferences("MyPreferences", Activity.MODE_PRIVATE).getString("token",""));
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
+                ConnectingURL.URL_Users + "?name="+userName, null, new Response.Listener<JSONArray>() {
 
-        GsonRequest<User[]> request = new GsonRequest<>( ConnectingURL.URL_Users, User[].class, headers, new Response.Listener<User[]>() {
             @Override
-            public void onResponse(User[] response) {
-                mUserList.addAll(Arrays.asList(response));
-                recyclerView.setAdapter(mUserListAdapter = new UserListAdapter(mUserList, UsersActivity.this) );
+            public void onResponse(JSONArray response) {
+
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        User user = new User(
+                                jsonObject.getString("name"),
+                                jsonObject.getString("surname"));
+                        userList.add(user);
+                    }
+
+                    progressDialog.dismiss();
+                    recyclerView.setAdapter(mUserListAdapter = new UserListAdapter(userList));
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                Toast.makeText(UsersActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
                 Log.e("APIResponse", error.toString());
-                error.printStackTrace();
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", "Bearer " + SharedOurPreferences.getDefaults("token", UsersActivity.this));
+                return headers;
+            }
+        };
+
         requestQueue.add(request);
 
     }

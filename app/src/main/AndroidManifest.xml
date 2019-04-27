@@ -20,6 +20,9 @@
         <activity android:name=".client.activity.NewPostActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name=".client.activity.UsersActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <activity
             android:name=".client.activity.MainActivity"
             android:exported="true"

@@ -1,6 +1,8 @@
 package wat.projectsi.client.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +20,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -31,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
@@ -108,7 +114,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mRecyclerPostView= findViewById(R.id.imageRecyclerView);
+        mRecyclerPostView= findViewById(R.id.postRecyclerView);
 
         mRecyclerPostView.setLayoutManager(new LinearLayoutManager(this));
         requestPosts();
@@ -157,13 +163,42 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
 
         } else if(id == R.id.nav_people){
-            Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
-            startActivity(userIntent);
+            writeUserName();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void writeUserName() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+        LinearLayout layout = new LinearLayout(MainActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText userName = new EditText(MainActivity.this);
+
+        userName.setTextSize(25);
+        layout.addView(userName);
+
+        dialog.setPositiveButton("Show users", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
+                userIntent.putExtra("name", userName.getText().toString());
+                dialog.dismiss();
+                startActivity(userIntent);
+            }
+        });
+
+        dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setView(layout);
+        dialog.show();
     }
 
     public void logOut(MenuItem item) {

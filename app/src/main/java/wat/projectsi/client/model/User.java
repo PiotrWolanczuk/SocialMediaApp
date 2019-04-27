@@ -16,7 +16,10 @@ public class User {
         this.surname = surname;
         this.profileImage = profileImage;
     }
-
+    public User(String name, String surname) {
+        this.name = name;
+        this.surname = surname;
+    }
     public String getName() {
         return name;
     }
@@ -27,9 +30,5 @@ public class User {
 
     public Bitmap getProfileImage() {
         return profileImage;
-    }
-
-    public void setProfileImage(Bitmap profileImage) {
-        this.profileImage = profileImage;
     }
 }

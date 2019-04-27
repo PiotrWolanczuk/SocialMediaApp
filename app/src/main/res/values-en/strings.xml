@@ -2,6 +2,7 @@
     <string name="app_name">Artemis Mobile</string>
 
     <string name="message_wrong">Something is wrong</string>
+    <string name="message_progress">In progress</string>
     <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -78,5 +79,8 @@
     <string name="send">Send</string>
     <string name="add_photo">Add photo</string>
     <string name="write_here">Write here…</string>
+
+    <!-- Strings related to view users -->
+    <string name="no_data_available">There is no data</string>
 
 </resources>
