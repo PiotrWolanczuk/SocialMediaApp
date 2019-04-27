@@ -83,4 +83,7 @@
     <!-- Strings related to view users -->
     <string name="no_data_available">There is no data</string>
 
+    <!-- Strings related to invite-->
+    <string name="invite">Invitation was sent</string>
+
 </resources>

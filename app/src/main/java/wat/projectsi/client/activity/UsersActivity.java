@@ -84,7 +84,7 @@ public class UsersActivity extends AppCompatActivity {
                     }
 
                     progressDialog.dismiss();
-                    recyclerView.setAdapter(mUserListAdapter = new UserListAdapter(userList));
+                    recyclerView.setAdapter(mUserListAdapter = new UserListAdapter(userList, UsersActivity.this));
                     recyclerView.setVisibility(View.VISIBLE);
                     emptyView.setVisibility(View.GONE);
                 } catch (JSONException e) {

@@ -1,39 +1,124 @@
 package wat.projectsi.client.adapter;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
 import wat.projectsi.R;
+import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.SharedOurPreferences;
+import wat.projectsi.client.activity.LoginActivity;
+import wat.projectsi.client.activity.MainActivity;
+import wat.projectsi.client.activity.UsersActivity;
 import wat.projectsi.client.model.User;
 
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserListViewHolder>{
     private List<User> users;
-
-    public UserListAdapter(List<User> users) {
+    private Context context;
+    public UserListAdapter(List<User> users, Context context) {
         this.users = users;
+        this.context =  context;
     }
 
     @NonNull
     @Override
     public UserListAdapter.UserListViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new UserListAdapter.UserListViewHolder(LayoutInflater.from(viewGroup.getContext()).
-                inflate(R.layout.user_list_row, viewGroup, false));
+                inflate(R.layout.user_list, viewGroup, false));
 
     }
 
     @Override
     public void onBindViewHolder(@NonNull UserListAdapter.UserListViewHolder userListViewHolder, int i) {
-        User user = users.get(i);
+        final User user = users.get(i);
 
         userListViewHolder.name.setText(user.getName());
         userListViewHolder.surname.setText(user.getSurname());
+
+        userListViewHolder.oneUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog(context, user);
+            }
+        });
+    }
+
+    private void showDialog(final Context context, final User user) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+
+        dialog.setPositiveButton("Invite friend", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sendInvitation(context, user);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setNegativeButton("View  profile", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //TODO: go to user's profile
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private void sendInvitation(final Context context, User user) {
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(context);
+
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("invite", user.getName());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,
+                ConnectingURL.URL_Invite,jsonRequest, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                Toast.makeText(context, context.getResources().getString(R.string.invite), Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("APIResponse", error.toString());
+                Toast.makeText(context, context.getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
+            }
+        });
+        MyRequestQueue.add(MyJsonRequest);
     }
 
     @Override
@@ -44,6 +129,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
     class UserListViewHolder extends RecyclerView.ViewHolder {
         TextView name, surname;
         ImageView profile;
+        LinearLayout oneUser;
 
         UserListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -51,6 +137,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
             name = itemView.findViewById(R.id.name);
             surname = itemView.findViewById(R.id.surname);
             profile = itemView.findViewById(R.id.imageProfile);
+            oneUser = itemView.findViewById(R.id.row);
         }
     }
 }
