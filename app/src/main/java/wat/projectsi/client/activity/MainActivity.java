@@ -1,28 +1,22 @@
 package wat.projectsi.client.activity;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -36,11 +30,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.GsonRequest;
 import wat.projectsi.client.Misc;
+import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.adapter.PostAdapter;
 import wat.projectsi.client.model.Post;
 
@@ -48,7 +45,6 @@ import wat.projectsi.client.model.Post;
 //TODO: Refreshing posts
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
@@ -81,16 +77,20 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show();
             }
         }
-
     };
 
     private RecyclerView mRecyclerPostView;
     private PostAdapter mPostAdapter;
     private List<Post> mPostList;
+    private boolean finished;
+    ReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        finished = true;
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -114,9 +114,10 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mRecyclerPostView= findViewById(R.id.postRecyclerView);
-
         mRecyclerPostView.setLayoutManager(new LinearLayoutManager(this));
-        requestPosts();
+
+        refresh();
+        startTimerThread();
     }
 
     @Override
@@ -169,32 +170,39 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void logOut(MenuItem item) {
-        SharedPreferences myPrefs = getSharedPreferences("token",
-                MODE_PRIVATE);
-        SharedPreferences.Editor editor = myPrefs.edit();
-        editor.clear();
-        editor.commit();
-        //Log.d(TAG, "Now log out and start the activity login");
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        lock.writeLock().lock();
+        try {
+            finished = false;
+        }finally {
+            lock.writeLock().unlock();
+        }
+        SharedOurPreferences.clear(this);
+        finish();
     }
 
     private void requestPosts()
     {
-        mPostList = new ArrayList<>();
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        headers.put("Authorization","Bearer "+ getSharedPreferences(Misc.PREFERENCES_NAME, Activity.MODE_PRIVATE).getString("token",""));
+        headers.put("Authorization","Bearer "+ SharedOurPreferences.getDefaults("token",this));
 
 
         GsonRequest<Post[]> request = new GsonRequest<>( ConnectingURL.URL_Posts, Post[].class, headers, new Response.Listener<Post[]>() {
             @Override
             public void onResponse(Post[] response) {
-                mPostList.addAll(Arrays.asList(response));
-                mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this) );
+
+                if(mPostList== null) {
+                    mPostList = new ArrayList<>();
+                    mPostList.addAll(Arrays.asList(response));
+                    mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
+                }
+                else{
+                    mPostList.clear();
+                    mPostList.addAll(Arrays.asList(response));
+                    mPostAdapter.notifyDataSetChanged();
+                }
             }
         }, errorListener);
 
@@ -207,5 +215,55 @@ public class MainActivity extends AppCompatActivity
 
     public void commentRequest(View view) {
         //TODO: comment body
+    }
+
+    private void startTimerThread() {
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            private boolean finished;
+            public void run() {
+                while(true) {
+                    try {
+                        Thread.sleep(Misc.refreshTime);
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    lock.readLock().lock();
+                    try {
+                        finished = MainActivity.this.finished;
+                    }finally {
+                        lock.readLock().unlock();
+                    }
+                    if(finished)
+                        return;
+                    handler.post(new Runnable(){
+                        public void run() {
+                            refresh();
+                        }
+                    });
+                }
+            }
+        };
+        new Thread(runnable).start();
+    }
+
+    public void refresh()
+    {
+        requestPosts();
+    }
+
+    @Override
+    protected void onDestroy(){
+
+        lock.writeLock().lock();
+        try {
+            finished = false;
+        }finally {
+            lock.writeLock().unlock();
+        }
+        super.onDestroy();
+
     }
 }

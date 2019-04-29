@@ -1,5 +1,6 @@
 package wat.projectsi.client;
 
 public class Misc {
-    public static final String PREFERENCES_NAME = "myPreferences";
+    public static final long refreshTime = 1000 ;
+
 }

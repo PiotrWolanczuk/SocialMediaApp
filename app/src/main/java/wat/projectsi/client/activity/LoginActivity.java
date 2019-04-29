@@ -42,13 +42,10 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private ProgressDialog progressDialog;
 
-    private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        preferences = getSharedPreferences(Misc.PREFERENCES_NAME, Activity.MODE_PRIVATE);
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         progressDialog = new ProgressDialog(this);
