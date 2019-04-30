@@ -8,9 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class SharedOurPreferences implements android.content.SharedPreferences {
-
     public static void setDefaults(String key, String value, Context context) {
-        SharedPreferences preferences =  PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(key, value);
         editor.commit();
@@ -19,6 +18,13 @@ public class SharedOurPreferences implements android.content.SharedPreferences {
     public static String getDefaults(String key, Context context) {
         SharedPreferences preferences =  PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, null);
+    }
+
+    public static void clear(Context context){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.commit();
     }
 
     @Override
