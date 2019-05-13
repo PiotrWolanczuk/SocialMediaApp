@@ -3,14 +3,12 @@ package wat.projectsi.client.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,10 +28,6 @@ import java.util.List;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.SharedOurPreferences;
-import wat.projectsi.client.activity.LoginActivity;
-import wat.projectsi.client.activity.MainActivity;
-import wat.projectsi.client.activity.UsersActivity;
 import wat.projectsi.client.model.User;
 
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserListViewHolder>{
@@ -70,7 +64,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
     private void showDialog(final Context context, final User user) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
-        dialog.setPositiveButton("Invite friend", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(R.string.invite, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sendInvitation(context, user);
@@ -78,7 +72,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
             }
         });
 
-        dialog.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -99,17 +93,17 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
 
         JSONObject jsonRequest = new JSONObject();
         try {
-            jsonRequest.put("invite", user.getName());
+            jsonRequest.put("invite", user.getId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,
-                ConnectingURL.URL_Invite,jsonRequest, new Response.Listener<JSONObject>() {
+                ConnectingURL.URL_Invite + "/" + user.getId(),jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(context, context.getResources().getString(R.string.invite), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.inviteSend), Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override

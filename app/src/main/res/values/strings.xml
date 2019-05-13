@@ -3,6 +3,7 @@
 
     <string name="message_wrong">Cos poszlo nie tak</string>
     <string name="message_progress">W toku</string>
+    <string name="cancel">Anuluj</string>
     <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
@@ -85,6 +86,8 @@
     <string name="no_data_available">Nie ma danych</string>
 
     <!-- Strings related to invite-->
-    <string name="invite">Zaproszenie zostalo wyslane</string>
+    <string name="people">Ludzie</string>
+    <string name="inviteSend">Zaproszenie zostalo wyslane</string>
+    <string name="invite">Zapros</string>
 
 </resources>

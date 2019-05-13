@@ -54,14 +54,10 @@ public class UsersActivity extends AppCompatActivity {
         recyclerView.setVisibility(View.GONE);
         emptyView.setVisibility(View.VISIBLE);
 
-        Bundle name = getIntent().getExtras();
-        String userName = name.getString("name");
-
-
-        showPeople(userName);
+        showPeople();
     }
 
-    private void showPeople(String userName) {
+    private void showPeople() {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getResources().getString(R.string.message_progress));
         progressDialog.show();
@@ -69,7 +65,7 @@ public class UsersActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
-                ConnectingURL.URL_Users + "?name="+userName, null, new Response.Listener<JSONArray>() {
+                ConnectingURL.URL_Users, null, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray response) {
@@ -79,7 +75,8 @@ public class UsersActivity extends AppCompatActivity {
                         JSONObject jsonObject = response.getJSONObject(i);
                         User user = new User(
                                 jsonObject.getString("name"),
-                                jsonObject.getString("surname"));
+                                jsonObject.getString("surname"),
+                                jsonObject.getInt("id"));
                         userList.add(user);
                     }
 
