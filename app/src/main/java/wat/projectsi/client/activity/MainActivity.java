@@ -1,8 +1,6 @@
 package wat.projectsi.client.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,8 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -38,7 +34,7 @@ import java.util.List;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.GsonRequest;
+import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.Misc;
 import wat.projectsi.client.adapter.PostAdapter;
 import wat.projectsi.client.model.Post;

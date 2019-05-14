@@ -34,7 +34,7 @@ import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.adapter.GalleryAdapter;
 import wat.projectsi.client.SharedOurPreferences;
-import wat.projectsi.client.VolleyJsonRequest;
+import wat.projectsi.client.request.VolleyJsonRequest;
 
 public class NewPostActivity extends AppCompatActivity {
 

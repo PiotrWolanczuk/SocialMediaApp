@@ -13,8 +13,16 @@ public class ConnectingURL {
     public static final String URL_Signup = getURL() +"/signup";
     public static final String URL_Signin = getURL() +"/signin";
     public static final String URL_Posts = getURL() +"/posts";
-    public static final String URL_Users = getURL() +"/users";
-    public static final String URL_Invite = getURL() +"/acquaintances";
+    public static final String URL_Notifications_Acquaintance = getURL() +"/notifications/acquaintance";
+    public static final String URL_Notifications_Messages = getURL() +"/notifications/message";
+    public static final String URL_Notifications_Post = getURL() +"/notifications/post";
+    public static final String URL_Acquaintances = getURL() +"/acquaintances";
+    public static final String URL_Users = getURL()+"/users";
+    public static final String URL_UsersFriends = getURL()+"/users/friends";
+    public static final String URL_Violations = getURL()+"/violations";
+    public static final String URL_ViolationsComments = getURL()+"/violations/comments";
+    public static final String URL_ViolationsPosts = getURL()+"/violations/posts";
+
     //public static final String URL_Users = "https://44f6c2fb-103e-4d1e-b979-4578d72db19c.mock.pstmn.io/users";
 
     public static String getURL()

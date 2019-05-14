@@ -1,4 +1,4 @@
-package wat.projectsi.client;
+package wat.projectsi.client.request;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
