@@ -29,6 +29,7 @@ import java.util.Map;
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.SharedOurPreferences;
+import wat.projectsi.client.adapter.FriendAdapter;
 import wat.projectsi.client.adapter.UserListAdapter;
 import wat.projectsi.client.model.User;
 
@@ -39,11 +40,15 @@ public class UsersActivity extends AppCompatActivity {
     private List<User> userList = new ArrayList<>();
 
     private UserListAdapter mUserListAdapter;
+    private FriendAdapter mFriendListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
+
+        Bundle bundle = getIntent().getExtras();
+        String whichGroupShows = bundle.getString("people");
 
         recyclerView = findViewById(R.id.my_recycler_view);
         emptyView = findViewById(R.id.empty_view);
@@ -54,10 +59,13 @@ public class UsersActivity extends AppCompatActivity {
         recyclerView.setVisibility(View.GONE);
         emptyView.setVisibility(View.VISIBLE);
 
-        showPeople();
+        if(whichGroupShows.equals("users"))
+            showPeople(bundle.getString("name"));
+        else if(whichGroupShows.equals("friends"))
+            showFriends();
     }
 
-    private void showPeople() {
+    private void showPeople(String name) {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getResources().getString(R.string.message_progress));
         progressDialog.show();
@@ -65,7 +73,7 @@ public class UsersActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
-                ConnectingURL.URL_Users, null, new Response.Listener<JSONArray>() {
+                ConnectingURL.URL_Users +"?name=" + name, null, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray response) {
@@ -107,6 +115,56 @@ public class UsersActivity extends AppCompatActivity {
         };
 
         requestQueue.add(request);
+    }
+    private void showFriends() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getResources().getString(R.string.message_progress));
+        progressDialog.show();
 
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
+                ConnectingURL.URL_UsersFriends, null, new Response.Listener<JSONArray>() {
+
+            @Override
+            public void onResponse(JSONArray response) {
+
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        User user = new User(
+                                jsonObject.getString("name"),
+                                jsonObject.getString("surname"),
+                                jsonObject.getInt("id"));
+                        userList.add(user);
+                    }
+
+                    progressDialog.dismiss();
+                    recyclerView.setAdapter(mFriendListAdapter = new FriendAdapter(userList, UsersActivity.this));
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                Toast.makeText(UsersActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
+                Log.e("APIResponse", error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", "Bearer " + SharedOurPreferences.getDefaults("token", UsersActivity.this));
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
     }
 }

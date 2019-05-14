@@ -55,8 +55,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-//        mEmailView.setText("user1");
-//        mPasswordView.setText("UserPass1");
+        mEmailView.setText("user1");
+        mPasswordView.setText("UserPass1");
 
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {

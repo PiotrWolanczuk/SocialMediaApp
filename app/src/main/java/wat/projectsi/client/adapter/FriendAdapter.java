@@ -3,7 +3,6 @@ package wat.projectsi.client.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,24 +30,24 @@ import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.model.User;
 
-public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserListViewHolder>{
+public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder>{
     private List<User> users;
     private Context context;
-    public UserListAdapter(List<User> users, Context context) {
+    public FriendAdapter(List<User> users, Context context) {
         this.users = users;
         this.context =  context;
     }
 
     @NonNull
     @Override
-    public UserListAdapter.UserListViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new UserListAdapter.UserListViewHolder(LayoutInflater.from(viewGroup.getContext()).
+    public FriendAdapter.FriendViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        return new FriendAdapter.FriendViewHolder(LayoutInflater.from(viewGroup.getContext()).
                 inflate(R.layout.user_list, viewGroup, false));
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserListAdapter.UserListViewHolder userListViewHolder, int i) {
+    public void onBindViewHolder(@NonNull FriendAdapter.FriendViewHolder userListViewHolder, int i) {
         final User user = users.get(i);
 
         userListViewHolder.name.setText(user.getName());
@@ -65,10 +64,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
     private void showUserDialog(final Context context, final User user) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
-        dialog.setPositiveButton(R.string.invite, new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton("usun", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sendInvitation(context, user);
+                deleteFromFriends(context, user);
                 dialog.dismiss();
             }
         });
@@ -89,7 +88,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
         dialog.show();
     }
 
-    private void sendInvitation(final Context context, User user) {
+    private void deleteFromFriends(final Context context, User user) {
         RequestQueue MyRequestQueue = Volley.newRequestQueue(context);
 
         JSONObject jsonRequest = new JSONObject();
@@ -99,8 +98,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
             e.printStackTrace();
         }
 
-        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,
-                ConnectingURL.URL_Invite + "/" + user.getId(),jsonRequest, new Response.Listener<JSONObject>() {
+        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.DELETE,
+                ConnectingURL.URL_Acquaintances + "/" + user.getId(),jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -121,12 +120,12 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
         return users.size();
     }
 
-    class UserListViewHolder extends RecyclerView.ViewHolder {
+    class FriendViewHolder extends RecyclerView.ViewHolder {
         TextView name, surname;
         ImageView profile;
         LinearLayout oneUser;
 
-        UserListViewHolder(@NonNull View itemView) {
+        FriendViewHolder(@NonNull View itemView) {
             super(itemView);
 
             name = itemView.findViewById(R.id.name);

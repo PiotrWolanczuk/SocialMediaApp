@@ -22,6 +22,7 @@ public class ConnectingURL {
     public static final String URL_Violations = getURL()+"/violations";
     public static final String URL_ViolationsComments = getURL()+"/violations/comments";
     public static final String URL_ViolationsPosts = getURL()+"/violations/posts";
+    public static final String URL_Invite = getURL()+"/acquaintances";
 
     //public static final String URL_Users = "https://44f6c2fb-103e-4d1e-b979-4578d72db19c.mock.pstmn.io/users";
 

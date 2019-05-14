@@ -1,6 +1,8 @@
 package wat.projectsi.client.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -157,13 +161,45 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
 
         } else if(id == R.id.nav_people){
+            writeName();
+        }else if(id == R.id.nav_friends){
             Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
+            userIntent.putExtra("people", "friends"); // friends
             startActivity(userIntent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void writeName() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText name = new EditText(this);
+        layout.addView(name);
+        dialog.setPositiveButton("Szukaj", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
+                userIntent.putExtra("people", "users"); // people
+                userIntent.putExtra("name", name.getText());
+                dialog.dismiss();
+                startActivity(userIntent);
+            }
+        });
+
+        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setView(layout);
+        dialog.show();
     }
 
     public void logOut(MenuItem item) {
