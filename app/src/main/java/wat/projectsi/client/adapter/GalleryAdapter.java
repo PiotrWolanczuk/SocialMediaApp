@@ -1,4 +1,4 @@
-package wat.projectsi.client;
+package wat.projectsi.client.adapter;
 
 import android.content.Context;
 import android.net.Uri;

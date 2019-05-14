@@ -41,8 +41,8 @@ import wat.projectsi.client.Validator;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String manStr="man";
-    private static final String womanStr="woman";
+    private static final String manStr = "man";
+    private static final String womanStr = "woman";
 
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
@@ -121,7 +121,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Set up the register form.
         mEmailView = findViewById(R.id.email);
 
         mPasswordView = findViewById(R.id.password);
@@ -138,15 +137,13 @@ public class RegisterActivity extends AppCompatActivity {
         mGenderView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     mGenderView.setText(R.string.prompt_gender_man);
-                }
-                else {
+                } else {
                     mGenderView.setText(R.string.prompt_gender_woman);
                 }
             }
         });
-
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -177,11 +174,11 @@ public class RegisterActivity extends AppCompatActivity {
                 c.set(Calendar.MONTH, monthOfYear);
                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                mDateView.setText(DateFormatter.viewDateFormat().format(c.getTime()));
+                mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
             }
         };
 
-        mDateView.setText( DateFormatter.viewDateFormat().format(c.getTime()));
+        mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
     }
 
     public void startTermActivity(View view) {
@@ -280,7 +277,6 @@ public class RegisterActivity extends AppCompatActivity {
             mProgressDialog.hide();
             focusView.requestFocus();
         } else {
-
             mProgressDialog.show();
 
             registerRequest(login, email, password,
@@ -301,7 +297,7 @@ public class RegisterActivity extends AppCompatActivity {
             data.put("name", name);
             data.put("surname", surname);
             data.put("birthDate", birthDate);
-            data.put("gender", isMan? manStr:womanStr);
+            data.put("gender", isMan ? manStr : womanStr);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -317,7 +313,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }, errorListener);
         requestQueue.add(request);
-
     }
 
     public void showDatePickerDialog(View view) {
@@ -333,20 +328,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-                        // Display Selected date in textbox
-
-                        if (year > mYear)
-                            view.updateDate(mYear, mMonth, mDay);
-
-                        if (monthOfYear > mMonth && year == mYear)
-                            view.updateDate(mYear, mMonth, mDay);
-
-                        if (dayOfMonth > mDay && year == mYear && monthOfYear == mMonth)
-                            view.updateDate(mYear, mMonth, mDay);
-
-                        mDateView.setText(dayOfMonth + "-"
-                                + (monthOfYear + 1) + "-" + year);
-
+                        mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
                     }
                 }, mYear, mMonth, mDay);
         dpd.getDatePicker().setMinDate(DateFormatter.minDate);

@@ -35,7 +35,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public void onBindViewHolder(@NonNull PostViewHolder holder, int i) {
         holder.mNameView.setText(mPostItemList.get(i).getName() + " " + mPostItemList.get(i).getSurname());
         holder.mPostContentView.setText(mPostItemList.get(i).getPostContent());
-        holder.mPostDateView.setText(DateFormatter.viewPostDateFormat(mContext).format(mPostItemList.get(i).getSentDate()));
+        holder.mPostDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(mPostItemList.get(i).getSentDate()));
 
         holder.mPostImageRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.mPostImageRecyclerView.setAdapter(new ImageRecyclerAdapter(mContext, mPostItemList.get(i).getImages()));

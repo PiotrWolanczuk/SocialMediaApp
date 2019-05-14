@@ -77,4 +77,17 @@
     <string name="send">Send</string>
     <string name="add_photo">Add photo</string>
     <string name="write_here">Write here…</string>
+
+    <!-- Strings related to sending notifications -->
+    <string name="read">Read</string>
+    <string name="not_read">Not Read</string>
+    <string name="prompt_accept">Accept</string>
+    <string name="prompt_reject">Reject</string>
+
+    <string name="prompt_notification_desc_invitation">Invitation to acquaintance.</string>
+    <string name="prompt_notification_desc_accept">Accepted invitation to acquaintance.</string>
+    <string name="prompt_notification_desc_reject">Rejected invitation to acquaintance.</string>
+    <string name="prompt_notification_desc_end">Acquaintance has been end.</string>
+    <string name="prompt_notification_desc_message">New message.</string>
+    <string name="prompt_notification_desc_post">New post.</string>
 </resources>
