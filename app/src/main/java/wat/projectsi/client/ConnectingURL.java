@@ -10,9 +10,18 @@ public class ConnectingURL {
     private static final String NOX_URL= "http://172.17.100.2:8080";    //NOX
     private static final String DOC_URL = "http://10.0.0.42:8080";      //Docker    //TODO: check if is
 
-    public static final String URL_Signup = getURL() +"/api/auth/signup";
-    public static final String URL_Signin = getURL() +"/api/auth/signin";
+    public static final String URL_Signup = getURL() +"/signup";
+    public static final String URL_Signin = getURL() +"/signin";
     public static final String URL_Posts = getURL() +"/posts";
+    public static final String URL_Notifications_Acquaintance = getURL() +"/notifications/acquaintance";
+    public static final String URL_Notifications_Messages = getURL() +"/notifications/message";
+    public static final String URL_Notifications_Post = getURL() +"/notifications/post";
+    public static final String URL_Acquaintances = getURL() +"/acquaintances";
+    public static final String URL_Users = getURL()+"/users";
+    public static final String URL_UsersFriends = getURL()+"/users/friends";
+    public static final String URL_Violations = getURL()+"/violations";
+    public static final String URL_ViolationsComments = getURL()+"/violations/comments";
+    public static final String URL_ViolationsPosts = getURL()+"/violations/posts";
 
     public static String getURL()
     {

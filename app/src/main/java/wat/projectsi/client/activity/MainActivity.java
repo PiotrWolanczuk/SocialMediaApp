@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,8 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -28,21 +32,28 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.GsonRequest;
+import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
+import wat.projectsi.client.adapter.NotificationAdapter;
 import wat.projectsi.client.adapter.PostAdapter;
+import wat.projectsi.client.model.notification.Notification;
+import wat.projectsi.client.model.notification.NotificationAcquaintance;
+import wat.projectsi.client.model.notification.NotificationMessage;
+import wat.projectsi.client.model.notification.NotificationPost;
 import wat.projectsi.client.model.Post;
 
 
-//TODO: Refreshing posts
+//user1 UserPass1
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -82,31 +93,57 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mRecyclerPostView;
     private PostAdapter mPostAdapter;
     private List<Post> mPostList;
+    private RecyclerView mRecyclerNotificationsView;
+    private NotificationAdapter mNotificationAdapter;
+    private List<NotificationAcquaintance> mNotificationAcquaintanceList;
+    private List<NotificationMessage> mNotificationMessageList;
+    private List<NotificationPost> mNotificationPostList;
+    private List<Notification> mNotificationList;
+    private PopupWindow mPopupWindow;
+
+    private boolean isResponse = false;
     private boolean finished;
-    ReadWriteLock lock = new ReentrantReadWriteLock();
+    private Handler handler;
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        finished = true;
+        finished = false;
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_menu);
         setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.action_bar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent newPostIntent = new Intent(MainActivity.this, NewPostActivity.class);
+                if(mPopupWindow!=null)
+                    closeNotification();
                 startActivity(newPostIntent);
             }
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                if(mPopupWindow!=null)
+                    closeNotification();
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -116,6 +153,18 @@ public class MainActivity extends AppCompatActivity
         mRecyclerPostView= findViewById(R.id.postRecyclerView);
         mRecyclerPostView.setLayoutManager(new LinearLayoutManager(this));
 
+        mNotificationList = new ArrayList<>();
+        mNotificationAcquaintanceList = new ArrayList<>();
+        mNotificationMessageList = new ArrayList<>();
+        mNotificationPostList = new ArrayList<>();
+        mPostList = new ArrayList<>();
+
+        mNotificationAdapter = new NotificationAdapter(mNotificationList, MainActivity.this);
+        mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
+
+        requestQueue = Volley.newRequestQueue(this);
+
+        handler = new Handler();
         refresh();
         startTimerThread();
     }
@@ -172,7 +221,7 @@ public class MainActivity extends AppCompatActivity
     public void logOut(MenuItem item) {
         lock.writeLock().lock();
         try {
-            finished = false;
+            finished = true;
         }finally {
             lock.writeLock().unlock();
         }
@@ -182,31 +231,87 @@ public class MainActivity extends AppCompatActivity
 
     private void requestPosts()
     {
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization","Bearer "+ SharedOurPreferences.getDefaults("token",this));
-
-
-        GsonRequest<Post[]> request = new GsonRequest<>( ConnectingURL.URL_Posts, Post[].class, headers, new Response.Listener<Post[]>() {
+        GsonRequest<Post[]> request = new GsonRequest<>( ConnectingURL.URL_Posts, Post[].class, Misc.getSecureHeaders(this), new Response.Listener<Post[]>() {
             @Override
             public void onResponse(Post[] response) {
 
-                if(mPostList== null) {
-                    mPostList = new ArrayList<>();
-                    mPostList.addAll(Arrays.asList(response));
-                    mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
-                }
-                else{
-                    mPostList.clear();
-                    mPostList.addAll(Arrays.asList(response));
-                    mPostAdapter.notifyDataSetChanged();
-                }
+                mPostList.clear();
+                mPostList.addAll(Arrays.asList(response));
+                Collections.sort(mPostList, new Comparator<Post>() {
+                    @Override
+                    public int compare(Post o1, Post o2) {
+                        return o1.getSentDate().compareTo(o2.getSentDate());
+                    }
+                });
+
+                mPostAdapter.notifyDataSetChanged();
             }
         }, errorListener);
 
         requestQueue.add(request);
+    }
+
+    private void requestNotifications()
+    {
+        {
+            GsonRequest<NotificationAcquaintance[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationAcquaintance[].class,
+                    Misc.getSecureHeaders(this), new Response.Listener<NotificationAcquaintance[]>() {
+                @Override
+                public void onResponse(NotificationAcquaintance[] response) {
+                    mNotificationAcquaintanceList.clear();
+                    mNotificationAcquaintanceList.addAll(Arrays.asList(response));
+                    isResponse = true;
+                }
+            }, errorListener);
+
+            requestQueue.add(request);
+        }
+
+        {
+            GsonRequest<NotificationMessage[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationMessage[].class,
+                    Misc.getSecureHeaders(this), new Response.Listener<NotificationMessage[]>() {
+                @Override
+                public void onResponse(NotificationMessage[] response) {
+                    mNotificationMessageList.clear();
+                    mNotificationMessageList.addAll(Arrays.asList(response));
+                    isResponse = true;
+                }
+            }, errorListener);
+
+            requestQueue.add(request);
+        }
+
+        {
+            GsonRequest<NotificationPost[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationPost[].class,
+                    Misc.getSecureHeaders(this), new Response.Listener<NotificationPost[]>() {
+                @Override
+                public void onResponse(NotificationPost[] response) {
+                    mNotificationPostList.clear();
+                    mNotificationPostList.addAll(Arrays.asList(response));
+                    isResponse = true;
+                }
+            }, errorListener);
+
+            requestQueue.add(request);
+        }
+
+        if(isResponse)
+        {
+            mNotificationList.clear();
+            mNotificationList.addAll(mNotificationAcquaintanceList);
+            mNotificationList.addAll(mNotificationMessageList);
+            mNotificationList.addAll(mNotificationPostList);
+
+            Collections.sort(mNotificationList, new Comparator<Notification>() {
+                @Override
+                public int compare(Notification o1, Notification o2) {
+                    return o1.getDateTimeOfSend().compareTo(o2.getDateTimeOfSend());
+                }
+            });
+
+            mNotificationAdapter.notifyDataSetChanged();
+            isResponse=false;
+        }
     }
 
     public void reportRequest(View view) {
@@ -217,53 +322,80 @@ public class MainActivity extends AppCompatActivity
         //TODO: comment body
     }
 
-    private void startTimerThread() {
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            private boolean finished;
-            public void run() {
-                while(true) {
-                    try {
-                        Thread.sleep(Misc.refreshTime);
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+    public void acceptInvitation(View view) {
+        //TODO: comment body
+    }
 
-                    lock.readLock().lock();
-                    try {
-                        finished = MainActivity.this.finished;
-                    }finally {
-                        lock.readLock().unlock();
+    public void rejectInvitation(View view) {
+        //TODO: report body
+    }
+
+    private void startTimerThread() {
+        Runnable mTimerThread = new Runnable() {
+            public void run() {
+                lock.readLock().lock();
+                try {
+                    if (!MainActivity.this.finished) {
+                        refresh();
+                        handler.postDelayed(this, Misc.refreshTime);
                     }
-                    if(finished)
-                        return;
-                    handler.post(new Runnable(){
-                        public void run() {
-                            refresh();
-                        }
-                    });
+                } finally {
+                    lock.readLock().unlock();
                 }
             }
         };
-        new Thread(runnable).start();
+
+        handler.postDelayed(mTimerThread, Misc.refreshTime);
     }
 
     public void refresh()
     {
+        requestNotifications();
         requestPosts();
     }
 
     @Override
     protected void onDestroy(){
 
-        lock.writeLock().lock();
-        try {
-            finished = false;
-        }finally {
-            lock.writeLock().unlock();
+        if(!finished ){
+            lock.writeLock().lock();
+            try {
+                finished = false;
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
+
+        if(mPopupWindow!=null)
+            closeNotification();
+
         super.onDestroy();
 
+    }
+
+    private void closeNotification()
+    {
+        mPopupWindow.dismiss();
+        mRecyclerNotificationsView=null;
+        mPopupWindow=null;
+    }
+
+    public void display_notifications(View view) {
+        if(mPopupWindow==null) {
+            View popupView = LayoutInflater.from(MainActivity.this).inflate(R.layout.notification_popup_main, null);
+            mPopupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+
+            mRecyclerNotificationsView=popupView.findViewById(R.id.notificationRecyclerView);
+            mRecyclerNotificationsView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerNotificationsView.setAdapter(mNotificationAdapter);
+
+            mPopupWindow.showAsDropDown(findViewById(R.id.notifications_button));
+        }
+        else closeNotification();
+    }
+
+    public void onToolbarClick(View view) {
+        if(mPopupWindow!=null)
+            closeNotification();
     }
 }

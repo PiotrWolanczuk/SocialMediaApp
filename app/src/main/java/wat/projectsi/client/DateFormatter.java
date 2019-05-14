@@ -16,18 +16,27 @@ public class DateFormatter {
         return DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
     }
 
-    public static DateFormat viewPostDateFormat(final Context context){
+    public static DateFormat viewDateTimeFormat(final Context context){
         return new SimpleDateFormat((android.text.format.DateFormat.is24HourFormat(context)? "yyyy-MM-dd  hh:mm:ss" : "yyyy-MM-dd  hh:mm:ss aa"), Locale.getDefault());
     }
 
-    public static DateFormat apiDateFormat(){
+    private static DateFormat apiDateFormat(){
         return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    }
+
+//    public static String convertToDateTime(Date date)
+//    {
+//        return viewDateTimeFormat().format(date);
+//    }
+
+    public static String convertToLocalDate(Date date){
+        return viewDateFormat().format(date);
     }
 
     public static String convertToApi(String date)
     {
         try {
-            return DateFormatter.apiDateFormat().format( DateFormatter.viewDateFormat().parse(date));
+            return apiDateFormat().format( viewDateFormat().parse(date));
         } catch (ParseException e) {
             e.printStackTrace();
             return new Date().toString();
