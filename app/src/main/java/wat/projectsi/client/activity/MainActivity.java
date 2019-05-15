@@ -24,17 +24,22 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -79,6 +84,8 @@ public class MainActivity extends AppCompatActivity
 //                case 403://"Forbidden"
 //                    break;
 //                case 404://"Not Found"
+//                    break;
+//                case 405: //"Method Not Allowed"
 //                    break;
 //                case 415://"Unsupported Media Type" ->BadJason
 //                    break;
@@ -323,11 +330,35 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void acceptInvitation(View view) {
-        //TODO: comment body
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ConnectingURL.URL_Acquaintances + "/" + view.getTag() + "/accept", new JSONObject(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                    }
+
+                }, errorListener) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(MainActivity.this);
+            }
+        };
+        requestQueue.add(request);
     }
 
     public void rejectInvitation(View view) {
-        //TODO: report body
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ConnectingURL.URL_Acquaintances + "/" + view.getTag() + "/reject", new JSONObject(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                    }
+
+                }, errorListener) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(MainActivity.this);
+            }
+        };
+        requestQueue.add(request);
     }
 
     private void startTimerThread() {
