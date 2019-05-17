@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -32,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -40,11 +42,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.model.Comment;
 import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
@@ -109,9 +112,9 @@ public class MainActivity extends AppCompatActivity
     private PopupWindow mPopupWindow;
 
     private boolean isResponse = false;
-    private boolean finished;
+    private static volatile boolean finished;
     private Handler handler;
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private static Lock lock = new ReentrantLock();
     private RequestQueue requestQueue;
 
     @Override
@@ -226,11 +229,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void logOut(MenuItem item) {
-        lock.writeLock().lock();
+        lock.lock();
         try {
             finished = true;
+            requestQueue.stop();
         }finally {
-            lock.writeLock().unlock();
+            lock.unlock();
         }
         SharedOurPreferences.clear(this);
         finish();
@@ -242,16 +246,74 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Post[] response) {
 
-                mPostList.clear();
-                mPostList.addAll(Arrays.asList(response));
-                Collections.sort(mPostList, new Comparator<Post>() {
-                    @Override
-                    public int compare(Post o1, Post o2) {
-                        return o1.getSentDate().compareTo(o2.getSentDate());
-                    }
-                });
+                List<Post> list =new ArrayList<>();
 
-                mPostAdapter.notifyDataSetChanged();
+                outerLoop:
+                for(Post post: response)
+                {
+                    for(Post oldPost:mPostList)
+                    {
+                        if(post.getPostId()==oldPost.getPostId())
+                            continue outerLoop;
+                    }
+                    list.add(post);
+                }
+
+                if(list.size()>0) {
+                    mPostList.addAll(list);
+                    Collections.sort(mPostList, new Comparator<Post>() {
+                        @Override
+                        public int compare(Post o1, Post o2) {
+                            return o1.getSentDate().compareTo(o2.getSentDate());
+                        }
+                    });
+                    mPostAdapter.notifyDataSetChanged();
+                }
+
+                for (Post post : mPostList) {
+                    requestComments(post.getPostId());
+                }
+            }
+        }, errorListener);
+
+        requestQueue.add(request);
+    }
+
+    private void requestComments(final long postID)
+    {
+        GsonRequest<Comment[]> request = new GsonRequest<>( ConnectingURL.URL_Comments+"/"+postID, Comment[].class, Misc.getSecureHeaders(this), new Response.Listener<Comment[]>() {
+            @Override
+            public void onResponse(Comment[] response) {
+                for(Post post:mPostList)
+                    if(post.getPostId()==postID) {
+                        if (post.getCommentList() != null) {
+                            List<Comment> list =new ArrayList<>();
+
+                            outerLoop:
+                            for (Comment comment : response) {
+                                for (Comment oldComment : post.getCommentList()) {
+                                    if (comment.getCommentId() == oldComment.getCommentId())
+                                        continue outerLoop;
+                                }
+                                list.add(comment);
+                            }
+                            if (list.size() > 0) {
+                                post.getCommentList().addAll(list);
+                                Collections.sort(post.getCommentList(), new Comparator<Comment>() {
+                                    @Override
+                                    public int compare(Comment o1, Comment o2) {
+                                        return o1.getSendDate().compareTo(o2.getSendDate());
+                                    }
+                                });
+                                mPostAdapter.notifyDataSetChanged();
+                            }
+                        }
+                        else{
+                            post.setCommentList(Arrays.asList(response));
+                            mPostAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    }
             }
         }, errorListener);
 
@@ -325,8 +387,33 @@ public class MainActivity extends AppCompatActivity
         //TODO: report body
     }
 
-    public void commentRequest(View view) {
-        //TODO: comment body
+    public void addCommentRequest(View view) {
+
+        TextView newCommentView =((View)(view.getParent().getParent())).findViewById(R.id.postNewComment);
+        JSONObject data = new JSONObject();
+        try {
+
+            data.put("commentContest", newCommentView.getText());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Comments + "/" + view.getTag(), data,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(MainActivity.this, getString(R.string.prompt_successful_comment), Toast.LENGTH_SHORT).show();
+                    }
+                }, errorListener) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(MainActivity.this);
+            }
+        };
+        requestQueue.add(request);
+
+        newCommentView.setText(null);
+
     }
 
     public void acceptInvitation(View view) {
@@ -335,7 +422,6 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onResponse(JSONObject response) {
                     }
-
                 }, errorListener) {
             @Override
             public Map<String, String> getHeaders() {
@@ -351,7 +437,6 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onResponse(JSONObject response) {
                     }
-
                 }, errorListener) {
             @Override
             public Map<String, String> getHeaders() {
@@ -362,16 +447,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startTimerThread() {
+
         Runnable mTimerThread = new Runnable() {
             public void run() {
-                lock.readLock().lock();
+                lock.lock();
                 try {
-                    if (!MainActivity.this.finished) {
+                    if (!MainActivity.finished) {
                         refresh();
                         handler.postDelayed(this, Misc.refreshTime);
                     }
                 } finally {
-                    lock.readLock().unlock();
+                    lock.unlock();
                 }
             }
         };
@@ -389,11 +475,12 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy(){
 
         if(!finished ){
-            lock.writeLock().lock();
+            lock.lock();
             try {
                 finished = false;
+                requestQueue.stop();
             } finally {
-                lock.writeLock().unlock();
+                lock.unlock();
             }
         }
 

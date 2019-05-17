@@ -36,9 +36,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.mNameView.setText(mPostItemList.get(i).getName() + " " + mPostItemList.get(i).getSurname());
         holder.mPostContentView.setText(mPostItemList.get(i).getPostContent());
         holder.mPostDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(mPostItemList.get(i).getSentDate()));
+        View parent= ((View)holder.mNameView.getParent());
+        parent.findViewById(R.id.comment_button).setTag(mPostItemList.get(i).getPostId());
 
         holder.mPostImageRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.mPostImageRecyclerView.setAdapter(new ImageRecyclerAdapter(mContext, mPostItemList.get(i).getImages()));
+        holder.mPostCommentRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.VERTICAL, false));
+        holder.mPostCommentRecyclerView.setAdapter( new CommentAdapter(mContext, mPostItemList.get(i).getCommentList()));
     }
 
     @Override
@@ -48,6 +52,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     public class PostViewHolder extends RecyclerView.ViewHolder {
         RecyclerView mPostImageRecyclerView;
+        RecyclerView mPostCommentRecyclerView;
         TextView mPostContentView;
         TextView mPostDateView;
         TextView mNameView;
@@ -55,6 +60,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         public PostViewHolder(View view) {
             super(view);
             mPostImageRecyclerView = view.findViewById(R.id.imageRecyclerView);
+            mPostCommentRecyclerView = view.findViewById(R.id.commentsRecyclerView);
             mPostContentView = view.findViewById(R.id.postContent);
             mPostDateView = view.findViewById(R.id.sendPostDate);
             mNameView = view.findViewById(R.id.namePost);

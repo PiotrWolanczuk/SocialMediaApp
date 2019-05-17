@@ -72,13 +72,15 @@
     <!-- String related to posts -->
     <string name="prompt_report">Report</string>
     <string name="prompt_comment">Comment</string>
+    <string name="prompt_successful_comment">Added comment</string>
+    <string name="prompt_new_comment_hint">Write comment…</string>
 
     <!-- Strings related to sending posts -->
     <string name="send">Send</string>
     <string name="add_photo">Add photo</string>
     <string name="write_here">Write here…</string>
 
-    <!-- Strings related to sending notifications -->
+    <!-- Strings related to notifications -->
     <string name="read">Read</string>
     <string name="not_read">Not Read</string>
     <string name="prompt_accept">Accept</string>
