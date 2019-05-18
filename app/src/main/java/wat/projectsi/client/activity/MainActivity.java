@@ -1,54 +1,69 @@
 package wat.projectsi.client.activity;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.view.WindowManager;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.GsonRequest;
+import wat.projectsi.client.model.Comment;
+import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.Misc;
+import wat.projectsi.client.SharedOurPreferences;
+import wat.projectsi.client.adapter.NotificationAdapter;
 import wat.projectsi.client.adapter.PostAdapter;
+import wat.projectsi.client.model.notification.Notification;
+import wat.projectsi.client.model.notification.NotificationAcquaintance;
+import wat.projectsi.client.model.notification.NotificationMessage;
+import wat.projectsi.client.model.notification.NotificationPost;
 import wat.projectsi.client.model.Post;
 
 
-//TODO: Refreshing posts
+//user1 UserPass1
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
@@ -73,6 +88,8 @@ public class MainActivity extends AppCompatActivity
 //                    break;
 //                case 404://"Not Found"
 //                    break;
+//                case 405: //"Method Not Allowed"
+//                    break;
 //                case 415://"Unsupported Media Type" ->BadJason
 //                    break;
 //                case 500://"Fail! -> Cause: User Role not find."
@@ -81,32 +98,62 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show();
             }
         }
-
     };
 
     private RecyclerView mRecyclerPostView;
     private PostAdapter mPostAdapter;
     private List<Post> mPostList;
+    private RecyclerView mRecyclerNotificationsView;
+    private NotificationAdapter mNotificationAdapter;
+    private List<NotificationAcquaintance> mNotificationAcquaintanceList;
+    private List<NotificationMessage> mNotificationMessageList;
+    private List<NotificationPost> mNotificationPostList;
+    private List<Notification> mNotificationList;
+    private PopupWindow mPopupWindow;
+
+    private boolean isResponse = false;
+    private static volatile boolean finished;
+    private Handler handler;
+    private static Lock lock = new ReentrantLock();
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        finished = false;
+
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_menu);
         setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.action_bar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent newPostIntent = new Intent(MainActivity.this, NewPostActivity.class);
+                if(mPopupWindow!=null)
+                    closeNotification();
                 startActivity(newPostIntent);
             }
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                if(mPopupWindow!=null)
+                    closeNotification();
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -114,9 +161,22 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mRecyclerPostView= findViewById(R.id.postRecyclerView);
-
         mRecyclerPostView.setLayoutManager(new LinearLayoutManager(this));
-        requestPosts();
+
+        mNotificationList = new ArrayList<>();
+        mNotificationAcquaintanceList = new ArrayList<>();
+        mNotificationMessageList = new ArrayList<>();
+        mNotificationPostList = new ArrayList<>();
+        mPostList = new ArrayList<>();
+
+        mNotificationAdapter = new NotificationAdapter(mNotificationList, MainActivity.this);
+        mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
+
+        requestQueue = Volley.newRequestQueue(this);
+
+        handler = new Handler();
+        refresh();
+        startTimerThread();
     }
 
     @Override
@@ -169,43 +229,291 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void logOut(MenuItem item) {
-        SharedPreferences myPrefs = getSharedPreferences("token",
-                MODE_PRIVATE);
-        SharedPreferences.Editor editor = myPrefs.edit();
-        editor.clear();
-        editor.commit();
-        //Log.d(TAG, "Now log out and start the activity login");
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        lock.lock();
+        try {
+            finished = true;
+            requestQueue.stop();
+        }finally {
+            lock.unlock();
+        }
+        SharedOurPreferences.clear(this);
+        finish();
     }
 
     private void requestPosts()
     {
-        mPostList = new ArrayList<>();
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization","Bearer "+ getSharedPreferences(Misc.PREFERENCES_NAME, Activity.MODE_PRIVATE).getString("token",""));
-
-
-        GsonRequest<Post[]> request = new GsonRequest<>( ConnectingURL.URL_Posts, Post[].class, headers, new Response.Listener<Post[]>() {
+        GsonRequest<Post[]> request = new GsonRequest<>( ConnectingURL.URL_Posts, Post[].class, Misc.getSecureHeaders(this), new Response.Listener<Post[]>() {
             @Override
             public void onResponse(Post[] response) {
-                mPostList.addAll(Arrays.asList(response));
-                mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this) );
+
+                List<Post> list =new ArrayList<>();
+
+                outerLoop:
+                for(Post post: response)
+                {
+                    for(Post oldPost:mPostList)
+                    {
+                        if(post.getPostId()==oldPost.getPostId())
+                            continue outerLoop;
+                    }
+                    list.add(post);
+                }
+
+                if(list.size()>0) {
+                    mPostList.addAll(list);
+                    Collections.sort(mPostList, new Comparator<Post>() {
+                        @Override
+                        public int compare(Post o1, Post o2) {
+                            return o1.getSentDate().compareTo(o2.getSentDate());
+                        }
+                    });
+                    mPostAdapter.notifyDataSetChanged();
+                }
+
+                for (Post post : mPostList) {
+                    requestComments(post.getPostId());
+                }
             }
         }, errorListener);
 
         requestQueue.add(request);
     }
 
+    private void requestComments(final long postID)
+    {
+        GsonRequest<Comment[]> request = new GsonRequest<>( ConnectingURL.URL_Comments+"/"+postID, Comment[].class, Misc.getSecureHeaders(this), new Response.Listener<Comment[]>() {
+            @Override
+            public void onResponse(Comment[] response) {
+                for(Post post:mPostList)
+                    if(post.getPostId()==postID) {
+                        if (post.getCommentList() != null) {
+                            List<Comment> list =new ArrayList<>();
+
+                            outerLoop:
+                            for (Comment comment : response) {
+                                for (Comment oldComment : post.getCommentList()) {
+                                    if (comment.getCommentId() == oldComment.getCommentId())
+                                        continue outerLoop;
+                                }
+                                list.add(comment);
+                            }
+                            if (list.size() > 0) {
+                                post.getCommentList().addAll(list);
+                                Collections.sort(post.getCommentList(), new Comparator<Comment>() {
+                                    @Override
+                                    public int compare(Comment o1, Comment o2) {
+                                        return o1.getSendDate().compareTo(o2.getSendDate());
+                                    }
+                                });
+                                mPostAdapter.notifyDataSetChanged();
+                            }
+                        }
+                        else{
+                            post.setCommentList(Arrays.asList(response));
+                            mPostAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    }
+            }
+        }, errorListener);
+
+        requestQueue.add(request);
+    }
+
+    private void requestNotifications()
+    {
+        {
+            GsonRequest<NotificationAcquaintance[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationAcquaintance[].class,
+                    Misc.getSecureHeaders(this), new Response.Listener<NotificationAcquaintance[]>() {
+                @Override
+                public void onResponse(NotificationAcquaintance[] response) {
+                    mNotificationAcquaintanceList.clear();
+                    mNotificationAcquaintanceList.addAll(Arrays.asList(response));
+                    isResponse = true;
+                }
+            }, errorListener);
+
+            requestQueue.add(request);
+        }
+
+        {
+            GsonRequest<NotificationMessage[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationMessage[].class,
+                    Misc.getSecureHeaders(this), new Response.Listener<NotificationMessage[]>() {
+                @Override
+                public void onResponse(NotificationMessage[] response) {
+                    mNotificationMessageList.clear();
+                    mNotificationMessageList.addAll(Arrays.asList(response));
+                    isResponse = true;
+                }
+            }, errorListener);
+
+            requestQueue.add(request);
+        }
+
+        {
+            GsonRequest<NotificationPost[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationPost[].class,
+                    Misc.getSecureHeaders(this), new Response.Listener<NotificationPost[]>() {
+                @Override
+                public void onResponse(NotificationPost[] response) {
+                    mNotificationPostList.clear();
+                    mNotificationPostList.addAll(Arrays.asList(response));
+                    isResponse = true;
+                }
+            }, errorListener);
+
+            requestQueue.add(request);
+        }
+
+        if(isResponse)
+        {
+            mNotificationList.clear();
+            mNotificationList.addAll(mNotificationAcquaintanceList);
+            mNotificationList.addAll(mNotificationMessageList);
+            mNotificationList.addAll(mNotificationPostList);
+
+            Collections.sort(mNotificationList, new Comparator<Notification>() {
+                @Override
+                public int compare(Notification o1, Notification o2) {
+                    return o1.getDateTimeOfSend().compareTo(o2.getDateTimeOfSend());
+                }
+            });
+
+            mNotificationAdapter.notifyDataSetChanged();
+            isResponse=false;
+        }
+    }
+
     public void reportRequest(View view) {
         //TODO: report body
     }
 
-    public void commentRequest(View view) {
-        //TODO: comment body
+    public void addCommentRequest(View view) {
+
+        TextView newCommentView =((View)(view.getParent().getParent())).findViewById(R.id.postNewComment);
+        JSONObject data = new JSONObject();
+        try {
+
+            data.put("commentContest", newCommentView.getText());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Comments + "/" + view.getTag(), data,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(MainActivity.this, getString(R.string.prompt_successful_comment), Toast.LENGTH_SHORT).show();
+                    }
+                }, errorListener) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(MainActivity.this);
+            }
+        };
+        requestQueue.add(request);
+
+        newCommentView.setText(null);
+
+    }
+
+    public void acceptInvitation(View view) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ConnectingURL.URL_Acquaintances + "/" + view.getTag() + "/accept", new JSONObject(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                    }
+                }, errorListener) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(MainActivity.this);
+            }
+        };
+        requestQueue.add(request);
+    }
+
+    public void rejectInvitation(View view) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ConnectingURL.URL_Acquaintances + "/" + view.getTag() + "/reject", new JSONObject(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                    }
+                }, errorListener) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(MainActivity.this);
+            }
+        };
+        requestQueue.add(request);
+    }
+
+    private void startTimerThread() {
+
+        Runnable mTimerThread = new Runnable() {
+            public void run() {
+                lock.lock();
+                try {
+                    if (!MainActivity.finished) {
+                        refresh();
+                        handler.postDelayed(this, Misc.refreshTime);
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            }
+        };
+
+        handler.postDelayed(mTimerThread, Misc.refreshTime);
+    }
+
+    public void refresh()
+    {
+        requestNotifications();
+        requestPosts();
+    }
+
+    @Override
+    protected void onDestroy(){
+
+        if(!finished ){
+            lock.lock();
+            try {
+                finished = false;
+                requestQueue.stop();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        if(mPopupWindow!=null)
+            closeNotification();
+
+        super.onDestroy();
+
+    }
+
+    private void closeNotification()
+    {
+        mPopupWindow.dismiss();
+        mRecyclerNotificationsView=null;
+        mPopupWindow=null;
+    }
+
+    public void display_notifications(View view) {
+        if(mPopupWindow==null) {
+            View popupView = LayoutInflater.from(MainActivity.this).inflate(R.layout.notification_popup_main, null);
+            mPopupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+
+            mRecyclerNotificationsView=popupView.findViewById(R.id.notificationRecyclerView);
+            mRecyclerNotificationsView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerNotificationsView.setAdapter(mNotificationAdapter);
+
+            mPopupWindow.showAsDropDown(findViewById(R.id.notifications_button));
+        }
+        else closeNotification();
+    }
+
+    public void onToolbarClick(View view) {
+        if(mPopupWindow!=null)
+            closeNotification();
     }
 }

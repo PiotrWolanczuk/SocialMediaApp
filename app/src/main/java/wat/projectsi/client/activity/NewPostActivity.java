@@ -32,9 +32,10 @@ import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.GalleryAdapter;
+import wat.projectsi.client.Misc;
+import wat.projectsi.client.adapter.GalleryAdapter;
 import wat.projectsi.client.SharedOurPreferences;
-import wat.projectsi.client.VolleyJsonRequest;
+import wat.projectsi.client.request.VolleyJsonRequest;
 
 public class NewPostActivity extends AppCompatActivity {
 
@@ -176,7 +177,7 @@ public class NewPostActivity extends AppCompatActivity {
         }
 
         VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.POST,
-                ConnectingURL.URL_AddPost, jsonRequest, new Response.Listener<JSONObject>() {
+                ConnectingURL.URL_Posts, jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -195,10 +196,7 @@ public class NewPostActivity extends AppCompatActivity {
         }) {
             @Override
             public Map<String, String> getHeaders() {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " +
-                        SharedOurPreferences.getDefaults("token", NewPostActivity.this));
-                return headers;
+                return Misc.getSecureHeaders(NewPostActivity.this);
             }
         };
 

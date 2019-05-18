@@ -73,11 +73,25 @@
     <!-- String related to posts -->
     <string name="prompt_report">Zgłoś</string>
     <string name="prompt_comment">Skomentuj</string>
+    <string name="prompt_successful_comment">Dodano komentarz</string>
+    <string name="prompt_new_comment_hint">Napisz komentarz…</string>
 
     <!-- Strings related to sending posts -->
     <string name="send">Wyslij</string>
     <string name="add_photo">Dodaj zdjecie</string>
     <string name="write_here">Pisz tutaj…</string>
 
+    <!-- Strings related to notifications -->
+    <string name="read">Przeczytane</string>
+    <string name="not_read">Nie Przeczytane</string>
+    <string name="prompt_accept">Zakceptuj</string>
+    <string name="prompt_reject">Odrzuć</string>
+
+    <string name="prompt_notification_desc_invitation">Zaproszenie do znajomych.</string>
+    <string name="prompt_notification_desc_accept">Przyjęto do znajomych.</string>
+    <string name="prompt_notification_desc_reject">Odrzuconow zaproszenie do znajomych.</string>
+    <string name="prompt_notification_desc_end">Zakończenie znajomości.</string>
+    <string name="prompt_notification_desc_message">Nowa wiadomość.</string>
+    <string name="prompt_notification_desc_post">Nowy post.</string>
 
 </resources>
