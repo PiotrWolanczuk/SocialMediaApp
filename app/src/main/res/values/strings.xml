@@ -2,6 +2,8 @@
     <string name="app_name">Artemis Mobile</string>
 
     <string name="message_wrong">Cos poszlo nie tak</string>
+    <string name="message_progress">W toku</string>
+    <string name="cancel">Anuluj</string>
     <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
@@ -69,6 +71,7 @@
     <string name="log_out">Wyloguj</string>
     <string name="profile">Profil</string>
     <string name="gallery">Galeria</string>
+    <string name="users">Ludzie</string>
 
     <!-- String related to posts -->
     <string name="prompt_report">Zgłoś</string>
@@ -93,5 +96,14 @@
     <string name="prompt_notification_desc_end">Zakończenie znajomości.</string>
     <string name="prompt_notification_desc_message">Nowa wiadomość.</string>
     <string name="prompt_notification_desc_post">Nowy post.</string>
+
+    <!-- Strings related to view users -->
+    <string name="no_data_available">Nie ma danych</string>
+
+    <!-- Strings related to invite-->
+    <string name="people">Ludzie</string>
+    <string name="inviteSend">Zaproszenie zostalo wyslane</string>
+    <string name="invite">Zapros</string>
+    <string name="friends">Znajomi</string>
 
 </resources>

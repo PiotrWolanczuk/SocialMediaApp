@@ -1,5 +1,7 @@
 package wat.projectsi.client.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +24,8 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity
         finished = false;
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar_menu);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -221,11 +225,53 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_gallery) {
 
+        } else if(id == R.id.nav_people){
+            writeName();
+        }else if(id == R.id.nav_friends){
+            Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
+            userIntent.putExtra("people", "friends"); // friends
+            startActivity(userIntent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void writeName() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText name = new EditText(this);
+        name.setHint("Name");
+        layout.addView(name);
+
+        final EditText surname = new EditText(this);
+        surname .setHint("Surname");
+        layout.addView(surname);
+
+        dialog.setPositiveButton("Szukaj", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
+                userIntent.putExtra("people", "users"); // users
+                userIntent.putExtra("name", name.getText().toString());
+                userIntent.putExtra("surname", surname.getText().toString());
+                dialog.dismiss();
+                startActivity(userIntent);
+            }
+        });
+
+        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setView(layout);
+        dialog.show();
     }
 
     public void logOut(MenuItem item) {

@@ -34,7 +34,6 @@ import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Misc;
 import wat.projectsi.client.adapter.GalleryAdapter;
-import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.request.VolleyJsonRequest;
 
 public class NewPostActivity extends AppCompatActivity {
@@ -60,7 +59,7 @@ public class NewPostActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_button);
         addPhoto = findViewById(R.id.add_photo_button);
         newPostText = findViewById(R.id.message_text);
-        gvGallery = (GridView)findViewById(R.id.gv);
+        gvGallery = findViewById(R.id.gv);
     }
 
     public void send_new_post(View view) {
@@ -124,7 +123,6 @@ public class NewPostActivity extends AppCompatActivity {
                             ClipData.Item item = mClipData.getItemAt(i);
                             Uri uri = item.getUri();
 
-                            //images.add(uri.hashCode());
                             hashcodes.add(Integer.toString(uri.hashCode()));
 
                             mArrayUri.add(uri);

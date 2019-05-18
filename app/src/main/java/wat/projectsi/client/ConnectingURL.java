@@ -17,7 +17,7 @@ public class ConnectingURL {
     public static final String URL_Notifications_Messages = getURL() +"/notifications/message";
     public static final String URL_Notifications_Post = getURL() +"/notifications/post";
     public static final String URL_Acquaintances = getURL() +"/acquaintances";
-    public static final String URL_Users = getURL()+"/users";
+    public static final String URL_Users = getURL()+"/users/byname";
     public static final String URL_UsersFriends = getURL()+"/users/friends";
     public static final String URL_Violations = getURL()+"/violations";
     public static final String URL_ViolationsComments = getURL()+"/violations/comments";
