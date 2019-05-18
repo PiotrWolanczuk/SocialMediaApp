@@ -180,13 +180,20 @@ public class MainActivity extends AppCompatActivity
         layout.setOrientation(LinearLayout.VERTICAL);
 
         final EditText name = new EditText(this);
+        name.setHint("Name");
         layout.addView(name);
+
+        final EditText surname = new EditText(this);
+        surname .setHint("Surname");
+        layout.addView(surname);
+
         dialog.setPositiveButton("Szukaj", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
-                userIntent.putExtra("people", "users"); // people
-                userIntent.putExtra("name", name.getText());
+                userIntent.putExtra("people", "users"); // users
+                userIntent.putExtra("name", name.getText().toString());
+                userIntent.putExtra("surname", surname.getText().toString());
                 dialog.dismiss();
                 startActivity(userIntent);
             }

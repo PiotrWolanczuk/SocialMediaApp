@@ -100,7 +100,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
         }
 
         JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,
-                ConnectingURL.URL_Invite + "/" + user.getId(),jsonRequest, new Response.Listener<JSONObject>() {
+                ConnectingURL.URL_Acquaintances + "/" + user.getId(),jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {

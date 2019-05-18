@@ -59,13 +59,16 @@ public class UsersActivity extends AppCompatActivity {
         recyclerView.setVisibility(View.GONE);
         emptyView.setVisibility(View.VISIBLE);
 
-        if(whichGroupShows.equals("users"))
-            showPeople(bundle.getString("name"));
+        if(whichGroupShows.equals("users")){
+            String name = bundle.getString("name");
+            String surname = bundle.getString("surname");
+            showPeople(name, surname);
+        }
         else if(whichGroupShows.equals("friends"))
             showFriends();
     }
 
-    private void showPeople(String name) {
+    private void showPeople(String name, String surname) {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getResources().getString(R.string.message_progress));
         progressDialog.show();
@@ -73,18 +76,18 @@ public class UsersActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
-                ConnectingURL.URL_Users +"?name=" + name, null, new Response.Listener<JSONArray>() {
+                ConnectingURL.URL_Users + "?name="+name+"&surname="+surname, null, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray response) {
-
+                Log.e("APIResponse", response.toString());
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
                         User user = new User(
-                                jsonObject.getString("name"),
-                                jsonObject.getString("surname"),
-                                jsonObject.getInt("id"));
+                                jsonObject.getString("firstName"),
+                                jsonObject.getString("lastName"),
+                                jsonObject.getInt("userId"));
                         userList.add(user);
                     }
 
@@ -103,20 +106,23 @@ public class UsersActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 Toast.makeText(UsersActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
                 Log.e("APIResponse", error.toString());
+                System.out.println(error.getMessage());
             }
-        }) {
+        })
+        {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
+                //headers.put("Content-Type", "application/json");
                 headers.put("Authorization", "Bearer " + SharedOurPreferences.getDefaults("token", UsersActivity.this));
                 return headers;
             }
-        };
+        }
+        ;
 
         requestQueue.add(request);
     }
-    private void showFriends() {
+    private void showFriends( ) {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getResources().getString(R.string.message_progress));
         progressDialog.show();
@@ -124,19 +130,22 @@ public class UsersActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
-                ConnectingURL.URL_UsersFriends, null, new Response.Listener<JSONArray>() {
+                ConnectingURL.URL_Acquaintances, null, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray response) {
-
+                Log.e("APIResponse", response.toString());
                 try {
                     for (int i = 0; i < response.length(); i++) {
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        User user = new User(
-                                jsonObject.getString("name"),
-                                jsonObject.getString("surname"),
-                                jsonObject.getInt("id"));
-                        userList.add(user);
+                        JSONObject friend = response.getJSONObject(i);
+//                        if(friend.getJSONObject("state").equals("APPROVED")){
+                            JSONObject jsonObject = friend.getJSONObject("friend");
+                            User user = new User(
+                                    jsonObject.getString("firstName"),
+                                    jsonObject.getString("lastName"),
+                                    jsonObject.getInt("userId"));
+                            userList.add(user);
+//                        }
                     }
 
                     progressDialog.dismiss();

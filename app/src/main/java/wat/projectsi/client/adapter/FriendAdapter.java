@@ -93,7 +93,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
         JSONObject jsonRequest = new JSONObject();
         try {
-            jsonRequest.put("userEntityId", user.getId());
+            jsonRequest.put("userId", user.getId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
