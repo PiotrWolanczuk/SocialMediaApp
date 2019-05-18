@@ -25,10 +25,14 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.SharedOurPreferences;
+import wat.projectsi.client.activity.UsersActivity;
 import wat.projectsi.client.model.User;
 
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserListViewHolder>{
@@ -112,7 +116,15 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
                 Log.e("APIResponse", error.toString());
                 Toast.makeText(context, context.getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
             }
-        });
+        }){
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                //headers.put("Content-Type", "application/json");
+                headers.put("Authorization", "Bearer " + SharedOurPreferences.getDefaults("token", context));
+                return headers;
+            }
+        };
         MyRequestQueue.add(MyJsonRequest);
     }
 
