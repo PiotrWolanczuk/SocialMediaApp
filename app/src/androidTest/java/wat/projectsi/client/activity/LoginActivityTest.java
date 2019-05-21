@@ -1,7 +1,8 @@
-package wat.projectsi;
+package wat.projectsi.client.activity;
 
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.Suppress;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -11,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import wat.projectsi.R;
 import wat.projectsi.client.activity.LoginActivity;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -32,7 +34,7 @@ public class LoginActivityTest {
     @Suppress
     @Test
     public void clickLoginButton_openMainActivity() {
-        onView(withId(R.id.email)).perform(ViewActions.clearText())
+        onView(ViewMatchers.withId(R.id.email)).perform(ViewActions.clearText())
                 .perform(ViewActions.typeText("example@gmail.com"));
         onView(withId(R.id.password)).perform(ViewActions.clearText())
                 .perform(ViewActions.typeText("123456"));

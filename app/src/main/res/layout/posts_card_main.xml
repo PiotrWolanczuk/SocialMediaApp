@@ -21,14 +21,40 @@
             android:layout_height="wrap_content"
             android:background="@drawable/border">
 
-            <TextView
-                android:id="@+id/namePost"
+            <RelativeLayout
+                android:id="@+id/post_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
+                android:orientation="horizontal"
                 android:background="@drawable/border"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp" />
+                >
+
+                <TextView
+                    android:id="@+id/sendPostDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+
+                <ImageView
+                    android:id="@+id/postSenderPicture"
+                    android:layout_width="@dimen/profile_picture_size"
+                    android:layout_height="@dimen/profile_picture_size"
+                    android:background="@drawable/picture_border"
+                    android:layout_below="@id/sendPostDate"
+                    />
+
+                <TextView
+                    android:id="@+id/namePost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_toEndOf="@id/postSenderPicture"
+                    android:layout_below="@id/sendPostDate"
+                    />
+
+            </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/imageRecyclerView"
@@ -36,7 +62,7 @@
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:scrollbars="horizontal"
-                android:layout_below="@id/namePost"/>
+                android:layout_below="@id/post_description"/>
 
             <TextView
                 android:id="@+id/postContent"
@@ -45,13 +71,8 @@
                 android:layout_below="@+id/imageRecyclerView"
                 android:background="@drawable/border"
                 android:paddingStart="10dp"
-                android:paddingEnd="10dp" />
-
-            <TextView
-                android:id="@+id/sendPostDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/postContent"
+                android:paddingEnd="10dp"
+                android:paddingBottom="@dimen/activity_horizontal_margin"
                 />
 
             <android.support.v7.widget.RecyclerView
@@ -60,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:scrollbars="vertical"
-                android:layout_below="@id/sendPostDate"
+                android:layout_below="@id/postContent"
                 />
 
             <android.support.design.widget.TextInputLayout
