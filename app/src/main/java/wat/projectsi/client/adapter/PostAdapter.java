@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,10 +34,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int i) {
+        holder.mProfilePictureView.setImageBitmap(mPostItemList.get(i).getProfilePicture());
         holder.mNameView.setText(mPostItemList.get(i).getName() + " " + mPostItemList.get(i).getSurname());
         holder.mPostContentView.setText(mPostItemList.get(i).getPostContent());
         holder.mPostDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(mPostItemList.get(i).getSentDate()));
-        View parent= ((View)holder.mNameView.getParent());
+        View parent= ((View)holder.mNameView.getParent().getParent());
         parent.findViewById(R.id.comment_button).setTag(mPostItemList.get(i).getPostId());
 
         holder.mPostImageRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
@@ -56,6 +58,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         TextView mPostContentView;
         TextView mPostDateView;
         TextView mNameView;
+        ImageView mProfilePictureView;
 
         public PostViewHolder(View view) {
             super(view);
@@ -64,6 +67,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mPostContentView = view.findViewById(R.id.postContent);
             mPostDateView = view.findViewById(R.id.sendPostDate);
             mNameView = view.findViewById(R.id.namePost);
+            mProfilePictureView=view.findViewById(R.id.postSenderPicture);
         }
     }
 }

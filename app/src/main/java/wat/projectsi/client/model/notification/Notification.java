@@ -1,11 +1,14 @@
 package wat.projectsi.client.model.notification;
 
 import android.arch.lifecycle.ViewModel;
+import android.graphics.Bitmap;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import wat.projectsi.client.Misc;
 
 public abstract class Notification extends ViewModel implements Serializable {
     @SerializedName("notificationId")
@@ -22,14 +25,16 @@ public abstract class Notification extends ViewModel implements Serializable {
     private String notificationSenderSurname;
     //@SerializedName("notificationSenderPicture")
     //private PictureEntity notificationSenderPicture;
+    private Bitmap profilePicture;
 
-    public Notification(Long notificationId, Date dateTimeOfSend, boolean isRead, Long notificationSenderId, String notificationSenderName, String notificationSenderSurname) {
+    public Notification(Long notificationId, Date dateTimeOfSend, boolean isRead, Long notificationSenderId, String notificationSenderName, String notificationSenderSurname, Bitmap profilePicture) {
         this.notificationId = notificationId;
         this.dateTimeOfSend = dateTimeOfSend;
         this.isRead = isRead;
         this.notificationSenderId = notificationSenderId;
         this.notificationSenderName = notificationSenderName;
         this.notificationSenderSurname = notificationSenderSurname;
+        this.profilePicture=profilePicture;
     }
 
     public abstract int getType();
@@ -56,5 +61,9 @@ public abstract class Notification extends ViewModel implements Serializable {
 
     public String getNotificationSenderSurname() {
         return notificationSenderSurname;
+    }
+
+    public Bitmap getProfilePicture() {
+        return profilePicture==null? Misc.defaultAvatar :profilePicture;
     }
 }

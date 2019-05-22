@@ -12,17 +12,17 @@ public class Comment extends ViewModel implements Serializable {
     private long commentId;
     @SerializedName("postId")
     private Long postId;
-    @SerializedName("userId")
-    private Long userId;
+    @SerializedName("user")
+    private User user;
     @SerializedName("commentContest")
     private String commentContest;
     @SerializedName("sendDate")
     private Date sendDate;
 
-    public Comment(long commentId, Long postId, Long userId, String commentContest, Date sendDate) {
+    public Comment(long commentId, Long postId, User user, String commentContest, Date sendDate) {
         this.commentId = commentId;
         this.postId = postId;
-        this.userId = userId;
+        this.user = user;
         this.commentContest = commentContest;
         this.sendDate = sendDate;
     }
@@ -35,8 +35,8 @@ public class Comment extends ViewModel implements Serializable {
         return postId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
     public String getCommentContest() {

@@ -1,5 +1,7 @@
 package wat.projectsi.client.model.notification;
 
+import android.graphics.Bitmap;
+
 import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
@@ -35,8 +37,8 @@ public class NotificationAcquaintance extends Notification {
     @SerializedName("acquaintanceState")
     private int acquaintanceState;
 
-    public NotificationAcquaintance(Long notificationId, Date dateTimeOfSend, boolean isRead, Long notificationSenderId, String notificationSenderName, String notificationSenderSurname, long acquaintanceId, int acquaintanceState) {
-        super(notificationId, dateTimeOfSend, isRead, notificationSenderId, notificationSenderName, notificationSenderSurname);
+    public NotificationAcquaintance(Long notificationId, Date dateTimeOfSend, boolean isRead, Long notificationSenderId, String notificationSenderName, Bitmap profilePicture, String notificationSenderSurname, long acquaintanceId, int acquaintanceState) {
+        super(notificationId, dateTimeOfSend, isRead, notificationSenderId, notificationSenderName, notificationSenderSurname, profilePicture);
         this.acquaintanceId = acquaintanceId;
         this.acquaintanceState = acquaintanceState;
     }

@@ -1,6 +1,7 @@
-package wat.projectsi;
+package wat.projectsi.client.activity;
 
 import android.content.Intent;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.rule.ActivityTestRule;
 
@@ -8,6 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import wat.projectsi.R;
 import wat.projectsi.client.activity.RegisterActivity;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -33,7 +35,7 @@ public class RegisterActivityTest {
     {
         rule.launchActivity(new Intent());
 
-        onView(withId(R.id.name)).perform(typeText("Anna12"));
+        onView(ViewMatchers.withId(R.id.name)).perform(typeText("Anna12"));
         onView(withId(R.id.surname)).perform(typeText("Annowska"));
         onView(withId(R.id.login)).perform(typeText("Anna12"));
         onView(withId(R.id.email)).perform(typeText("anna@annowska.com"));
