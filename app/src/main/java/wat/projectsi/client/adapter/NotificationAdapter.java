@@ -77,7 +77,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 viewHolder.mNotificationDescription.setText(R.string.prompt_notification_desc_invitation);
 
                 View parent= (View)viewHolder.mNotificationDescription.getParent().getParent();
-                long acquaintanceId= ((NotificationAcquaintance)mNotificationItemList.get(i)).getAcquaintanceId();
+                long acquaintanceId= mNotificationItemList.get(i).getNotificationSenderId();
                         parent.findViewById(R.id.accept_invitation_button).setTag(acquaintanceId);
                         parent.findViewById(R.id.reject_invitation_button).setTag(acquaintanceId);
             }

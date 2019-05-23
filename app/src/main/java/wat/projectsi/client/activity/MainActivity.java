@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity
                     Collections.sort(mPostList, new Comparator<Post>() {
                         @Override
                         public int compare(Post o1, Post o2) {
-                            return o1.getSentDate().compareTo(o2.getSentDate());
+                            return o2.getSentDate().compareTo(o1.getSentDate());
                         }
                     });
                     mPostAdapter.notifyDataSetChanged();
@@ -383,7 +383,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         {
-            GsonRequest<NotificationMessage[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationMessage[].class,
+            GsonRequest<NotificationMessage[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Messages, NotificationMessage[].class,
                     Misc.getSecureHeaders(this), new Response.Listener<NotificationMessage[]>() {
                 @Override
                 public void onResponse(NotificationMessage[] response) {
@@ -397,7 +397,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         {
-            GsonRequest<NotificationPost[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationPost[].class,
+            GsonRequest<NotificationPost[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Post, NotificationPost[].class,
                     Misc.getSecureHeaders(this), new Response.Listener<NotificationPost[]>() {
                 @Override
                 public void onResponse(NotificationPost[] response) {
@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity
             Collections.sort(mNotificationList, new Comparator<Notification>() {
                 @Override
                 public int compare(Notification o1, Notification o2) {
-                    return o1.getDateTimeOfSend().compareTo(o2.getDateTimeOfSend());
+                    return o2.getDateTimeOfSend().compareTo(o1.getDateTimeOfSend());
                 }
             });
 

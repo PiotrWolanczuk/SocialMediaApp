@@ -13,9 +13,9 @@ public class ConnectingURL {
     public static final String URL_Signup = getURL() +"/signup";
     public static final String URL_Signin = getURL() +"/signin";
     public static final String URL_Posts = getURL() +"/posts";
-    public static final String URL_Notifications_Acquaintance = getURL() +"/notifications/acquaintance";
-    public static final String URL_Notifications_Messages = getURL() +"/notifications/message";
-    public static final String URL_Notifications_Post = getURL() +"/notifications/post";
+    public static final String URL_Notifications_Acquaintance = getURL() +"/notifications/acquaintances";
+    public static final String URL_Notifications_Messages = getURL() +"/notifications/messages";
+    public static final String URL_Notifications_Post = getURL() +"/notifications/posts";
     public static final String URL_Acquaintances = getURL() +"/acquaintances";
     public static final String URL_Users = getURL()+"/users/byname";
     public static final String URL_UsersFriends = getURL()+"/users/friends";
