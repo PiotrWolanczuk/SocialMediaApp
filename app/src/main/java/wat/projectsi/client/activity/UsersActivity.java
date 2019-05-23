@@ -134,18 +134,17 @@ public class UsersActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(JSONArray response) {
-                Log.e("APIResponse", response.toString());
                 try {
                     for (int i = 0; i < response.length(); i++) {
-                        JSONObject friend = response.getJSONObject(i);
-//                        if(friend.getJSONObject("state").equals("APPROVED")){
-                            JSONObject jsonObject = friend.getJSONObject("friend");
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        if(response.getJSONObject(i).getString("state").equals("APPROVED")){
+                            JSONObject friend = jsonObject.getJSONObject("friend");
                             User user = new User(
-                                    jsonObject.getString("firstName"),
-                                    jsonObject.getString("lastName"),
-                                    jsonObject.getInt("userId"));
+                                    friend.getString("firstName"),
+                                    friend.getString("lastName"),
+                                    friend.getInt("userId"));
                             userList.add(user);
-//                        }
+                        }
                     }
 
                     progressDialog.dismiss();

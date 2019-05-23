@@ -106,4 +106,7 @@
     <string name="invite">Zapros</string>
     <string name="friends">Znajomi</string>
 
+
+    <string name="deleteFriend">Usunieto znajomego</string>
+
 </resources>

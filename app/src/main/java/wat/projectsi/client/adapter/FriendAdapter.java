@@ -24,10 +24,13 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.model.User;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder>{
@@ -93,7 +96,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
         JSONObject jsonRequest = new JSONObject();
         try {
-            jsonRequest.put("userId", user.getId());
+            jsonRequest.put("userEntityId", user.getId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -103,7 +106,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(context, context.getResources().getString(R.string.inviteSend), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.deleteFriend), Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -111,7 +114,14 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
                 Log.e("APIResponse", error.toString());
                 Toast.makeText(context, context.getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
             }
-        });
+        }){
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedOurPreferences.getDefaults("token", context));
+                return headers;
+            }
+        };
         MyRequestQueue.add(MyJsonRequest);
     }
 
