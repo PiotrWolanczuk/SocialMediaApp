@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -53,6 +54,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         viewHolder.mNotificationDateTimeOfSend.setText(DateFormatter.viewDateTimeFormat(mContext).format(mNotificationItemList.get(i).getDateTimeOfSend()));
         viewHolder.mNotificationIsRead.setText(mNotificationItemList.get(i).isRead() ? mContext.getString(R.string.read) : mContext.getString(R.string.not_read));
         viewHolder.mNotificationSender.setText(mNotificationItemList.get(i).getNotificationSenderName() + " " + mNotificationItemList.get(i).getNotificationSenderSurname());
+        viewHolder.mNotificationProfilePictureView.setImageBitmap(mNotificationItemList.get(i).getProfilePicture());
 
         switch (viewHolder.getItemViewType()) {
             case NotificationAcquaintance.TYPE2:{
@@ -75,7 +77,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 viewHolder.mNotificationDescription.setText(R.string.prompt_notification_desc_invitation);
 
                 View parent= (View)viewHolder.mNotificationDescription.getParent().getParent();
-                long acquaintanceId= ((NotificationAcquaintance)mNotificationItemList.get(i)).getAcquaintanceId();
+                long acquaintanceId= mNotificationItemList.get(i).getNotificationSenderId();
                         parent.findViewById(R.id.accept_invitation_button).setTag(acquaintanceId);
                         parent.findViewById(R.id.reject_invitation_button).setTag(acquaintanceId);
             }
@@ -114,6 +116,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         protected TextView mNotificationDateTimeOfSend;
         protected TextView mNotificationIsRead;
         protected TextView mNotificationSender;
+        protected ImageView mNotificationProfilePictureView;
         protected TextView mNotificationDescription;
 
         public NotificationViewHolder(View view) {
@@ -121,6 +124,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mNotificationDateTimeOfSend = view.findViewById(R.id.notificationDateTimeOfSend);
             mNotificationIsRead = view.findViewById(R.id.notificationIsRead);
             mNotificationSender = view.findViewById(R.id.notificationSender);
+            mNotificationProfilePictureView = view.findViewById(R.id.notificationSenderPicture);
             mNotificationDescription = view.findViewById(R.id.notificationDescription);
         }
     }

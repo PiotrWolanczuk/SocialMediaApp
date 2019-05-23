@@ -1,9 +1,7 @@
 package wat.projectsi.client.activity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -18,7 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,8 +28,6 @@ import org.json.JSONObject;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-
-import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
 
 public class LoginActivity extends AppCompatActivity {
@@ -48,8 +43,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+
         progressDialog = new ProgressDialog(this);
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -63,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
 //        mEmailView.setText("user1");
 //        mPasswordView.setText("UserPass1");
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-        progressDialog.setMessage("Siging in...");
+        progressDialog.setMessage(getResources().getString(R.string.message_progress));
         progressDialog.show();
         // Reset errors.
         mEmailView.setError(null);
@@ -136,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.cancel();
                 Log.e("APIResponse", error.toString());
-                Toast.makeText(LoginActivity.this, "Something is wrong.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
             }
         });
         MyRequestQueue.add(MyJsonRequest);

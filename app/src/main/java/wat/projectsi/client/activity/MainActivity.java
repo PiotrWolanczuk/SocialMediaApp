@@ -1,5 +1,7 @@
 package wat.projectsi.client.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +24,8 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity
         finished = false;
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar_menu);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -221,11 +225,53 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_gallery) {
 
+        } else if(id == R.id.nav_people){
+            writeName();
+        }else if(id == R.id.nav_friends){
+            Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
+            userIntent.putExtra("people", "friends"); // friends
+            startActivity(userIntent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void writeName() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText name = new EditText(this);
+        name.setHint("Name");
+        layout.addView(name);
+
+        final EditText surname = new EditText(this);
+        surname .setHint("Surname");
+        layout.addView(surname);
+
+        dialog.setPositiveButton("Szukaj", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
+                userIntent.putExtra("people", "users"); // users
+                userIntent.putExtra("name", name.getText().toString());
+                userIntent.putExtra("surname", surname.getText().toString());
+                dialog.dismiss();
+                startActivity(userIntent);
+            }
+        });
+
+        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setView(layout);
+        dialog.show();
     }
 
     public void logOut(MenuItem item) {
@@ -264,7 +310,7 @@ public class MainActivity extends AppCompatActivity
                     Collections.sort(mPostList, new Comparator<Post>() {
                         @Override
                         public int compare(Post o1, Post o2) {
-                            return o1.getSentDate().compareTo(o2.getSentDate());
+                            return o2.getSentDate().compareTo(o1.getSentDate());
                         }
                     });
                     mPostAdapter.notifyDataSetChanged();
@@ -337,7 +383,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         {
-            GsonRequest<NotificationMessage[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationMessage[].class,
+            GsonRequest<NotificationMessage[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Messages, NotificationMessage[].class,
                     Misc.getSecureHeaders(this), new Response.Listener<NotificationMessage[]>() {
                 @Override
                 public void onResponse(NotificationMessage[] response) {
@@ -351,7 +397,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         {
-            GsonRequest<NotificationPost[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Acquaintance, NotificationPost[].class,
+            GsonRequest<NotificationPost[]> request = new GsonRequest<>(ConnectingURL.URL_Notifications_Post, NotificationPost[].class,
                     Misc.getSecureHeaders(this), new Response.Listener<NotificationPost[]>() {
                 @Override
                 public void onResponse(NotificationPost[] response) {
@@ -374,7 +420,7 @@ public class MainActivity extends AppCompatActivity
             Collections.sort(mNotificationList, new Comparator<Notification>() {
                 @Override
                 public int compare(Notification o1, Notification o2) {
-                    return o1.getDateTimeOfSend().compareTo(o2.getDateTimeOfSend());
+                    return o2.getDateTimeOfSend().compareTo(o1.getDateTimeOfSend());
                 }
             });
 

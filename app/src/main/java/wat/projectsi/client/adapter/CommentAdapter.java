@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -32,8 +33,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int i) {
-        holder.mNameView.setText(mCommentList.get(i).getUserId().toString());
-        //holder.mNameView.setText(mCommentList.get(i).getName() + " " + mCommentList.get(i).getSurname());
+        holder.mNameView.setText(mCommentList.get(i).getUser().getName() + " " + mCommentList.get(i).getUser().getSurname());
+        holder.mProfilePictureView.setImageBitmap(mCommentList.get(i).getUser().getProfileImage());
         holder.mCommentContentView.setText(mCommentList.get(i).getCommentContest());
         holder.mCommentDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(mCommentList.get(i).getSendDate()));
     }
@@ -46,12 +47,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public class CommentViewHolder extends RecyclerView.ViewHolder {
         TextView mCommentContentView;
         TextView mCommentDateView;
+        ImageView mProfilePictureView;
         TextView mNameView;
 
         public CommentViewHolder(View view) {
             super(view);
             mCommentContentView = view.findViewById(R.id.commentContent);
             mCommentDateView = view.findViewById(R.id.sendCommentDate);
+            mProfilePictureView = view.findViewById(R.id.commentSenderPicture);
             mNameView = view.findViewById(R.id.nameComment);
         }
     }
