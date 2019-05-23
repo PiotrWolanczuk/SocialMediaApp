@@ -12,11 +12,4 @@
         android:title="@string/log_out"
         android:onClick="logOut"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_notification"
-        android:orderInCategory="100"
-        android:title="@string/log_out"
-        android:icon="@drawable/baseline_notifications_black_18dp"
-        android:onClick="notificationView"
-        app:showAsAction="ifRoom" />
 </menu>

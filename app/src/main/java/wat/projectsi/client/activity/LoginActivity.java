@@ -28,8 +28,10 @@ import org.json.JSONObject;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.SharedOurPreferences;
 
 public class LoginActivity extends AppCompatActivity {
+
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -39,10 +41,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // Set up the login form.
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+
         progressDialog = new ProgressDialog(this);
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -53,8 +56,10 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+        mEmailView.setText("user1");
+        mPasswordView.setText("UserPass1");
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-        progressDialog.setMessage("Siging in...");
+        progressDialog.setMessage(getResources().getString(R.string.message_progress));
         progressDialog.show();
         // Reset errors.
         mEmailView.setError(null);
@@ -97,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void consumeAPI(final String email, final String password) {
-        String urlAPI = "/api/auth/signin";
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
         JSONObject jsonRequest = new JSONObject();
@@ -108,11 +112,18 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,ConnectingURL.URL_Signin,jsonRequest, new Response.Listener<JSONObject>() {
+        JsonObjectRequest MyJsonRequest = new JsonObjectRequest( Request.Method.POST,
+                ConnectingURL.URL_Signin,jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 progressDialog.cancel();
+                try {
+                    SharedOurPreferences.setDefaults("token", response.getString("token"),
+                            LoginActivity.this);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(mainIntent);
             }
@@ -121,12 +132,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.cancel();
                 Log.e("APIResponse", error.toString());
-                Toast.makeText(LoginActivity.this, "Something is wrong.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
             }
         });
         MyRequestQueue.add(MyJsonRequest);
     }
-
 
     public void setUpNewPassword(View view) {
     }

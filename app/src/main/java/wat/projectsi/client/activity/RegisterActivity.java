@@ -2,8 +2,8 @@ package wat.projectsi.client.activity;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -34,13 +34,14 @@ import java.util.Calendar;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.DateFormatter;
 import wat.projectsi.client.Validator;
 
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String manStr="man";
-    private static final String womanStr="woman";
+    private static final String manStr = "man";
+    private static final String womanStr = "woman";
 
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
@@ -77,7 +78,6 @@ public class RegisterActivity extends AppCompatActivity {
                             mEmailView.requestFocus();
                             break;
                         case "Fail -> Username is already taken!":
-                            //TODO: Login
                             Toast.makeText(RegisterActivity.this, getString(R.string.error_used_login), Toast.LENGTH_SHORT).show();
                             break;
 
@@ -120,7 +120,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Set up the register form.
         mEmailView = findViewById(R.id.email);
 
         mPasswordView = findViewById(R.id.password);
@@ -137,15 +136,13 @@ public class RegisterActivity extends AppCompatActivity {
         mGenderView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     mGenderView.setText(R.string.prompt_gender_man);
-                }
-                else {
+                } else {
                     mGenderView.setText(R.string.prompt_gender_woman);
                 }
             }
         });
-
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -176,11 +173,11 @@ public class RegisterActivity extends AppCompatActivity {
                 c.set(Calendar.MONTH, monthOfYear);
                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                mDateView.setText(Validator.dateFormat.format(c.getTime()));
+                mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
             }
         };
 
-        mDateView.setText(Validator.dateFormat.format(c.getTime()));
+        mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
     }
 
     public void startTermActivity(View view) {
@@ -279,16 +276,16 @@ public class RegisterActivity extends AppCompatActivity {
             mProgressDialog.hide();
             focusView.requestFocus();
         } else {
-
             mProgressDialog.show();
 
             registerRequest(login, email, password,
-                    mNameView.getText().toString(), mSurnameView.getText().toString(), mDateView.getText().toString(), mGenderView.isChecked()
-            );
+                    mNameView.getText().toString(), mSurnameView.getText().toString(),
+                    DateFormatter.convertToApi(mDateView.getText().toString()),
+                    mGenderView.isChecked());
         }
     }
 
-    private boolean registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate, boolean isMan) {
+    private void registerRequest(final String login, final String email, final String password, final String name, final String surname, final String birthDate, boolean isMan) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JSONObject data = new JSONObject();
@@ -299,7 +296,7 @@ public class RegisterActivity extends AppCompatActivity {
             data.put("name", name);
             data.put("surname", surname);
             data.put("birthDate", birthDate);
-            data.put("gender", isMan? manStr:womanStr);
+            data.put("gender", isMan ? manStr : womanStr);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -309,14 +306,12 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 mProgressDialog.cancel();
-                Toast.makeText(RegisterActivity.this, response.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, getText(R.string.prompt_register_success), Toast.LENGTH_LONG).show();
 
                 backToLoginActivity();
             }
         }, errorListener);
         requestQueue.add(request);
-
-        return false;
     }
 
     public void showDatePickerDialog(View view) {
@@ -332,24 +327,11 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-                        // Display Selected date in textbox
-
-                        if (year > mYear)
-                            view.updateDate(mYear, mMonth, mDay);
-
-                        if (monthOfYear > mMonth && year == mYear)
-                            view.updateDate(mYear, mMonth, mDay);
-
-                        if (dayOfMonth > mDay && year == mYear && monthOfYear == mMonth)
-                            view.updateDate(mYear, mMonth, mDay);
-
-                        mDateView.setText(dayOfMonth + "-"
-                                + (monthOfYear + 1) + "-" + year);
-
+                        mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
                     }
                 }, mYear, mMonth, mDay);
-        dpd.getDatePicker().setMinDate(Validator.minDate);
-        dpd.getDatePicker().setMaxDate(Validator.maxDate);
+        dpd.getDatePicker().setMinDate(DateFormatter.minDate);
+        dpd.getDatePicker().setMaxDate(DateFormatter.maxDate);
         dpd.show();
 
     }
