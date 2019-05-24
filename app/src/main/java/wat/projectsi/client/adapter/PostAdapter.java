@@ -34,17 +34,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int i) {
-        holder.mProfilePictureView.setImageBitmap(mPostItemList.get(i).getProfilePicture());
-        holder.mNameView.setText(mPostItemList.get(i).getName() + " " + mPostItemList.get(i).getSurname());
-        holder.mPostContentView.setText(mPostItemList.get(i).getPostContent());
-        holder.mPostDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(mPostItemList.get(i).getSentDate()));
-        View parent= ((View)holder.mNameView.getParent().getParent());
-        parent.findViewById(R.id.comment_button).setTag(mPostItemList.get(i).getPostId());
+        Post post=mPostItemList.get(i);
+        holder.mProfilePictureView.setImageBitmap(post.getProfilePicture());
+        holder.mNameView.setText(post.getName());
+        holder.mSurnameView.setText(post.getSurname());
+        holder.mPostContentView.setText(post.getPostContent());
+        holder.mPostDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(post.getSentDate()));
+        View parent= ((View)holder.mPostContentView.getParent().getParent());
+        parent.findViewById(R.id.comment_button).setTag(post.getPostId());
 
         holder.mPostImageRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
-        holder.mPostImageRecyclerView.setAdapter(new ImageRecyclerAdapter(mContext, mPostItemList.get(i).getImages()));
+        holder.mPostImageRecyclerView.setAdapter(new ImageRecyclerAdapter(mContext, post.getImages()));
         holder.mPostCommentRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.VERTICAL, false));
-        holder.mPostCommentRecyclerView.setAdapter( new CommentAdapter(mContext, mPostItemList.get(i).getCommentList()));
+        holder.mPostCommentRecyclerView.setAdapter( new CommentAdapter(mContext, post.getCommentList()));
     }
 
     @Override
@@ -58,6 +60,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         TextView mPostContentView;
         TextView mPostDateView;
         TextView mNameView;
+        TextView mSurnameView;
         ImageView mProfilePictureView;
 
         public PostViewHolder(View view) {
@@ -66,8 +69,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mPostCommentRecyclerView = view.findViewById(R.id.commentsRecyclerView);
             mPostContentView = view.findViewById(R.id.postContent);
             mPostDateView = view.findViewById(R.id.sendPostDate);
-            mNameView = view.findViewById(R.id.namePost);
-            mProfilePictureView=view.findViewById(R.id.postSenderPicture);
+            mNameView = view.findViewById(R.id.profileName);
+            mSurnameView = view.findViewById(R.id.profileSurname);
+            mProfilePictureView=view.findViewById(R.id.profilePicture);
         }
     }
 }

@@ -32,6 +32,7 @@ import java.util.Map;
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.SharedOurPreferences;
+import wat.projectsi.client.activity.MainActivity;
 import wat.projectsi.client.activity.UsersActivity;
 import wat.projectsi.client.model.User;
 
@@ -57,6 +58,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
 
         userListViewHolder.name.setText(user.getName());
         userListViewHolder.surname.setText(user.getSurname());
+        userListViewHolder.profile.setImageBitmap(user.getProfileImage());
 
         userListViewHolder.oneUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +96,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
     }
 
     private void sendInvitation(final Context context, User user) {
+
+        if(user.getId()== MainActivity.getCurrentUser().getId())return;
+
         RequestQueue MyRequestQueue = Volley.newRequestQueue(context);
 
         JSONObject jsonRequest = new JSONObject();
@@ -140,9 +145,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
         UserListViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            name = itemView.findViewById(R.id.name);
-            surname = itemView.findViewById(R.id.surname);
-            profile = itemView.findViewById(R.id.imageProfile);
+            name = itemView.findViewById(R.id.profileName);
+            surname = itemView.findViewById(R.id.profileSurname);
+            profile = itemView.findViewById(R.id.profilePicture);
             oneUser = itemView.findViewById(R.id.row);
         }
     }

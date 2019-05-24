@@ -2,7 +2,6 @@ package wat.projectsi.client.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import java.util.List;
 import wat.projectsi.R;
 import wat.projectsi.client.DateFormatter;
 import wat.projectsi.client.model.Comment;
+import wat.projectsi.client.model.User;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder>{
     private List<Comment> mCommentList;
@@ -33,10 +33,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int i) {
-        holder.mNameView.setText(mCommentList.get(i).getUser().getName() + " " + mCommentList.get(i).getUser().getSurname());
-        holder.mProfilePictureView.setImageBitmap(mCommentList.get(i).getUser().getProfileImage());
-        holder.mCommentContentView.setText(mCommentList.get(i).getCommentContest());
-        holder.mCommentDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(mCommentList.get(i).getSendDate()));
+        Comment comment =mCommentList.get(i);
+        User user =comment.getUser();
+        holder.mProfilePictureView.setImageBitmap(user.getProfileImage());
+        holder.mNameView.setText(user.getName());
+        holder.mSurnameView.setText(user.getSurname());
+        holder.mCommentContentView.setText(comment.getCommentContest());
+        holder.mCommentDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(comment.getSendDate()));
     }
 
     @Override
@@ -47,15 +50,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public class CommentViewHolder extends RecyclerView.ViewHolder {
         TextView mCommentContentView;
         TextView mCommentDateView;
-        ImageView mProfilePictureView;
         TextView mNameView;
+        TextView mSurnameView;
+        ImageView mProfilePictureView;
 
         public CommentViewHolder(View view) {
             super(view);
             mCommentContentView = view.findViewById(R.id.commentContent);
             mCommentDateView = view.findViewById(R.id.sendCommentDate);
-            mProfilePictureView = view.findViewById(R.id.commentSenderPicture);
-            mNameView = view.findViewById(R.id.nameComment);
+            mNameView = view.findViewById(R.id.profileName);
+            mSurnameView = view.findViewById(R.id.profileSurname);
+            mProfilePictureView=view.findViewById(R.id.profilePicture);
         }
     }
 }

@@ -22,6 +22,7 @@ import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.EditText;
@@ -52,6 +53,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.model.Comment;
+import wat.projectsi.client.model.User;
 import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
@@ -114,12 +116,14 @@ public class MainActivity extends AppCompatActivity
     private List<NotificationPost> mNotificationPostList;
     private List<Notification> mNotificationList;
     private PopupWindow mPopupWindow;
+    private NavigationView navigationView;
 
     private boolean isResponse = false;
     private static volatile boolean finished;
     private Handler handler;
     private static Lock lock = new ReentrantLock();
     private RequestQueue requestQueue;
+    private static User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,7 +165,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         mRecyclerPostView= findViewById(R.id.postRecyclerView);
@@ -179,6 +183,7 @@ public class MainActivity extends AppCompatActivity
         requestQueue = Volley.newRequestQueue(this);
 
         handler = new Handler();
+        requestCurrentUser();
         refresh();
         startTimerThread();
     }
@@ -492,6 +497,20 @@ public class MainActivity extends AppCompatActivity
         requestQueue.add(request);
     }
 
+    private void requestCurrentUser(){
+        GsonRequest<User> request = new GsonRequest<>(ConnectingURL.URL_UsersCurrent, User.class,
+                Misc.getSecureHeaders(this), new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                currentUser=response;
+                ((ImageView)navigationView.findViewById(R.id.profilePicture)).setImageBitmap(currentUser.getProfileImage());
+                ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
+            }
+        }, errorListener);
+
+        requestQueue.add(request);
+    }
+
     private void startTimerThread() {
 
         Runnable mTimerThread = new Runnable() {
@@ -561,5 +580,10 @@ public class MainActivity extends AppCompatActivity
     public void onToolbarClick(View view) {
         if(mPopupWindow!=null)
             closeNotification();
+    }
+
+    public static User getCurrentUser()
+    {
+        return currentUser;
     }
 }

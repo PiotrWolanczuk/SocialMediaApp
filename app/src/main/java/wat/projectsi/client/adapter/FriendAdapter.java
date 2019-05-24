@@ -55,6 +55,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
         userListViewHolder.name.setText(user.getName());
         userListViewHolder.surname.setText(user.getSurname());
+        userListViewHolder.profile.setImageBitmap(user.getProfileImage());
 
         userListViewHolder.oneUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,9 +139,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         FriendViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            name = itemView.findViewById(R.id.name);
-            surname = itemView.findViewById(R.id.surname);
-            profile = itemView.findViewById(R.id.imageProfile);
+            name = itemView.findViewById(R.id.profileName);
+            surname = itemView.findViewById(R.id.profileSurname);
+            profile = itemView.findViewById(R.id.profilePicture);
             oneUser = itemView.findViewById(R.id.row);
         }
     }

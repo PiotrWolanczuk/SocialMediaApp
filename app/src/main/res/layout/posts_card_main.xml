@@ -36,22 +36,10 @@
                     android:layout_height="wrap_content"
                     />
 
-                <ImageView
-                    android:id="@+id/postSenderPicture"
-                    android:layout_width="@dimen/profile_picture_size"
-                    android:layout_height="@dimen/profile_picture_size"
-                    android:background="@drawable/picture_border"
+                <include layout="@layout/user_profile"
                     android:layout_below="@id/sendPostDate"
-                    />
-
-                <TextView
-                    android:id="@+id/namePost"
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:layout_toEndOf="@id/postSenderPicture"
-                    android:layout_below="@id/sendPostDate"
+                    android:layout_width="wrap_content"
                     />
 
             </RelativeLayout>
