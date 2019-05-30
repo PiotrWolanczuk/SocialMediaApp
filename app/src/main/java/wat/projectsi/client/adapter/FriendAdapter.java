@@ -30,6 +30,7 @@ import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Picture;
 import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.model.User;
 
@@ -55,7 +56,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
         userListViewHolder.name.setText(user.getName());
         userListViewHolder.surname.setText(user.getSurname());
-        userListViewHolder.profile.setImageBitmap(user.getProfileImage());
+        new Picture(userListViewHolder.profile).execute(user.getProfileImage());
 
         userListViewHolder.oneUser.setOnClickListener(new View.OnClickListener() {
             @Override

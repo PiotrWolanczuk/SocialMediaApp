@@ -1,13 +1,11 @@
 package wat.projectsi.client.model;
 
-import android.graphics.Bitmap;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import wat.projectsi.client.Misc;
+import wat.projectsi.client.Picture;
 
 public class User implements Serializable {
     @SerializedName("userId")
@@ -20,9 +18,9 @@ public class User implements Serializable {
     private Date birthday;
 //    @SerializedName("pictureId")
 
-    private Bitmap profileImage;
+    private String profileImage;
 
-    public User(String name, String surname, int id, Bitmap profileImage) {
+    public User(String name, String surname, int id, String profileImage) {
         this.name = name;
         this.surname = surname;
         this.id = id;
@@ -41,8 +39,8 @@ public class User implements Serializable {
         return surname;
     }
 
-    public Bitmap getProfileImage() {
-        return profileImage==null? Misc.defaultAvatar : profileImage;
+    public String getProfileImage() {
+        return profileImage==null? Picture.defaultAvatar : profileImage;
     }
 
     public long getId() {

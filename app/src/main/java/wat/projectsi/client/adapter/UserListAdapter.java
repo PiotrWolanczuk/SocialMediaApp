@@ -3,7 +3,6 @@ package wat.projectsi.client.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,6 +30,7 @@ import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Picture;
 import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.activity.MainActivity;
 import wat.projectsi.client.activity.UsersActivity;
@@ -58,7 +58,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
 
         userListViewHolder.name.setText(user.getName());
         userListViewHolder.surname.setText(user.getSurname());
-        userListViewHolder.profile.setImageBitmap(user.getProfileImage());
+        new Picture(userListViewHolder.profile).execute(user.getProfileImage());
 
         userListViewHolder.oneUser.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -52,6 +52,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Picture;
 import wat.projectsi.client.model.Comment;
 import wat.projectsi.client.model.User;
 import wat.projectsi.client.request.GsonRequest;
@@ -503,7 +504,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(User response) {
                 currentUser=response;
-                ((ImageView)navigationView.findViewById(R.id.profilePicture)).setImageBitmap(currentUser.getProfileImage());
+                new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getProfileImage());
                 ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
             }
         }, errorListener);

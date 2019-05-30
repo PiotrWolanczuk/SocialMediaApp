@@ -15,6 +15,7 @@ import java.util.List;
 
 import wat.projectsi.R;
 import wat.projectsi.client.DateFormatter;
+import wat.projectsi.client.Picture;
 import wat.projectsi.client.model.Post;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder>{
@@ -35,7 +36,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int i) {
         Post post=mPostItemList.get(i);
-        holder.mProfilePictureView.setImageBitmap(post.getProfilePicture());
+        new Picture(holder.mProfilePictureView).execute(post.getProfilePicture());
         holder.mNameView.setText(post.getName());
         holder.mSurnameView.setText(post.getSurname());
         holder.mPostContentView.setText(post.getPostContent());
@@ -54,7 +55,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         return mPostItemList.size();
     }
 
-    public class PostViewHolder extends RecyclerView.ViewHolder {
+    class PostViewHolder extends RecyclerView.ViewHolder {
         RecyclerView mPostImageRecyclerView;
         RecyclerView mPostCommentRecyclerView;
         TextView mPostContentView;
@@ -63,7 +64,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         TextView mSurnameView;
         ImageView mProfilePictureView;
 
-        public PostViewHolder(View view) {
+        PostViewHolder(View view) {
             super(view);
             mPostImageRecyclerView = view.findViewById(R.id.imageRecyclerView);
             mPostCommentRecyclerView = view.findViewById(R.id.commentsRecyclerView);

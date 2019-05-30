@@ -75,31 +75,6 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/fb_sign_in_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in_fb"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/email_sign_in_button3"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in_email"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/profileEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="setUpNewPassword"
-                android:text="@string/forgot_password" />
-
             <TextView
                 android:id="@+id/signUpText"
                 android:layout_width="match_parent"

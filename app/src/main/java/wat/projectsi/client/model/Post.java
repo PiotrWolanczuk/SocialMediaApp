@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import wat.projectsi.client.Misc;
+import wat.projectsi.client.Picture;
 
 public class Post extends ViewModel implements Serializable {
     @SerializedName("postId")
@@ -29,7 +30,7 @@ public class Post extends ViewModel implements Serializable {
     private  String surname;
 //TODO: Implements pictures
     //@SerializedName("pictureEntityList")
-    private Bitmap profilePicture;
+    private String  profilePicture;
     private List<Bitmap> images;
 //    private Collection<PictureEntity> pictureEntityList;
     private List<Comment> mCommentList;
@@ -73,8 +74,8 @@ public class Post extends ViewModel implements Serializable {
         return images;
     }
 
-    public Bitmap getProfilePicture() {
-        return profilePicture==null? Misc.defaultAvatar : profilePicture;
+    public String getProfilePicture() {
+        return profilePicture==null? Picture.defaultAvatar : profilePicture;
     }
 
     public List<Comment> getCommentList() {
