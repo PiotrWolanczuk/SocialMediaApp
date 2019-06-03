@@ -1,19 +1,13 @@
 package wat.projectsi.client.model;
 
 import android.arch.lifecycle.ViewModel;
-import android.graphics.Bitmap;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import wat.projectsi.client.Misc;
-import wat.projectsi.client.Picture;
 
 public class Post extends ViewModel implements Serializable {
     @SerializedName("postId")
@@ -28,14 +22,11 @@ public class Post extends ViewModel implements Serializable {
     private String name;
     @SerializedName("surname")
     private  String surname;
-//TODO: Implements pictures
-    //@SerializedName("pictureEntityList")
     private String  profilePicture;
-    private List<Bitmap> images;
-//    private Collection<PictureEntity> pictureEntityList;
+    private List<String> images;
     private List<Comment> mCommentList;
 
-    public Post(long postId ,String postContent, Date sentDate, Long userId, String name, String surname, List<Bitmap> images) {
+    public Post(long postId ,String postContent, Date sentDate, Long userId, String name, String surname, List<String> images) {
         this.postId=postId;
         this.postContent = postContent;
         this.sentDate = sentDate;
@@ -70,12 +61,12 @@ public class Post extends ViewModel implements Serializable {
         return surname;
     }
 
-    public List<Bitmap> getImages() {
+    public List<String> getImages() {
         return images;
     }
 
     public String getProfilePicture() {
-        return profilePicture==null? Picture.defaultAvatar : profilePicture;
+        return profilePicture;
     }
 
     public List<Comment> getCommentList() {

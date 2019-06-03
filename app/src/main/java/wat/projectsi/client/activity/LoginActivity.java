@@ -56,8 +56,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-//        mEmailView.setText("user1");
-//        mPasswordView.setText("UserPass1");
+        mEmailView.setText("user1");
+        mPasswordView.setText("UserPass1");
 
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -136,9 +136,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         MyRequestQueue.add(MyJsonRequest);
-    }
-
-    public void setUpNewPassword(View view) {
     }
 
     public void setUpNewAccount(View view) {

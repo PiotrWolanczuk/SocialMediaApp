@@ -40,7 +40,7 @@ public class User implements Serializable {
     }
 
     public String getProfileImage() {
-        return profileImage==null? Picture.defaultAvatar : profileImage;
+        return profileImage;
     }
 
     public long getId() {
