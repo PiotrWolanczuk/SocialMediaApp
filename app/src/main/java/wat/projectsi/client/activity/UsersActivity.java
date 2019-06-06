@@ -11,11 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +31,7 @@ import wat.projectsi.client.adapter.FriendAdapter;
 import wat.projectsi.client.adapter.UserListAdapter;
 import wat.projectsi.client.model.User;
 
-public class UsersActivity extends AppCompatActivity {
+public class UsersActivity extends BasicActivity {
 
     private RecyclerView recyclerView;
     private TextView emptyView;
@@ -69,14 +67,12 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void showPeople(String name, String surname) {
-        final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getResources().getString(R.string.message_progress));
         progressDialog.show();
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
-                ConnectingURL.URL_Users + "?name="+name+"&surname="+surname, null, new Response.Listener<JSONArray>() {
+                ConnectingURL.URL_Users_ByName + "?name="+name+"&surname="+surname, null, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray response) {
@@ -123,11 +119,8 @@ public class UsersActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
     private void showFriends( ) {
-        final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getResources().getString(R.string.message_progress));
         progressDialog.show();
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
                 ConnectingURL.URL_Acquaintances, null, new Response.Listener<JSONArray>() {

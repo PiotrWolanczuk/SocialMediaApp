@@ -33,6 +33,7 @@ public class Picture extends AsyncTask<String, String, Bitmap> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if(bitmap==null)bitmap=Misc.defaultAvatar;
         return bitmap;
     }
 

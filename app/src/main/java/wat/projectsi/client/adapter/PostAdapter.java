@@ -37,8 +37,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public void onBindViewHolder(@NonNull PostViewHolder holder, int i) {
         Post post=mPostItemList.get(i);
         new Picture(holder.mProfilePictureView).execute(post.getProfilePicture());
+        holder.mProfilePictureView.setTag(post.getUserId());
         holder.mNameView.setText(post.getName());
+        holder.mNameView.setTag(post.getUserId());
         holder.mSurnameView.setText(post.getSurname());
+        holder.mSurnameView.setTag(post.getUserId());
         holder.mPostContentView.setText(post.getPostContent());
         holder.mPostDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(post.getSentDate()));
         View parent= ((View)holder.mPostContentView.getParent().getParent());

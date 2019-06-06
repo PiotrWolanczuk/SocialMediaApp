@@ -36,11 +36,12 @@
                     android:layout_height="wrap_content"
                     />
 
-                <include layout="@layout/user_profile"
-                    android:layout_below="@id/sendPostDate"
-                    android:layout_height="wrap_content"
+                <include
+                    layout="@layout/user_profile"
                     android:layout_width="wrap_content"
-                    />
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/sendPostDate"
+                    android:onClick="showProfile" />
 
             </RelativeLayout>
 

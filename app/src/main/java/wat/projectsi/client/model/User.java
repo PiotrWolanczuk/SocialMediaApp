@@ -16,8 +16,9 @@ public class User implements Serializable {
     private String surname;
     @SerializedName("birthday")
     private Date birthday;
-//    @SerializedName("pictureId")
-
+    @SerializedName("gender")
+    private String gender;
+   // @SerializedName("pictureId")
     private String profileImage;
 
     public User(String name, String surname, int id, String profileImage) {
@@ -49,5 +50,9 @@ public class User implements Serializable {
 
     public Date getBirthday() {
         return birthday;
+    }
+
+    public String getGender() {
+        return gender;
     }
 }

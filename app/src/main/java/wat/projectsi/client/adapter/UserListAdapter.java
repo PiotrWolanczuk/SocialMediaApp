@@ -32,6 +32,7 @@ import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Picture;
 import wat.projectsi.client.SharedOurPreferences;
+import wat.projectsi.client.activity.BasicActivity;
 import wat.projectsi.client.activity.MainActivity;
 import wat.projectsi.client.activity.UsersActivity;
 import wat.projectsi.client.model.User;
@@ -59,6 +60,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
         userListViewHolder.name.setText(user.getName());
         userListViewHolder.surname.setText(user.getSurname());
         new Picture(userListViewHolder.profile).execute(user.getProfileImage());
+        userListViewHolder.profile.setTag(user.getId());
+        userListViewHolder.name.setTag(user.getId());
+        userListViewHolder.surname.setTag(user.getId());
 
         userListViewHolder.oneUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,10 +89,11 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
                 dialog.dismiss();
             }
         });
-        dialog.setNegativeButton("View  profile", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton(R.string.prompt_view_profile, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO: go to user's profile
+                if(context instanceof BasicActivity)
+                    ((BasicActivity)context).showProfile(user.getId());
                 dialog.dismiss();
             }
         });

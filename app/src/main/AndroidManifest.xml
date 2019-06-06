@@ -46,6 +46,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".client.activity.RegisterActivity" />
+        <activity android:name=".client.activity.ProfileActivity" />
     </application>
 
 </manifest>

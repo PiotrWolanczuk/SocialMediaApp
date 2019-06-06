@@ -37,7 +37,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         Comment comment =mCommentList.get(i);
         User user =comment.getUser();
         new Picture(holder.mProfilePictureView).execute(user.getProfileImage());
+        holder.mProfilePictureView.setTag(user.getId());
         holder.mNameView.setText(user.getName());
+        holder.mNameView.setTag(user.getId());
+        holder.mSurnameView.setTag(user.getId());
         holder.mSurnameView.setText(user.getSurname());
         holder.mCommentContentView.setText(comment.getCommentContest());
         holder.mCommentDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(comment.getSendDate()));

@@ -17,8 +17,10 @@ public class ConnectingURL {
     public static final String URL_Notifications_Messages = getURL() +"/notifications/messages";
     public static final String URL_Notifications_Post = getURL() +"/notifications/posts";
     public static final String URL_Acquaintances = getURL() +"/acquaintances";
-    public static final String URL_Users = getURL()+"/users/byname";
-    public static final String URL_UsersCurrent = getURL()+"/users/current";
+    public static final String URL_Users = getURL()+"/users";
+    public static final String URL_Users_ByName = getURL()+"/users/byname";
+    public static final String URL_Users_Current = getURL()+"/users/current";
+    public static final String URL_Users_Profile = getURL()+"/users/profile";
     public static final String URL_Violations = getURL()+"/violations";
     public static final String URL_ViolationsComments = getURL()+"/violations/comments";
     public static final String URL_ViolationsPosts = getURL()+"/violations/posts";
