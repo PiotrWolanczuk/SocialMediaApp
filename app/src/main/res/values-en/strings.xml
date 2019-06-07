@@ -94,10 +94,12 @@
     <string name="prompt_notification_desc_reject">Rejected invitation to acquaintance.</string>
     <string name="prompt_notification_desc_end">Acquaintance has been end.</string>
     <string name="prompt_notification_desc_message">New message.</string>
-    <string name="prompt_notification_desc_post">New post.</string>
+    <string name="prompt_notification_desc_post">Comment your post.</string>
 
     <!-- Strings related to view users -->
     <string name="no_data_available">There is no data</string>
+    <string name="prompt_delete_friend">Delete</string>
+    <string name="prompt_view_profile">View Profile</string>
 
     <!-- Strings related to invite-->
     <string name="people">People</string>
@@ -105,5 +107,9 @@
     <string name="invite">Invite</string>
     <string name="friends">Friends</string>
 
-    <string name="deleteFriend">Friend is deleted</string>
+    <string name="delete_friend">Friend is deleted</string>
+
+    <!-- Strings related to profile-->
+    <string name="prompt_birthday">Birthday</string>
+    <string name="prompt_friend_list">Friends list</string>
 </resources>

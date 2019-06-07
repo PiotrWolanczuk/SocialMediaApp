@@ -14,7 +14,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -52,7 +51,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Picture;
 import wat.projectsi.client.model.Comment;
+import wat.projectsi.client.model.Profile;
 import wat.projectsi.client.model.User;
 import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.Misc;
@@ -68,43 +69,8 @@ import wat.projectsi.client.model.Post;
 
 //user1 UserPass1
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BasicActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private final Response.ErrorListener errorListener = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            if (error instanceof NetworkError || error instanceof TimeoutError || error == null || error.networkResponse == null) {
-                Log.e("NetworkError", error.toString());
-                Toast.makeText(getApplicationContext(), R.string.error_no_network_available, Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            Log.e("APIResponse", error.toString());
-            System.out.println("Kod " + error.networkResponse.statusCode);
-
-            switch (error.networkResponse.statusCode) {
-//                case 200://"OK"
-//                case 201://"Created"
-//                    break;
-//                case 400://"Bad Request"
-//                    break;
-//                case 401://"Unauthorized"
-//                    break;
-//                case 403://"Forbidden"
-//                    break;
-//                case 404://"Not Found"
-//                    break;
-//                case 405: //"Method Not Allowed"
-//                    break;
-//                case 415://"Unsupported Media Type" ->BadJason
-//                    break;
-//                case 500://"Fail! -> Cause: User Role not find."
-//                    break;
-                default:
-                    Toast.makeText(MainActivity.this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 
     private RecyclerView mRecyclerPostView;
     private PostAdapter mPostAdapter;
@@ -122,7 +88,6 @@ public class MainActivity extends AppCompatActivity
     private static volatile boolean finished;
     private Handler handler;
     private static Lock lock = new ReentrantLock();
-    private RequestQueue requestQueue;
     private static User currentUser;
 
     @Override
@@ -180,7 +145,6 @@ public class MainActivity extends AppCompatActivity
         mNotificationAdapter = new NotificationAdapter(mNotificationList, MainActivity.this);
         mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
 
-        requestQueue = Volley.newRequestQueue(this);
 
         handler = new Handler();
         requestCurrentUser();
@@ -227,6 +191,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
+            showCurrentProfile(findViewById(R.id.nav_view));
 
         } else if (id == R.id.nav_gallery) {
 
@@ -498,12 +463,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void requestCurrentUser(){
-        GsonRequest<User> request = new GsonRequest<>(ConnectingURL.URL_UsersCurrent, User.class,
+        GsonRequest<User> request = new GsonRequest<>(ConnectingURL.URL_Users_Current, User.class,
                 Misc.getSecureHeaders(this), new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 currentUser=response;
-                ((ImageView)navigationView.findViewById(R.id.profilePicture)).setImageBitmap(currentUser.getProfileImage());
+                new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getProfileImage());
                 ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
             }
         }, errorListener);
@@ -586,4 +551,5 @@ public class MainActivity extends AppCompatActivity
     {
         return currentUser;
     }
+
 }

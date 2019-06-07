@@ -4,21 +4,20 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import java.util.HashMap;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import wat.projectsi.R;
 
 
 public class Misc {
     public static final long refreshTime = 1000 ;
-
     public static final Bitmap defaultAvatar;
-
     static{
         Bitmap bitmap=null;
         try {
-           bitmap=BitmapFactory.decodeResource(getApplication().getResources(),R.drawable.default_avatar);
+           bitmap = BitmapFactory.decodeResource(getApplication().getResources(), R.drawable.default_avatar);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,5 +38,6 @@ public class Misc {
         return (Application) Class.forName("android.app.ActivityThread")
                 .getMethod("currentApplication").invoke(null, (Object[]) null);
     }
+
 
 }

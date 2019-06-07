@@ -95,10 +95,13 @@
     <string name="prompt_notification_desc_reject">Odrzuconow zaproszenie do znajomych.</string>
     <string name="prompt_notification_desc_end">Zakończenie znajomości.</string>
     <string name="prompt_notification_desc_message">Nowa wiadomość.</string>
-    <string name="prompt_notification_desc_post">Nowy post.</string>
+    <string name="prompt_notification_desc_post">Skomentował twój post.</string>
 
     <!-- Strings related to view users -->
     <string name="no_data_available">Nie ma danych</string>
+    <string name="prompt_delete_friend">Usuń</string>
+    <string name="prompt_view_profile">Pokaż profil</string>
+
 
     <!-- Strings related to invite-->
     <string name="people">Ludzie</string>
@@ -107,6 +110,10 @@
     <string name="friends">Znajomi</string>
 
 
-    <string name="deleteFriend">Usunieto znajomego</string>
+    <string name="delete_friend">Usunieto znajomego</string>
+
+    <!-- Strings related to profile-->
+    <string name="prompt_birthday">Data urodzenia</string>
+    <string name="prompt_friend_list">Lista znajomych</string>
 
 </resources>

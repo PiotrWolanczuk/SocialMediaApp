@@ -3,6 +3,7 @@ package wat.projectsi.client.activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -25,8 +26,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,11 +44,9 @@ public class NewPostActivity extends AppCompatActivity {
     Button addPhoto;
     EditText newPostText;
 
-    private static ArrayList<Integer> images = new ArrayList<>();
     private static int RESULT_LOAD_IMAGE = 1;
-    private static ArrayList<String> hashcodes = new ArrayList<>();
+    private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
     String messageText;
-    private GalleryAdapter galleryAdapter;
     private GridView gvGallery;
     String imageEncoded;
     List<String> imagesEncodedList;
@@ -63,13 +63,18 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     public void send_new_post(View view) {
-        if (hashcodes.size() == 0)
-            hashcodes.add("{}");
         messageText = String.valueOf(newPostText.getText());
-        if (messageText.isEmpty())
-            consumeNewPostAPI("{}", hashcodes);
-        else
-            consumeNewPostAPI(messageText, hashcodes);
+        if (bitmaps.size() != 0){
+            if (messageText.isEmpty())
+                consumeNewPostAPI("{}", bitmaps);
+            else
+                consumeNewPostAPI(messageText, bitmaps);
+        }else{
+            if (messageText.isEmpty())
+                consumeNewPostAPI("{}", null);
+            else
+                consumeNewPostAPI(messageText, null);
+        }
     }
 
     public void add_photo_from_gallery(View view) {
@@ -83,23 +88,28 @@ public class NewPostActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
-            // When an Image is picked
             if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK
                     && null != data) {
                 // Get the Image from data
 
                 String[] filePathColumn = { MediaStore.Images.Media.DATA };
                 imagesEncodedList = new ArrayList<>();
+                GalleryAdapter galleryAdapter;
                 if(data.getData()!=null){
 
                     Uri mImageUri=data.getData();
 
-                    images.add(mImageUri.hashCode());
-                    hashcodes.add(Integer.toString(images.get(images.size() - 1)));
-
                     Cursor cursor = getContentResolver().query(mImageUri,
                             filePathColumn, null, null, null);
                     cursor.moveToFirst();
+
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
+                        bitmaps.add(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     imageEncoded  = cursor.getString(columnIndex);
@@ -123,11 +133,16 @@ public class NewPostActivity extends AppCompatActivity {
                             ClipData.Item item = mClipData.getItemAt(i);
                             Uri uri = item.getUri();
 
-                            hashcodes.add(Integer.toString(uri.hashCode()));
-
                             mArrayUri.add(uri);
                             Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
                             cursor.moveToFirst();
+
+                            try {
+                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                                bitmaps.add(bitmap);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
                             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                             imageEncoded  = cursor.getString(columnIndex);
@@ -155,19 +170,24 @@ public class NewPostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void consumeNewPostAPI(final String text, final ArrayList imageHashcodes) {
+    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 1, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+    private void consumeNewPostAPI(final String text, final List<Bitmap> imageBitmaps) {
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
         final JSONObject jsonRequest = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        JSONObject listElement = new JSONObject();
+        final JSONArray jsonArray = new JSONArray();
+        final JSONObject jsonElement = new JSONObject();
         try {
-            for (int i = 0; i < imageHashcodes.size(); i++) {
-                System.out.println(imageHashcodes.get(i));
-                listElement.put("hashCode", imageHashcodes.get(i));
-                jsonArray.put(listElement);
+            if(imageBitmaps != null){
+                for(int i = 0; i < imageBitmaps.size(); i++){
+                    jsonElement.put("picture"+i, getFileDataFromDrawable(imageBitmaps.get(i)));
+                    jsonArray.put(jsonElement);
+                }
             }
-
             jsonRequest.put("pictureEntityCollection", jsonArray);
             jsonRequest.put("postContent", text);
         } catch (JSONException e) {

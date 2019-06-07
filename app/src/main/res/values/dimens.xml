@@ -7,4 +7,7 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="nav_header_profile_picture_size">90dp</dimen>
     <dimen name="profile_picture_size">45dp</dimen>
+    <dimen name="profile_picture_display_size">90dp</dimen>
+    <dimen name="recycle_view_user_size_margin">8dp</dimen>
+    <dimen name="profile_view_user_list_size">150dp</dimen>
 </resources>

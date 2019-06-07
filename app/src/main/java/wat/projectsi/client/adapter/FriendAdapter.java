@@ -30,7 +30,9 @@ import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Picture;
 import wat.projectsi.client.SharedOurPreferences;
+import wat.projectsi.client.activity.BasicActivity;
 import wat.projectsi.client.model.User;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder>{
@@ -55,7 +57,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
         userListViewHolder.name.setText(user.getName());
         userListViewHolder.surname.setText(user.getSurname());
-        userListViewHolder.profile.setImageBitmap(user.getProfileImage());
+        new Picture(userListViewHolder.profile).execute(user.getProfileImage());
+
+        userListViewHolder.name.setTag(user.getId());
+        userListViewHolder.surname.setTag(user.getId());
+        userListViewHolder.profile.setTag(user.getId());
 
         userListViewHolder.oneUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +74,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     private void showUserDialog(final Context context, final User user) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
-        dialog.setPositiveButton("usun", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(context.getText(R.string.delete_friend), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteFromFriends(context, user);
@@ -82,10 +88,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
                 dialog.dismiss();
             }
         });
-        dialog.setNegativeButton("View  profile", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton(R.string.prompt_view_profile, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO: go to user's profile
+                if(context instanceof BasicActivity)
+                    ((BasicActivity)context).showProfile(user.getId());
                 dialog.dismiss();
             }
         });
@@ -107,7 +114,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(context, context.getResources().getString(R.string.deleteFriend), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.delete_friend), Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override

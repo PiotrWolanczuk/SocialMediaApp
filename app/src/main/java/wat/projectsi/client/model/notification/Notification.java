@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import wat.projectsi.client.Misc;
+import wat.projectsi.client.Picture;
 
 public abstract class Notification extends ViewModel implements Serializable {
     @SerializedName("notificationId")

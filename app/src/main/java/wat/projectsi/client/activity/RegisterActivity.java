@@ -128,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
         mSurnameView = findViewById(R.id.surname);
         mLoginView = findViewById(R.id.login);
         mAcceptTermsView = findViewById(R.id.acceptTerms);
-        mDateView = findViewById(R.id.date);
+        mDateView = findViewById(R.id.birthday);
 
         mProgressDialog = new ProgressDialog(this);
         mGenderView = findViewById(R.id.genderSwitch);
