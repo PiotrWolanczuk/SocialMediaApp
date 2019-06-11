@@ -71,6 +71,7 @@
     <string name="profile">Profile</string>
     <string name="gallery">Gallery</string>
     <string name="users">Users</string>
+    <string name="statute">Statute</string>
 
     <!-- String related to posts -->
     <string name="prompt_report">Report</string>

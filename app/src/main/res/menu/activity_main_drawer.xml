@@ -20,6 +20,10 @@
             android:id="@+id/nav_friends"
             android:icon="@drawable/baseline_people_outline_black_18dp"
             android:title="@string/friends" />
+        <item
+            android:id="@+id/nav_statute"
+            android:icon="@drawable/baseline_receipt_black_18dp"
+            android:title="@string/statute" />
     </group>
 
 </menu>

@@ -201,11 +201,33 @@ public class MainActivity extends BasicActivity
             Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
             userIntent.putExtra("people", "friends"); // friends
             startActivity(userIntent);
+        } else if(id == R.id.nav_statute){
+            showStatute();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showStatute() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final TextView statute = new TextView(this);
+        statute.setText(R.string.terms_text);
+        layout.addView(statute);
+
+        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setView(layout);
+        dialog.show();
     }
 
     private void writeName() {
