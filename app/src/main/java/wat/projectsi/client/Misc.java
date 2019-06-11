@@ -12,7 +12,7 @@ import wat.projectsi.R;
 
 
 public class Misc {
-    public static final long refreshTime = 1000 ;
+    public static final long refreshTime = 10000 ;
     public static final Bitmap defaultAvatar;
     static{
         Bitmap bitmap=null;

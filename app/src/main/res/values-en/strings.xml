@@ -78,6 +78,8 @@
     <string name="prompt_comment">Comment</string>
     <string name="prompt_successful_comment">Added comment</string>
     <string name="prompt_new_comment_hint">Write comment…</string>
+    <string name="prompt_delete">Delete</string>
+
 
     <!-- Strings related to sending posts -->
     <string name="send">Send</string>

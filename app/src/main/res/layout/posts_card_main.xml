@@ -112,6 +112,14 @@
                     android:layout_height="wrap_content"
                     android:onClick="addCommentRequest"
                     android:text="@string/prompt_comment" />
+
+                <Button
+                    android:id="@+id/delete_button"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="deleteRequest"
+                    android:text="@string/prompt_delete" />
             </LinearLayout>
 
         </RelativeLayout>
