@@ -54,6 +54,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Picture;
+import wat.projectsi.client.adapter.GalleryAdapter;
 import wat.projectsi.client.model.Comment;
 import wat.projectsi.client.model.Profile;
 import wat.projectsi.client.model.User;
@@ -195,9 +196,10 @@ public class MainActivity extends BasicActivity
 
         if (id == R.id.nav_profile) {
             showCurrentProfile(findViewById(R.id.nav_view));
-
         } else if (id == R.id.nav_gallery) {
-
+            Intent galleryIntent = new  Intent(MainActivity.this, GalleryActivity.class);
+            galleryIntent.putExtra("userId", currentUser.getId());
+            startActivity(galleryIntent);
         } else if(id == R.id.nav_people){
             writeName();
         }else if(id == R.id.nav_friends){
@@ -552,8 +554,8 @@ public class MainActivity extends BasicActivity
 
     public void refresh()
     {
-        requestNotifications();
-        requestPosts();
+//        requestNotifications();
+//        requestPosts();
     }
 
     @Override

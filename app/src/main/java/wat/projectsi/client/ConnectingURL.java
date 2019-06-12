@@ -25,6 +25,7 @@ public class ConnectingURL {
     public static final String URL_ViolationsComments = getURL()+"/violations/comments";
     public static final String URL_ViolationsPosts = getURL()+"/violations/posts";
     public static final String URL_Comments=getURL()+ "/comments";
+    public static final String URL_Pictures=getURL()+ "/pictures/all";
 
     public static String getURL()
     {
