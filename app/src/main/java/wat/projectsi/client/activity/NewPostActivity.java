@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -42,7 +43,9 @@ public class NewPostActivity extends AppCompatActivity {
 
     Button sendButton;
     Button addPhoto;
+    Button createPhoto;
     EditText newPostText;
+    ImageView proba;
 
     private static int RESULT_LOAD_IMAGE = 1;
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
@@ -50,6 +53,7 @@ public class NewPostActivity extends AppCompatActivity {
     private GridView gvGallery;
     String imageEncoded;
     List<String> imagesEncodedList;
+    private final int REQUEST_TAKE_PHOTO = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,15 @@ public class NewPostActivity extends AppCompatActivity {
         addPhoto = findViewById(R.id.add_photo_button);
         newPostText = findViewById(R.id.message_text);
         gvGallery = findViewById(R.id.gv);
+        proba = findViewById(R.id.proba);
+        createPhoto = findViewById(R.id.create_photo_button);
+
+        createPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createPhoto();
+            }
+        });
     }
 
     public void send_new_post(View view) {
@@ -87,6 +100,15 @@ public class NewPostActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK ){
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            proba.setImageBitmap(imageBitmap);
+        }else{
+            Toast.makeText(this, "Your image isn't here", Toast.LENGTH_LONG).show();
+        }
+
         try {
             if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK
                     && null != data) {
@@ -159,15 +181,18 @@ public class NewPostActivity extends AppCompatActivity {
                     }
                 }
             } else {
-                Toast.makeText(this, "You haven't picked Image",
+                Toast.makeText(this, "You haven't picked image",
                         Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG)
                     .show();
         }
+    }
 
-        super.onActivityResult(requestCode, resultCode, data);
+    public void createPhoto(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_TAKE_PHOTO);
     }
 
     public byte[] getFileDataFromDrawable(Bitmap bitmap) {

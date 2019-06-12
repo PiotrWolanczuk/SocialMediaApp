@@ -9,6 +9,7 @@ public class ConnectingURL {
     private static final String VBX_URL = "http://192.168.56.1:8080";   //VirtualBox Studio
     private static final String NOX_URL= "http://172.17.100.2:8080";    //NOX
     private static final String DOC_URL = "http://10.0.0.42:8080";      //Docker    //TODO: check if is
+    private static final String REAL_DEVICE = "http://192.168.43.20:8080";
 
     public static final String URL_Signup = getURL() +"/signup";
     public static final String URL_Signin = getURL() +"/signin";
@@ -25,9 +26,11 @@ public class ConnectingURL {
     public static final String URL_ViolationsComments = getURL()+"/violations/comments";
     public static final String URL_ViolationsPosts = getURL()+"/violations/posts";
     public static final String URL_Comments=getURL()+ "/comments";
+    public static final String URL_Pictures=getURL()+ "/pictures/all";
 
     public static String getURL()
     {
+        //return REAL_DEVICE;
         if(isGenymotion())
             return GEN_URL;
         else if(isVirtualBox())

@@ -80,5 +80,7 @@ public class Post extends ViewModel implements Serializable {
         mCommentList.addAll(commentList);
     }
 
-
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
 }

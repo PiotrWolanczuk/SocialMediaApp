@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,6 +54,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Picture;
+import wat.projectsi.client.adapter.GalleryAdapter;
 import wat.projectsi.client.model.Comment;
 import wat.projectsi.client.model.Profile;
 import wat.projectsi.client.model.User;
@@ -65,6 +68,7 @@ import wat.projectsi.client.model.notification.NotificationAcquaintance;
 import wat.projectsi.client.model.notification.NotificationMessage;
 import wat.projectsi.client.model.notification.NotificationPost;
 import wat.projectsi.client.model.Post;
+import wat.projectsi.client.request.VolleyJsonRequest;
 
 
 //user1 UserPass1
@@ -89,6 +93,8 @@ public class MainActivity extends BasicActivity
     private Handler handler;
     private static Lock lock = new ReentrantLock();
     private static User currentUser;
+    private String nameText;
+    private String surnameText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +150,7 @@ public class MainActivity extends BasicActivity
 
         mNotificationAdapter = new NotificationAdapter(mNotificationList, MainActivity.this);
         mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
-
+        requestQueue = Volley.newRequestQueue(this);
 
         handler = new Handler();
         requestCurrentUser();
@@ -192,20 +198,43 @@ public class MainActivity extends BasicActivity
 
         if (id == R.id.nav_profile) {
             showCurrentProfile(findViewById(R.id.nav_view));
-
         } else if (id == R.id.nav_gallery) {
-
+            Intent galleryIntent = new  Intent(MainActivity.this, GalleryActivity.class);
+            galleryIntent.putExtra("userId", currentUser.getId());
+            startActivity(galleryIntent);
         } else if(id == R.id.nav_people){
             writeName();
         }else if(id == R.id.nav_friends){
             Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
             userIntent.putExtra("people", "friends"); // friends
             startActivity(userIntent);
+        } else if(id == R.id.nav_statute){
+            showStatute();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showStatute() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final TextView statute = new TextView(this);
+        statute.setText(R.string.terms_text);
+        layout.addView(statute);
+
+        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setView(layout);
+        dialog.show();
     }
 
     private void writeName() {
@@ -215,20 +244,27 @@ public class MainActivity extends BasicActivity
         layout.setOrientation(LinearLayout.VERTICAL);
 
         final EditText name = new EditText(this);
-        name.setHint("Name");
+        name.setHint(R.string.name);
         layout.addView(name);
 
         final EditText surname = new EditText(this);
-        surname .setHint("Surname");
+        surname .setHint(R.string.surname);
         layout.addView(surname);
 
-        dialog.setPositiveButton("Szukaj", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
                 userIntent.putExtra("people", "users"); // users
-                userIntent.putExtra("name", name.getText().toString());
-                userIntent.putExtra("surname", surname.getText().toString());
+                nameText = name.getText().toString();
+                surnameText = surname.getText().toString();
+                if(nameText.isEmpty())
+                    nameText = " ";
+                if(surnameText.isEmpty())
+                    surnameText = " ";
+                userIntent.putExtra("name", nameText);
+                userIntent.putExtra("surname", surnameText);
+
                 dialog.dismiss();
                 startActivity(userIntent);
             }
@@ -336,6 +372,36 @@ public class MainActivity extends BasicActivity
         requestQueue.add(request);
     }
 
+    public void deleteRequest(View view){
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+
+        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.DELETE,
+                ConnectingURL.URL_Posts + "/" + view.getTag(), null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                System.out.println(response);
+                finish();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("APIResponse", error.toString());
+                error.printStackTrace();
+                Toast.makeText(MainActivity.this,
+                        getApplicationContext().getResources().getString(R.string.message_wrong),
+                        Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(MainActivity.this);
+            }
+        };
+
+        MyRequestQueue.add(MyJsonRequest);
+    }
+    
     private void requestNotifications()
     {
         {
@@ -468,7 +534,7 @@ public class MainActivity extends BasicActivity
             @Override
             public void onResponse(User response) {
                 currentUser=response;
-                new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getProfileImage());
+                new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getImage().getUrl());
                 ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
             }
         }, errorListener);

@@ -82,8 +82,7 @@ public class ProfileActivity extends BasicActivity {
         if(mUser!=null) {
             ((TextView) findViewById(R.id.profileName)).setText(mUser.getName());
             ((TextView) findViewById(R.id.profileSurname)).setText(mUser.getSurname());
-            new Picture(((ImageView) findViewById(R.id.profilePicture))).execute(mUser.getProfileImage());
-            //((TextView)findViewById(R.id.email)).setText(mUser.get);
+            new Picture(((ImageView) findViewById(R.id.profilePicture))).execute(mUser.getImage().getUrl());
             ((TextView) findViewById(R.id.gender)).setText(mUser.getGender().equals("MAN") ? getString(R.string.prompt_gender_man) : getString(R.string.prompt_gender_woman));
             ((TextView) findViewById(R.id.birthday)).setText(DateFormatter.convertToLocalDate(mUser.getBirthday()));
             if (((Profile) getIntent().getSerializableExtra("profile")).getPosts()!=null) {
@@ -92,6 +91,7 @@ public class ProfileActivity extends BasicActivity {
             }
 
             for (Post post : mPostList) {
+                requestPostUser(post.getUserId(), post);
                 requestComments(post.getPostId());
             }
         }
@@ -112,7 +112,13 @@ public class ProfileActivity extends BasicActivity {
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject jsonObject = response.getJSONObject(i);
                             if (response.getJSONObject(i).getString("state").equals("APPROVED")) {
-                                mUserList.add(new Gson().fromJson(jsonObject.getJSONObject("friend").toString(), User.class));
+                                JSONObject friend = jsonObject.getJSONObject("friend");
+                                User user = new User(
+                                        friend.getString("firstName"),
+                                        friend.getString("lastName"),
+                                        friend.getInt("userId"),
+                                        friend.getJSONObject("pictureId").getString("hashCode"));
+                                mUserList.add(user);
                             }
                         }
 
@@ -144,6 +150,7 @@ public class ProfileActivity extends BasicActivity {
 
                             outerLoop:
                             for (Comment comment : response) {
+                                requestCommentUser(comment.getUser().getId(), comment);
                                 for (Comment oldComment : post.getCommentList()) {
                                     if (comment.getCommentId() == oldComment.getCommentId())
                                         continue outerLoop;

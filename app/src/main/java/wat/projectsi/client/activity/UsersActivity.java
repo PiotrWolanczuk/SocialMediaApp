@@ -26,6 +26,7 @@ import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.adapter.FriendAdapter;
 import wat.projectsi.client.adapter.UserListAdapter;
@@ -83,7 +84,9 @@ public class UsersActivity extends BasicActivity {
                         User user = new User(
                                 jsonObject.getString("firstName"),
                                 jsonObject.getString("lastName"),
-                                jsonObject.getInt("userId"));
+                                jsonObject.getInt("userId"),
+                                jsonObject.getJSONObject("pictureId").getString("hashCode"));
+
                         userList.add(user);
                     }
 
@@ -108,10 +111,7 @@ public class UsersActivity extends BasicActivity {
         {
             @Override
             public Map<String, String> getHeaders() {
-                HashMap<String, String> headers = new HashMap<>();
-                //headers.put("Content-Type", "application/json");
-                headers.put("Authorization", "Bearer " + SharedOurPreferences.getDefaults("token", UsersActivity.this));
-                return headers;
+                return Misc.getSecureHeaders(getApplicationContext());
             }
         }
         ;
@@ -135,7 +135,9 @@ public class UsersActivity extends BasicActivity {
                             User user = new User(
                                     friend.getString("firstName"),
                                     friend.getString("lastName"),
-                                    friend.getInt("userId"));
+                                    friend.getInt("userId"),
+                                    friend.getJSONObject("pictureId").getString("hashCode"));
+
                             userList.add(user);
                         }
                     }
@@ -159,10 +161,7 @@ public class UsersActivity extends BasicActivity {
         }) {
             @Override
             public Map<String, String> getHeaders() {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                headers.put("Authorization", "Bearer " + SharedOurPreferences.getDefaults("token", UsersActivity.this));
-                return headers;
+                return Misc.getSecureHeaders(getApplicationContext());
             }
         };
 

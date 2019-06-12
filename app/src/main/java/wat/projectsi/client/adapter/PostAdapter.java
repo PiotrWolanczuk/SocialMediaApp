@@ -46,6 +46,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.mPostDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(post.getSentDate()));
         View parent= ((View)holder.mPostContentView.getParent().getParent());
         parent.findViewById(R.id.comment_button).setTag(post.getPostId());
+        parent.findViewById(R.id.delete_button).setTag(post.getPostId());
 
         holder.mPostImageRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.mPostImageRecyclerView.setAdapter(new ImageRecyclerAdapter(mContext, post.getImages()));

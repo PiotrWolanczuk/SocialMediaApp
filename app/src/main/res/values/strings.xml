@@ -72,17 +72,20 @@
     <string name="profile">Profil</string>
     <string name="gallery">Galeria</string>
     <string name="users">Ludzie</string>
+    <string name="statute">Regulamin</string>
 
     <!-- String related to posts -->
     <string name="prompt_report">Zgłoś</string>
     <string name="prompt_comment">Skomentuj</string>
     <string name="prompt_successful_comment">Dodano komentarz</string>
     <string name="prompt_new_comment_hint">Napisz komentarz…</string>
+    <string name="prompt_delete">Usun</string>
 
     <!-- Strings related to sending posts -->
     <string name="send">Wyslij</string>
     <string name="add_photo">Dodaj zdjecie</string>
     <string name="write_here">Pisz tutaj…</string>
+    <string name="create_photo">Zrob zdjecie</string>
 
     <!-- Strings related to notifications -->
     <string name="read">Przeczytane</string>
@@ -101,6 +104,9 @@
     <string name="no_data_available">Nie ma danych</string>
     <string name="prompt_delete_friend">Usuń</string>
     <string name="prompt_view_profile">Pokaż profil</string>
+    <string name="search">Szukaj</string>
+    <string name="name">Imie</string>
+    <string name="surname">Nazwisko</string>
 
 
     <!-- Strings related to invite-->
@@ -115,5 +121,6 @@
     <!-- Strings related to profile-->
     <string name="prompt_birthday">Data urodzenia</string>
     <string name="prompt_friend_list">Lista znajomych</string>
+    <string name="prompt_change_picture">Zmien profilowe</string>
 
 </resources>
