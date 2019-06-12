@@ -36,7 +36,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int i) {
         Comment comment =mCommentList.get(i);
         User user =comment.getUser();
-        new Picture(holder.mProfilePictureView).execute(user.getProfileImage());
+        new Picture(holder.mProfilePictureView).execute(user.getImage().getUrl());
         holder.mProfilePictureView.setTag(user.getId());
         holder.mNameView.setText(user.getName());
         holder.mNameView.setTag(user.getId());

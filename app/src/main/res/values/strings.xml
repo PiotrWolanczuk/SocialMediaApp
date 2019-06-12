@@ -104,6 +104,9 @@
     <string name="no_data_available">Nie ma danych</string>
     <string name="prompt_delete_friend">Usuń</string>
     <string name="prompt_view_profile">Pokaż profil</string>
+    <string name="search">Szukaj</string>
+    <string name="name">Imie</string>
+    <string name="surname">Nazwisko</string>
 
 
     <!-- Strings related to invite-->

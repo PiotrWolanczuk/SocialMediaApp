@@ -93,6 +93,8 @@ public class MainActivity extends BasicActivity
     private Handler handler;
     private static Lock lock = new ReentrantLock();
     private static User currentUser;
+    private String nameText;
+    private String surnameText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,20 +244,27 @@ public class MainActivity extends BasicActivity
         layout.setOrientation(LinearLayout.VERTICAL);
 
         final EditText name = new EditText(this);
-        name.setHint("Name");
+        name.setHint(R.string.name);
         layout.addView(name);
 
         final EditText surname = new EditText(this);
-        surname .setHint("Surname");
+        surname .setHint(R.string.surname);
         layout.addView(surname);
 
-        dialog.setPositiveButton("Szukaj", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent userIntent = new Intent(MainActivity.this, UsersActivity.class);
                 userIntent.putExtra("people", "users"); // users
-                userIntent.putExtra("name", name.getText().toString());
-                userIntent.putExtra("surname", surname.getText().toString());
+                nameText = name.getText().toString();
+                surnameText = surname.getText().toString();
+                if(nameText.isEmpty())
+                    nameText = " ";
+                if(surnameText.isEmpty())
+                    surnameText = " ";
+                userIntent.putExtra("name", nameText);
+                userIntent.putExtra("surname", surnameText);
+
                 dialog.dismiss();
                 startActivity(userIntent);
             }
@@ -525,7 +534,7 @@ public class MainActivity extends BasicActivity
             @Override
             public void onResponse(User response) {
                 currentUser=response;
-                new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getProfileImage());
+                new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getImage().getUrl());
                 ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
             }
         }, errorListener);

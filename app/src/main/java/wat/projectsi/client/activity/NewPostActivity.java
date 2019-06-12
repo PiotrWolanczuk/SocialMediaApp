@@ -181,7 +181,7 @@ public class NewPostActivity extends AppCompatActivity {
                     }
                 }
             } else {
-                Toast.makeText(this, "You haven't picked Image",
+                Toast.makeText(this, "You haven't picked image",
                         Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
