@@ -85,6 +85,7 @@
     <string name="send">Send</string>
     <string name="add_photo">Add photo</string>
     <string name="write_here">Write here…</string>
+    <string name="create_photo">Take photo</string>
 
     <!-- Strings related to notifications -->
     <string name="read">Read</string>

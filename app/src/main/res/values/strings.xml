@@ -85,6 +85,7 @@
     <string name="send">Wyslij</string>
     <string name="add_photo">Dodaj zdjecie</string>
     <string name="write_here">Pisz tutaj…</string>
+    <string name="create_photo">Zrob zdjecie</string>
 
     <!-- Strings related to notifications -->
     <string name="read">Przeczytane</string>

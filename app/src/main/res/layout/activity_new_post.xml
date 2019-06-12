@@ -7,6 +7,10 @@
     android:orientation="vertical"
     tools:context=".client.activity.NewPostActivity">
 
+
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,6 +36,11 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/proba"
+        android:layout_weight="1"/>
 
         <GridView
             android:layout_width="match_parent"
@@ -63,8 +72,14 @@
                 android:onClick="add_photo_from_gallery"
                 android:text="@string/add_photo"
                 tools:ignore="ButtonStyle" />
+            <Button
+                android:id="@+id/create_photo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/create_photo"
+                tools:ignore="ButtonStyle" />
         </LinearLayout>
-
     </LinearLayout>
 
 </RelativeLayout>
