@@ -116,4 +116,6 @@
     <!-- Strings related to profile-->
     <string name="prompt_birthday">Birthday</string>
     <string name="prompt_friend_list">Friends list</string>
+    <string name="prompt_change_picture">Change profile picture</string>
+
 </resources>

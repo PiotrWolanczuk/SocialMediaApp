@@ -30,9 +30,10 @@ public class GalleryActivity extends AppCompatActivity {
 
     private Long currentUserId;
     private RequestQueue requestQueue;
-    String[] images;
-    UniversalImageLoader adapter;
-    ViewPager viewPager;
+    private String[] images;
+    private UniversalImageLoader adapter;
+    private ViewPager viewPager;
+    private long[] imagesId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +83,9 @@ public class GalleryActivity extends AppCompatActivity {
                 for (int i = 1; i < response.length(); i++) {
                     picture = response.getJSONObject(i);
                     images[i - 1] = picture.getString("hashCode");
+                    imagesId[i-1] = picture.getLong("pictureId");
                 }
-                System.out.println(images.toString());
-                adapter = new UniversalImageLoader(GalleryActivity.this, ImageLoader.getInstance(), images);
+                adapter = new UniversalImageLoader(GalleryActivity.this, ImageLoader.getInstance(), images, currentUserId, imagesId);
                 viewPager.setAdapter(adapter);
             } catch (JSONException e) {
                 e.printStackTrace();

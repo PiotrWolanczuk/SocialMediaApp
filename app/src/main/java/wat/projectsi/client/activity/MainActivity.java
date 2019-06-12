@@ -554,8 +554,8 @@ public class MainActivity extends BasicActivity
 
     public void refresh()
     {
-//        requestNotifications();
-//        requestPosts();
+        requestNotifications();
+        requestPosts();
     }
 
     @Override
