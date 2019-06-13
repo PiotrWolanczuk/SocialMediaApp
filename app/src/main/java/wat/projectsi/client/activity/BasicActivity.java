@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -97,6 +98,11 @@ public abstract class BasicActivity extends AppCompatActivity {
             }
         }, errorListener);
 
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         requestQueue.add(request);
     }
 
@@ -122,6 +128,11 @@ public abstract class BasicActivity extends AppCompatActivity {
                 }
             }
         }, errorListener);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         requestQueue.add(request);
     }
@@ -153,6 +164,11 @@ public abstract class BasicActivity extends AppCompatActivity {
             }
         };
 
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         requestQueue.add(request);
     }
 
@@ -182,6 +198,11 @@ public abstract class BasicActivity extends AppCompatActivity {
                 return Misc.getSecureHeaders(getApplicationContext());
             }
         };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         requestQueue.add(request);
     }

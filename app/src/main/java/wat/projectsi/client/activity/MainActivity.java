@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -328,6 +329,11 @@ public class MainActivity extends BasicActivity
             }
         }, errorListener);
 
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         requestQueue.add(request);
     }
 
@@ -368,6 +374,11 @@ public class MainActivity extends BasicActivity
                     }
             }
         }, errorListener);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         requestQueue.add(request);
     }
@@ -494,6 +505,11 @@ public class MainActivity extends BasicActivity
         };
         requestQueue.add(request);
 
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         newCommentView.setText(null);
 
     }
@@ -538,6 +554,11 @@ public class MainActivity extends BasicActivity
                 ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
             }
         }, errorListener);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         requestQueue.add(request);
     }
@@ -616,6 +637,10 @@ public class MainActivity extends BasicActivity
     public static User getCurrentUser()
     {
         return currentUser;
+    }
+    public static void setCurrentUser(User user)
+    {
+        currentUser=user;
     }
 
 }

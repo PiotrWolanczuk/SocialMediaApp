@@ -122,5 +122,10 @@
     <string name="prompt_birthday">Data urodzenia</string>
     <string name="prompt_friend_list">Lista znajomych</string>
     <string name="prompt_change_picture">Zmien profilowe</string>
+    <string name="prompt_edit">Edytuj</string>
+
+    <!-- Strings related to edit profile-->
+    <string name="prompt_success_update">Zaktualizowano dane</string>
+    <string name="action_updating">Aktualizowanie danych</string>
 
 </resources>
