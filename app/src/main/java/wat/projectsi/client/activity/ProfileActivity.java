@@ -1,11 +1,20 @@
 package wat.projectsi.client.activity;
 
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -21,6 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -39,18 +49,12 @@ import wat.projectsi.client.model.User;
 import wat.projectsi.client.model.Profile;
 import wat.projectsi.client.request.GsonRequest;
 
-/*
-Wyświetlenie informacji podanych przez użytkownika, listy jego znajomych i umieszczonych przez niego postów
- */
-
 public class ProfileActivity extends BasicActivity {
 
-    private RecyclerView mFriendsRecyclerView;
     private RecyclerView mRecyclerPostView;
     private List<User> mUserList = new ArrayList<>();
 
     private RequestQueue mRequestQueue;
-    private FriendAdapter mFriendListAdapter;
     private PostAdapter mPostAdapter;
     private List<Post> mPostList;
 
@@ -60,11 +64,6 @@ public class ProfileActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-        mFriendsRecyclerView = findViewById(R.id.user_list);
-
-        mFriendsRecyclerView.setHasFixedSize(true);
-        mFriendsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mPostList = new ArrayList<>();
 
@@ -96,7 +95,9 @@ public class ProfileActivity extends BasicActivity {
             }
         }
 
-        showFriends();
+        if(mUser.getId()!=MainActivity.getCurrentUser().getId())
+            findViewById(R.id.profile_edit_button).setVisibility(View.GONE);
+        else findViewById(R.id.profile_edit_button).setVisibility(View.VISIBLE);
     }
 
     private void showFriends( ) {
@@ -122,7 +123,6 @@ public class ProfileActivity extends BasicActivity {
                             }
                         }
 
-                        mFriendsRecyclerView.setAdapter(mFriendListAdapter = new FriendAdapter(mUserList, ProfileActivity.this));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -178,5 +178,9 @@ public class ProfileActivity extends BasicActivity {
         }, errorListener);
 
         mRequestQueue.add(request);
+    }
+
+    public void profileEdit(View view) {
+        startActivity(new Intent(ProfileActivity.this, ProfileEditActivity.class));
     }
 }

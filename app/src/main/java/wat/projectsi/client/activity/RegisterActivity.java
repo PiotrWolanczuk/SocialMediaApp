@@ -35,13 +35,11 @@ import java.util.Calendar;
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.DateFormatter;
+import wat.projectsi.client.Misc;
 import wat.projectsi.client.Validator;
 
 
 public class RegisterActivity extends AppCompatActivity {
-
-    private static final String manStr = "man";
-    private static final String womanStr = "woman";
 
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
@@ -210,7 +208,6 @@ public class RegisterActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check if usser type valid characters
         if (!Validator.isNameValid(name)) {
             mNameView.setError(getString(R.string.error_invalid_characters));
             focusView = mNameView;
@@ -234,7 +231,6 @@ public class RegisterActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
@@ -245,14 +241,12 @@ public class RegisterActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        //check retyped password if same as password
         else if (!password.contentEquals(rePassword)) {
             mRePasswordView.setError(getString(R.string.error_repassword_password_not_same));
             focusView = mRePasswordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
@@ -263,7 +257,6 @@ public class RegisterActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        //Check if terms are accepted
         if (!mAcceptTermsView.isChecked()) {
             mAcceptTermsView.setError(getString(R.string.error_not_accepted_terms));
             focusView = mAcceptTermsView;
@@ -271,8 +264,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (cancel) {
-            // There was an error; don't attempt register and focus the first
-            // form field with an error.
             mProgressDialog.hide();
             focusView.requestFocus();
         } else {
@@ -296,7 +287,7 @@ public class RegisterActivity extends AppCompatActivity {
             data.put("name", name);
             data.put("surname", surname);
             data.put("birthDate", birthDate);
-            data.put("gender", isMan ? manStr : womanStr);
+            data.put("gender", isMan ? Misc.manStr : Misc.womanStr);
         } catch (JSONException e) {
             e.printStackTrace();
         }
