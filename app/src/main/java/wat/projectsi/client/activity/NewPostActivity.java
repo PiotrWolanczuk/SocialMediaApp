@@ -77,17 +77,17 @@ public class NewPostActivity extends AppCompatActivity {
 
     public void send_new_post(View view) {
         messageText = String.valueOf(newPostText.getText());
-        if (bitmaps.size() != 0){
+//        if (bitmaps.size() != 0){
+//            if (messageText.isEmpty())
+//                consumeNewPostAPI("{}", bitmaps);
+//            else
+//                consumeNewPostAPI(messageText, bitmaps);
+//        }else{
             if (messageText.isEmpty())
-                consumeNewPostAPI("{}", bitmaps);
-            else
-                consumeNewPostAPI(messageText, bitmaps);
-        }else{
-            if (messageText.isEmpty())
-                consumeNewPostAPI("{}", null);
+                Toast.makeText(this, R.string.message_wrong, Toast.LENGTH_LONG).show();
             else
                 consumeNewPostAPI(messageText, null);
-        }
+//        }
     }
 
     public void add_photo_from_gallery(View view) {

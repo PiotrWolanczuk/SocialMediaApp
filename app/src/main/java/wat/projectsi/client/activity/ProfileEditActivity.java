@@ -2,6 +2,7 @@ package wat.projectsi.client.activity;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -14,6 +15,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -132,7 +134,7 @@ public class ProfileEditActivity extends BasicActivity {
         try {
             data.put("firstName", name);
             data.put("lastName", surname);
-            data.put("birthDate", birthDate);
+            data.put("birthday", birthDate);
             data.put("gender", isMan ? Misc.manStr : Misc.womanStr);
             data.put("userId", MainActivity.getCurrentUser().getId());
             data.put("hashCode", MainActivity.getCurrentUser().getImage().getUrl());
@@ -146,16 +148,20 @@ public class ProfileEditActivity extends BasicActivity {
             public void onResponse(JSONObject response) {
                progressDialog.cancel();
                 Toast.makeText(ProfileEditActivity.this, getText(R.string.prompt_register_success), Toast.LENGTH_LONG).show();
-
                 requestCurrentUser();
-
                 finish();
             }
-        }
-        , errorListener){
+        }, new Response.ErrorListener() {
             @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("APIResponse", error.toString());
+                error.printStackTrace();
+                Toast.makeText(ProfileEditActivity.this, R.string.message_wrong, Toast.LENGTH_LONG).show();
+            }
+        }){
+        @Override
             public Map<String, String> getHeaders() {
-                return Misc.getSecureHeaders(getApplicationContext());
+                return Misc.getSecureHeaders(ProfileEditActivity.this);
             }
         };
         requestQueue.add(request);

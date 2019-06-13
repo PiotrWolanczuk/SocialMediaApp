@@ -27,6 +27,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,7 +87,8 @@ public class UniversalImageLoader extends PagerAdapter {
         dialog.setPositiveButton(context.getText(R.string.prompt_change_picture), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                changeUserProfile(hashCode);
+                changeUserProfile( MainActivity.getCurrentUser().getName(), MainActivity.getCurrentUser().getSurname(),
+                        MainActivity.getCurrentUser().getBirthday().toString(), hashCode, MainActivity.getCurrentUser().getGender());
                 dialog.dismiss();
             }
         });
@@ -100,52 +102,41 @@ public class UniversalImageLoader extends PagerAdapter {
         dialog.show();
     }
 
-    private void changeUserProfile(String hashCode) {
-        RequestQueue MyRequestQueue = Volley.newRequestQueue(activity);
-        final JSONObject jsonRequest = new JSONObject();
-        System.out.println(MainActivity.getCurrentUser().getBirthday());
-        System.out.println(MainActivity.getCurrentUser().getName());
-        System.out.println(MainActivity.getCurrentUser().getGender());
-        System.out.println(MainActivity.getCurrentUser().getSurname());
-        System.out.println(MainActivity.getCurrentUser().getId());
+    private void changeUserProfile(final String name, final String surname, final String birthDate, final String hashCode, final String gender) {
+        RequestQueue requestQueue = Volley.newRequestQueue(activity.getApplicationContext());
 
+        JSONObject data = new JSONObject();
         try {
-            jsonRequest.put("birthday",  MainActivity.getCurrentUser().getBirthday());
-            jsonRequest.put("firstName",  MainActivity.getCurrentUser().getName());
-            jsonRequest.put("gender",  MainActivity.getCurrentUser().getGender());
-            jsonRequest.put("hashCode",  hashCode);
-            jsonRequest.put("lastName",  MainActivity.getCurrentUser().getSurname());
-            jsonRequest.put("userId",  MainActivity.getCurrentUser().getId());
+            data.put("userId", MainActivity.getCurrentUser().getId());
+            data.put("firstName",name);
+            data.put("lastName", surname);
+            data.put("birthday",birthDate);
+            data.put("hashCode", hashCode);
+            data.put("gender",gender);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        System.out.println(jsonRequest);
 
-        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.PUT,
-                ConnectingURL.URL_Users, jsonRequest, new Response.Listener<JSONObject>() {
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ConnectingURL.URL_Users, data, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println(response);
-                System.out.println("Zmiana zaszla pomyslnie");
+                Toast.makeText(activity.getApplicationContext(), R.string.prompt_register_success, Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("APIResponse", error.toString());
                 error.printStackTrace();
-                Toast.makeText(activity,
-                        activity.getApplicationContext().getResources().getString(R.string.message_wrong), Toast.LENGTH_LONG).show();
+                Toast.makeText(activity.getApplicationContext(), R.string.message_wrong, Toast.LENGTH_LONG).show();
             }
-        }) {
+        }){
             @Override
             public Map<String, String> getHeaders() {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-
-                return headers;
+                return Misc.getSecureHeaders(activity.getApplicationContext());
             }
         };
-        MyRequestQueue.add(MyJsonRequest);
+        requestQueue.add(request);
     }
 
     @Override
