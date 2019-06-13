@@ -12,18 +12,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import wat.projectsi.R;
-import wat.projectsi.client.model.Profile;
-import wat.projectsi.client.model.User;
-import wat.projectsi.client.request.GsonRequest;
+import wat.projectsi.client.activity.MainActivity;
+import wat.projectsi.client.request.VolleyJsonRequest;
 
 public class UniversalImageLoader extends PagerAdapter {
 
@@ -31,17 +40,11 @@ public class UniversalImageLoader extends PagerAdapter {
     private ImageLoader imageLoader;
     private LayoutInflater inflater;
     private String[] images;
-    private long userId;
-    private long[] imagesId;
-    private User currentUser;
-    RequestQueue requestQueue;
 
-    public UniversalImageLoader(Activity activity, ImageLoader imageLoader, String[] images, long userId, long[] imagesId) {
+    public UniversalImageLoader(Activity activity, ImageLoader imageLoader, String[] images) {
         this.imageLoader = imageLoader;
         this.activity = activity;
         this.images = images;
-        this.userId = userId;
-        this.imagesId = imagesId;
     }
 
     @Override
@@ -66,24 +69,24 @@ public class UniversalImageLoader extends PagerAdapter {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pickImageForProfile(position, imagesId);
+                pickImageForProfile(images[position]);
             }
         });
         container.addView(itemView);
         return itemView;
     }
 
-    private void pickImageForProfile(int position, long[] imagesId) {
-        checkIfUserWant(activity.getApplicationContext());
+    private void pickImageForProfile(String hashCode) {
+        checkIfUserWant(activity.getApplicationContext(), hashCode);
     }
 
-    private void checkIfUserWant(Context context) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+    private void checkIfUserWant(Context context, final String hashCode) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
 
         dialog.setPositiveButton(context.getText(R.string.prompt_change_picture), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                changeUserProfile();
+                changeUserProfile(hashCode);
                 dialog.dismiss();
             }
         });
@@ -97,47 +100,56 @@ public class UniversalImageLoader extends PagerAdapter {
         dialog.show();
     }
 
-    private void changeUserProfile() {
-        requestCurrentUser();
+    private void changeUserProfile(String hashCode) {
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(activity);
+        final JSONObject jsonRequest = new JSONObject();
+        System.out.println(MainActivity.getCurrentUser().getBirthday());
+        System.out.println(MainActivity.getCurrentUser().getName());
+        System.out.println(MainActivity.getCurrentUser().getGender());
+        System.out.println(MainActivity.getCurrentUser().getSurname());
+        System.out.println(MainActivity.getCurrentUser().getId());
 
-//        requestQueue = Volley.newRequestQueue(activity.getApplicationContext());
-//        GsonRequest<User> request = new GsonRequest<>(Request.Method.PUT, ConnectingURL.URL_Users_Profile, Profile.class,
-//                Misc.getSecureHeaders(activity.getApplicationContext()), new Response.Listener<User>() {
-//            @Override
-//            public void onResponse(User response) {
-//
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e("API", error.getMessage());
-//            }
-//        });
+        try {
+            jsonRequest.put("birthday",  MainActivity.getCurrentUser().getBirthday());
+            jsonRequest.put("firstName",  MainActivity.getCurrentUser().getName());
+            jsonRequest.put("gender",  MainActivity.getCurrentUser().getGender());
+            jsonRequest.put("hashCode",  hashCode);
+            jsonRequest.put("lastName",  MainActivity.getCurrentUser().getSurname());
+            jsonRequest.put("userId",  MainActivity.getCurrentUser().getId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        System.out.println(jsonRequest);
 
-//        requestQueue.add(request);
+        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.PUT,
+                ConnectingURL.URL_Users, jsonRequest, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                System.out.println(response);
+                System.out.println("Zmiana zaszla pomyslnie");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("APIResponse", error.toString());
+                error.printStackTrace();
+                Toast.makeText(activity,
+                        activity.getApplicationContext().getResources().getString(R.string.message_wrong), Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+
+                return headers;
+            }
+        };
+        MyRequestQueue.add(MyJsonRequest);
     }
 
     @Override
     public void destroyItem(@NonNull View container, int position, @NonNull Object object) {
         ((ViewPager)container).removeView((View)object);
     }
-
-    private void requestCurrentUser(){
-        requestQueue = Volley.newRequestQueue(activity.getApplicationContext());
-        GsonRequest<User> request = new GsonRequest<>(ConnectingURL.URL_Users_Profile, User.class,
-                Misc.getSecureHeaders(activity.getApplicationContext()), new Response.Listener<User>() {
-            @Override
-            public void onResponse(User response) {
-                currentUser = response;
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("API", error.getMessage());
-            }
-        });
-
-        requestQueue.add(request);
-    }
-
 }
