@@ -32,16 +32,16 @@ public class ConnectingURL {
     public static String getURL()
     {
         //return REAL_DEVICE;
-        return REAL_DEVICE_HOME;
-//        if(isGenymotion())
-//            return GEN_URL;
-//        else if(isVirtualBox())
-//            return VBX_URL;
-//        else if(isNox())
-//            return NOX_URL;
-//        else if(isOtherEmulator())
-//            return AVD_URL;
-//        else return DOC_URL;
+//        return REAL_DEVICE_HOME;
+        if(isGenymotion())
+            return GEN_URL;
+        else if(isVirtualBox())
+            return VBX_URL;
+        else if(isNox())
+            return NOX_URL;
+        else if(isOtherEmulator())
+            return AVD_URL;
+        else return DOC_URL;
         //TODO: return on real devices
     }
 
