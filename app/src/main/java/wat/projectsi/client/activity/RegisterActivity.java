@@ -1,7 +1,9 @@
 package wat.projectsi.client.activity;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -14,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -179,8 +182,28 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void startTermActivity(View view) {
-        //TODO: After create termsActivity
+        showStatute();
 //        RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, TermsActivity.class));
+    }
+
+    private void showStatute() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final TextView statute = new TextView(this);
+        statute.setText(R.string.terms_text);
+        layout.addView(statute);
+
+        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setView(layout);
+        dialog.show();
     }
 
     private void backToLoginActivity() {
