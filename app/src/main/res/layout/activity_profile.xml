@@ -43,6 +43,14 @@
                     android:paddingEnd="10dp"
                     />
 
+                <Button
+                    android:id="@+id/profile_edit_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_edit"
+                    android:onClick="profileEdit"
+                    />
+
             </LinearLayout>
 
             <LinearLayout
@@ -109,27 +117,9 @@
                 android:layout_below="@id/profile_description"
                 android:background="@drawable/border"
                 >
-
-                <TextView
-                    android:id="@+id/user_list_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/prompt_friend_list"
-                    />
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/user_list"
-                    android:scrollbars="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/profile_view_user_list_size"
-                    android:layout_below="@id/user_list_name"
-                    android:background="@drawable/border"
-                    />
-
                 <include layout="@layout/post_list"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_below="@id/user_list"
                     android:background="@drawable/border"
                     />
 

@@ -120,5 +120,10 @@
     <string name="prompt_birthday">Birthday</string>
     <string name="prompt_friend_list">Friends list</string>
     <string name="prompt_change_picture">Change profile picture</string>
+    <string name="prompt_edit">Edit</string>
+
+    <!-- Strings related to edit profile-->
+    <string name="prompt_success_update">Updated profile data</string>
+    <string name="action_updating">Updating danych</string>
 
 </resources>

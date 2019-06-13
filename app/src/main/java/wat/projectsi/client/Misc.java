@@ -12,7 +12,12 @@ import wat.projectsi.R;
 
 
 public class Misc {
-    public static final long refreshTime = 10000 ;
+    public static final long refreshTime = 10000;
+    public static final int MY_SOCKET_TIMEOUT_MS=(int)(refreshTime/2L);
+
+    public static final String manStr = "man";
+    public static final String womanStr = "woman";
+
     public static final Bitmap defaultAvatar;
     static{
         Bitmap bitmap=null;

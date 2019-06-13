@@ -16,6 +16,7 @@ import java.util.List;
 import wat.projectsi.R;
 import wat.projectsi.client.DateFormatter;
 import wat.projectsi.client.Picture;
+import wat.projectsi.client.activity.MainActivity;
 import wat.projectsi.client.model.Post;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder>{
@@ -36,7 +37,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int i) {
         Post post=mPostItemList.get(i);
-        new Picture(holder.mProfilePictureView).execute(post.getProfilePicture());
+        new Picture(holder.mProfilePictureView).execute(MainActivity.getCurrentUser().getImage().getUrl());
         holder.mProfilePictureView.setTag(post.getUserId());
         holder.mNameView.setText(post.getName());
         holder.mNameView.setTag(post.getUserId());
