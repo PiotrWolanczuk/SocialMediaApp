@@ -135,7 +135,7 @@ public class ProfileEditActivity extends BasicActivity {
             data.put("birthDate", birthDate);
             data.put("gender", isMan ? Misc.manStr : Misc.womanStr);
             data.put("userId", MainActivity.getCurrentUser().getId());
-            data.put("hashCode", MainActivity.getCurrentUser().getProfileImage());
+            data.put("hashCode", MainActivity.getCurrentUser().getImage().getUrl());
         } catch (JSONException e) {
             e.printStackTrace();
         }
