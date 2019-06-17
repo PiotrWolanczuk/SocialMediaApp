@@ -7,39 +7,35 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.app.ActionBar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,25 +50,20 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.Picture;
-import wat.projectsi.client.adapter.GalleryAdapter;
-import wat.projectsi.client.model.Comment;
-import wat.projectsi.client.model.Profile;
-import wat.projectsi.client.model.User;
-import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.Misc;
+import wat.projectsi.client.Picture;
 import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.adapter.NotificationAdapter;
 import wat.projectsi.client.adapter.PostAdapter;
+import wat.projectsi.client.model.Comment;
+import wat.projectsi.client.model.Post;
+import wat.projectsi.client.model.User;
 import wat.projectsi.client.model.notification.Notification;
 import wat.projectsi.client.model.notification.NotificationAcquaintance;
 import wat.projectsi.client.model.notification.NotificationMessage;
 import wat.projectsi.client.model.notification.NotificationPost;
-import wat.projectsi.client.model.Post;
+import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.request.VolleyJsonRequest;
-
-
-//user1 UserPass1
 
 public class MainActivity extends BasicActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -393,7 +384,7 @@ public class MainActivity extends BasicActivity
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    System.out.println(response);
+                    Toast.makeText(MainActivity.this, R.string.done, Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }, new Response.ErrorListener() {
@@ -479,17 +470,53 @@ public class MainActivity extends BasicActivity
         }
     }
 
-    public void reportRequest(View view) {
-        View parent = view.getRootView().findViewById(R.id.postContent);
+    public void reportRequest(final View view) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText description = new EditText(this);
+        description.setHint(R.string.description);
+        layout.addView(description);
+
+        dialog.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(description.getText().toString().isEmpty())
+                    report(view, " ");
+                else
+                    report(view, description.getText().toString());
+            }
+        });
+
+        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setView(layout);
+        dialog.show();
+    }
+
+    private void report(View view, String description){
+        View button = view.getRootView().findViewById(R.id.delete_button);
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
-        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.DELETE,
-                ConnectingURL.URL_Posts + "/" + parent.getTag(), null, new Response.Listener<JSONObject>() {
+        JSONObject jsonRequest = new JSONObject();
+
+        try {
+            jsonRequest.put("postId",  button.getTag());
+            jsonRequest.put("violationDescription", description);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.POST,
+                ConnectingURL.URL_ViolationsPosts, jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println(response);
-                finish();
+                Toast.makeText(MainActivity.this, R.string.done, Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override

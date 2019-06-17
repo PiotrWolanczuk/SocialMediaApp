@@ -4,6 +4,7 @@
     <string name="message_wrong">Cos poszlo nie tak</string>
     <string name="message_progress">W toku</string>
     <string name="cancel">Anuluj</string>
+    <string name="done">Zrobione</string>
     <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
@@ -127,5 +128,8 @@
     <!-- Strings related to edit profile-->
     <string name="prompt_success_update">Zaktualizowano dane</string>
     <string name="action_updating">Aktualizowanie danych</string>
+
+    <!-- Strings related to violation-->
+    <string name="description">Opis</string>
 
 </resources>

@@ -147,7 +147,7 @@ public class ProfileEditActivity extends BasicActivity {
             @Override
             public void onResponse(JSONObject response) {
                progressDialog.cancel();
-                Toast.makeText(ProfileEditActivity.this, getText(R.string.prompt_register_success), Toast.LENGTH_LONG).show();
+                Toast.makeText(ProfileEditActivity.this, R.string.done, Toast.LENGTH_SHORT).show();
                 requestCurrentUser();
                 finish();
             }
