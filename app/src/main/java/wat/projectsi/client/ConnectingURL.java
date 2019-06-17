@@ -31,7 +31,7 @@ public class ConnectingURL {
 
     public static String getURL()
     {
-        //return REAL_DEVICE;
+//        return REAL_DEVICE;
 //        return REAL_DEVICE_HOME;
         if(isGenymotion())
             return GEN_URL;

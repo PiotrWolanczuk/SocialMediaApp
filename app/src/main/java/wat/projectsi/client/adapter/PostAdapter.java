@@ -44,6 +44,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.mSurnameView.setText(post.getSurname());
         holder.mSurnameView.setTag(post.getUserId());
         holder.mPostContentView.setText(post.getPostContent());
+        holder.mPostContentView.setTag(post.getUserId());
         holder.mPostDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(post.getSentDate()));
         View parent= ((View)holder.mPostContentView.getParent().getParent());
         parent.findViewById(R.id.comment_button).setTag(post.getPostId());

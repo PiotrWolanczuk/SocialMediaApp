@@ -57,6 +57,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
         userListViewHolder.name.setText(user.getName());
         userListViewHolder.surname.setText(user.getSurname());
+        if(user.getImage().getUrl() != null)
         new Picture(userListViewHolder.profile).execute(user.getImage().getUrl());
 
         userListViewHolder.name.setTag(user.getId());

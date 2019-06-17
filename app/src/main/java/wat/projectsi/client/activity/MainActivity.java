@@ -384,33 +384,36 @@ public class MainActivity extends BasicActivity
     }
 
     public void deleteRequest(View view){
-        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+        View parent = view.getRootView().findViewById(R.id.postContent);
+        if(currentUser.getId() == parent.getTag()){
+            RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
-        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.DELETE,
-                ConnectingURL.URL_Posts + "/" + view.getTag(), null, new Response.Listener<JSONObject>() {
+            VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.DELETE,
+                    ConnectingURL.URL_Posts + "/" + parent.getTag(), null, new Response.Listener<JSONObject>() {
 
-            @Override
-            public void onResponse(JSONObject response) {
-                System.out.println(response);
-                finish();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("APIResponse", error.toString());
-                error.printStackTrace();
-                Toast.makeText(MainActivity.this,
-                        getApplicationContext().getResources().getString(R.string.message_wrong),
-                        Toast.LENGTH_LONG).show();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return Misc.getSecureHeaders(MainActivity.this);
-            }
-        };
+                @Override
+                public void onResponse(JSONObject response) {
+                    System.out.println(response);
+                    finish();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("APIResponse", error.toString());
+                    error.printStackTrace();
+                    Toast.makeText(MainActivity.this,
+                            getApplicationContext().getResources().getString(R.string.message_wrong),
+                            Toast.LENGTH_LONG).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    return Misc.getSecureHeaders(MainActivity.this);
+                }
+            };
 
-        MyRequestQueue.add(MyJsonRequest);
+            MyRequestQueue.add(MyJsonRequest);
+        }
     }
     
     private void requestNotifications()
@@ -483,35 +486,36 @@ public class MainActivity extends BasicActivity
     public void addCommentRequest(View view) {
 
         TextView newCommentView =((View)(view.getParent().getParent())).findViewById(R.id.postNewComment);
-        JSONObject data = new JSONObject();
-        try {
+        if(!newCommentView.getText().equals("")){
+            JSONObject data = new JSONObject();
+            try {
 
-            data.put("commentContest", newCommentView.getText());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Comments + "/" + view.getTag(), data,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(MainActivity.this, getString(R.string.prompt_successful_comment), Toast.LENGTH_SHORT).show();
-                    }
-                }, errorListener) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return Misc.getSecureHeaders(MainActivity.this);
+                data.put("commentContest", newCommentView.getText());
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        };
-        requestQueue.add(request);
 
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                Misc.MY_SOCKET_TIMEOUT_MS,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Comments + "/" + view.getTag(), data,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Toast.makeText(MainActivity.this, getString(R.string.prompt_successful_comment), Toast.LENGTH_SHORT).show();
+                        }
+                    }, errorListener) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    return Misc.getSecureHeaders(MainActivity.this);
+                }
+            };
+            requestQueue.add(request);
 
-        newCommentView.setText(null);
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    Misc.MY_SOCKET_TIMEOUT_MS,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
+            newCommentView.setText(null);
+        }
     }
 
     public void acceptInvitation(View view) {
