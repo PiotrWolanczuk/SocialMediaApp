@@ -385,7 +385,7 @@ public class MainActivity extends BasicActivity
 
     public void deleteRequest(View view){
         View parent = view.getRootView().findViewById(R.id.postContent);
-        if(currentUser.getId() == parent.getTag()){
+        if(currentUser.getId() == (long)parent.getTag()){
             RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
             VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.DELETE,
@@ -480,7 +480,34 @@ public class MainActivity extends BasicActivity
     }
 
     public void reportRequest(View view) {
-        //TODO: report body
+        View parent = view.getRootView().findViewById(R.id.postContent);
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+
+        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.DELETE,
+                ConnectingURL.URL_Posts + "/" + parent.getTag(), null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                System.out.println(response);
+                finish();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("APIResponse", error.toString());
+                error.printStackTrace();
+                Toast.makeText(MainActivity.this,
+                        getApplicationContext().getResources().getString(R.string.message_wrong),
+                        Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(MainActivity.this);
+            }
+        };
+
+        MyRequestQueue.add(MyJsonRequest);
     }
 
     public void addCommentRequest(View view) {
