@@ -102,7 +102,7 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:onClick="reportRequest"
+                    android:onClick="reportRequestPost"
                     android:text="@string/prompt_report" />
 
                 <Button

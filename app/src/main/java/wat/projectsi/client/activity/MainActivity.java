@@ -470,7 +470,13 @@ public class MainActivity extends BasicActivity
         }
     }
 
-    public void reportRequest(final View view) {
+    public void reportRequestPost(View view){
+        reportRequest(view, 1);
+    }
+    public void reportRequestComment(View view){
+        reportRequest(view, 2);
+    }
+    private void reportRequest(final View view, final int commentOrPost) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -482,10 +488,11 @@ public class MainActivity extends BasicActivity
         dialog.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(description.getText().toString().isEmpty())
-                    report(view, " ");
-                else
-                    report(view, description.getText().toString());
+                try {
+                    report(view, description.getText().toString(), commentOrPost);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -499,20 +506,11 @@ public class MainActivity extends BasicActivity
         dialog.show();
     }
 
-    private void report(View view, String description){
-        View button = view.getRootView().findViewById(R.id.delete_button);
+    public void reportRequest(JSONObject jsonRequest,  String url){
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
-        JSONObject jsonRequest = new JSONObject();
-
-        try {
-            jsonRequest.put("postId",  button.getTag());
-            jsonRequest.put("violationDescription", description);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.POST,
-                ConnectingURL.URL_ViolationsPosts, jsonRequest, new Response.Listener<JSONObject>() {
+                url, jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -535,6 +533,22 @@ public class MainActivity extends BasicActivity
         };
 
         MyRequestQueue.add(MyJsonRequest);
+    }
+    private void report(View view, String description, int commentOrPost) throws JSONException {
+        JSONObject jsonRequest = new JSONObject();
+
+        if(commentOrPost == 1){
+            View viewWithId = view.getRootView().findViewById(R.id.delete_button);
+            jsonRequest.put("postId",  viewWithId.getTag());
+            jsonRequest.put("violationDescription", description);
+            reportRequest(jsonRequest, ConnectingURL.URL_ViolationsPosts);
+        }
+        else if(commentOrPost == 2){
+            View viewWithId = view.getRootView().findViewById(R.id.commentContent);
+            jsonRequest.put("commentId",  viewWithId.getTag());
+            jsonRequest.put("violationDescription", description);
+            reportRequest(jsonRequest, ConnectingURL.URL_ViolationsComments);
+        }
     }
 
     public void addCommentRequest(View view) {
