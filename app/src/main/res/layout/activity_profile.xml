@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ScrollView
@@ -15,42 +15,43 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/userProfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/userProfile"
-                android:layout_margin="@dimen/fab_margin"
-                >
+                android:layout_margin="@dimen/fab_margin">
 
                 <ImageView
                     android:id="@+id/profilePicture"
                     android:layout_width="@dimen/profile_picture_display_size"
                     android:layout_height="@dimen/profile_picture_display_size"
-                    android:background="@drawable/picture_border"
-                    />
+                    android:background="@drawable/picture_border" />
 
-                <TextView
-                    android:id="@+id/profileName"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    />
+                    android:layout_margin="@dimen/fab_margin"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/profileSurname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="10dp"
-                    />
+                    <TextView
+                        android:id="@+id/profileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp" />
 
-                <Button
-                    android:id="@+id/profile_edit_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/prompt_edit"
-                    android:onClick="profileEdit"
-                    />
+                    <TextView
+                        android:id="@+id/profileSurname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="10dp" />
 
+                    <Button
+                        android:id="@+id/profile_edit_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="profileEdit"
+                        android:text="@string/prompt_edit" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -58,45 +59,42 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/userProfile"
-                android:orientation="vertical"
                 android:layout_margin="@dimen/fab_margin"
-                >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/birthdayDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/prompt_birthday"
-                    />
+                    android:text="@string/prompt_birthday" />
+
                 <TextView
                     android:id="@+id/genderDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/prompt_gender"
-                    />
+                    android:text="@string/prompt_gender" />
 
                 <TextView
                     android:id="@+id/emailDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/prompt_email"
-                    />
+                    android:text="@string/prompt_email" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/profile_elements"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_below="@id/userProfile"
-                android:layout_toEndOf="@id/profile_description"
                 android:layout_margin="@dimen/fab_margin"
-                >
+                android:layout_toEndOf="@id/profile_description"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/birthday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
                 <TextView
                     android:id="@+id/gender"
                     android:layout_width="match_parent"
@@ -113,15 +111,15 @@
                 android:id="@+id/post_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_below="@id/profile_description"
                 android:background="@drawable/border"
-                >
-                <include layout="@layout/post_list"
-                    android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <include
+                    layout="@layout/post_list"
                     android:layout_width="wrap_content"
-                    android:background="@drawable/border"
-                    />
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border" />
 
             </RelativeLayout>
         </RelativeLayout>
