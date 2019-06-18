@@ -28,17 +28,20 @@ import java.util.Map;
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Misc;
-import wat.projectsi.client.adapter.ViolationAdapter;
+import wat.projectsi.client.adapter.ViolationCommentsAdapter;
+import wat.projectsi.client.adapter.ViolationPostsAdapter;
+import wat.projectsi.client.model.violation.ViolationComment;
 import wat.projectsi.client.model.violation.ViolationPost;
-import wat.projectsi.client.request.VolleyJsonRequest;
 
 public class ViolationActivity extends BasicActivity {
 
     private RecyclerView recyclerView;
     private TextView emptyView;
-    private List<ViolationPost> violationsList = new ArrayList<>();
+    private List<ViolationPost> violationPostsList = new ArrayList<>();
+    private List<ViolationComment> violationCommentsList = new ArrayList<>();
 
-    private ViolationAdapter violationAdapter;
+    private ViolationPostsAdapter violationPostsAdapter;
+    private ViolationCommentsAdapter violationCommentsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +57,15 @@ public class ViolationActivity extends BasicActivity {
         recyclerView.setVisibility(View.GONE);
         emptyView.setVisibility(View.VISIBLE);
 
-        showViolationsPosts();
-        showViolationsComments();
+        Bundle bundle = getIntent().getExtras();
+        String whichGroupShows = bundle.getString("violations");
+
+
+        if(whichGroupShows.equals("posts")){
+            showViolationsPosts();
+        }
+        else if(whichGroupShows.equals("comments"))
+            showViolationsComments();
     }
 
     private void showViolationsPosts() {
@@ -75,11 +85,11 @@ public class ViolationActivity extends BasicActivity {
                                 jsonObject.getString("violationDescription"),
                                 jsonObject.getJSONObject("post").getLong("postId"));
 
-                        violationsList.add(violation);
+                        violationPostsList.add(violation);
                     }
 
                     progressDialog.dismiss();
-                    recyclerView.setAdapter(violationAdapter = new ViolationAdapter(violationsList, ViolationActivity.this));
+                    recyclerView.setAdapter(violationPostsAdapter = new ViolationPostsAdapter(violationPostsList, ViolationActivity.this));
                     recyclerView.setVisibility(View.VISIBLE);
                     emptyView.setVisibility(View.GONE);
                 } catch (JSONException e) {
@@ -140,6 +150,52 @@ public class ViolationActivity extends BasicActivity {
     }
 
     private void showViolationsComments() {
+        progressDialog.setMessage(getResources().getString(R.string.message_progress));
+        progressDialog.show();
 
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
+                ConnectingURL.URL_ViolationsComments, null, new Response.Listener<JSONArray>() {
+
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Log.e("APIResponse", jsonObject.toString());
+                        ViolationComment violation = new ViolationComment(
+                                jsonObject.getJSONObject("comment").getString("commentContest"),
+                                jsonObject.getString("violationDescription"));
+
+                        violationCommentsList.add(violation);
+                    }
+
+                    progressDialog.dismiss();
+                    recyclerView.setAdapter(violationCommentsAdapter = new ViolationCommentsAdapter(violationCommentsList, ViolationActivity.this));
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                Toast.makeText(ViolationActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
+                Log.e("APIResponse", error.toString());
+                System.out.println(error.getMessage());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(getApplicationContext());
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestQueue.add(request);
     }
 }

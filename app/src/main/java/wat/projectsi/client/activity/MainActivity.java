@@ -144,9 +144,12 @@ public class MainActivity extends BasicActivity
         mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
         requestQueue = Volley.newRequestQueue(this);
 
-        MenuItem adminItem = navigationView.getMenu().findItem(R.id.nav_violation);
-        if(SharedOurPreferences.getDefaults("role", MainActivity.this).equals("ROLE_ADMIN"))
+        MenuItem adminItem = navigationView.getMenu().findItem(R.id.nav_violation_posts);
+        MenuItem adminItem2 = navigationView.getMenu().findItem(R.id.nav_violation_comments);
+        if(SharedOurPreferences.getDefaults("role", MainActivity.this).equals("ROLE_ADMIN")){
             adminItem.setVisible(true);
+            adminItem2.setVisible(true);
+        }
 
         handler = new Handler();
         requestCurrentUser();
@@ -191,8 +194,14 @@ public class MainActivity extends BasicActivity
             startActivity(userIntent);
         } else if(id == R.id.nav_statute){
             showStatute();
-        }else if(id == R.id.nav_violation){
+        }else if(id == R.id.nav_violation_posts){
             Intent violationsActivity = new Intent(MainActivity.this, ViolationActivity.class);
+            violationsActivity.putExtra("violations", "posts");
+            startActivity(violationsActivity);
+        }
+        else if(id == R.id.nav_violation_comments){
+            Intent violationsActivity = new Intent(MainActivity.this, ViolationActivity.class);
+            violationsActivity.putExtra("violations", "comments");
             startActivity(violationsActivity);
         }
 

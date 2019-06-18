@@ -131,6 +131,9 @@
 
     <!-- Strings related to violation-->
     <string name="description">Opis</string>
-    <string name="violation">Naruszenia</string>
+    <string name="posts_violation">Naruszenia postow</string>
+    <string name="comments_violation">Naruszenia komentarzy</string>
+    <string name="posts">Posty</string>
+    <string name="comments">Komentarze</string>
 
 </resources>

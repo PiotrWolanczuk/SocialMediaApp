@@ -130,6 +130,9 @@
 
     <!-- Strings related to violation-->
     <string name="description">Description</string>
-    <string name="violation">Violations</string>
+    <string name="posts_violation">Posts violations</string>
+    <string name="comments_violation">Comments violations</string>
+    <string name="posts">Posty</string>
+    <string name="comments">Komentarze</string>
 
 </resources>

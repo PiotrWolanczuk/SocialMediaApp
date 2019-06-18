@@ -14,11 +14,11 @@ import java.util.List;
 import wat.projectsi.R;
 import wat.projectsi.client.model.violation.ViolationPost;
 
-public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.ViolationViewHolder>{
+public class ViolationPostsAdapter extends RecyclerView.Adapter<ViolationPostsAdapter.ViolationViewHolder>{
     private Context context;
     private List<ViolationPost> violationList;
 
-    public ViolationAdapter(List<ViolationPost> violationList, Context context) {
+    public ViolationPostsAdapter(List<ViolationPost> violationList, Context context) {
         this.context = context;
         this.violationList = violationList;
     }

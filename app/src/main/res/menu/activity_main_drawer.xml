@@ -25,9 +25,14 @@
             android:icon="@drawable/baseline_receipt_black_18dp"
             android:title="@string/statute" />
         <item
-            android:id="@+id/nav_violation"
+            android:id="@+id/nav_violation_posts"
             android:icon="@drawable/baseline_new_releases_black_18dp"
-            android:title="@string/violation"
+            android:title="@string/posts_violation"
+            android:visible="false"/>
+        <item
+            android:id="@+id/nav_violation_comments"
+            android:icon="@drawable/baseline_new_releases_black_18dp"
+            android:title="@string/comments_violation"
             android:visible="false"/>
     </group>
 
