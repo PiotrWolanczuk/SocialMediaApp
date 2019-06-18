@@ -144,6 +144,10 @@ public class MainActivity extends BasicActivity
         mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
         requestQueue = Volley.newRequestQueue(this);
 
+        MenuItem adminItem = navigationView.getMenu().findItem(R.id.nav_violation);
+        if(SharedOurPreferences.getDefaults("role", MainActivity.this).equals("ROLE_ADMIN"))
+            adminItem.setVisible(true);
+
         handler = new Handler();
         requestCurrentUser();
         refresh();
@@ -167,21 +171,6 @@ public class MainActivity extends BasicActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -202,6 +191,9 @@ public class MainActivity extends BasicActivity
             startActivity(userIntent);
         } else if(id == R.id.nav_statute){
             showStatute();
+        }else if(id == R.id.nav_violation){
+            Intent violationsActivity = new Intent(MainActivity.this, ViolationActivity.class);
+            startActivity(violationsActivity);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -376,7 +368,7 @@ public class MainActivity extends BasicActivity
 
     public void deleteRequest(View view){
         View parent = view.getRootView().findViewById(R.id.postContent);
-        if(currentUser.getId() == (long)parent.getTag()){
+        if(currentUser.getId() == (long)parent.getTag() || SharedOurPreferences.getDefaults("authority", MainActivity.this).equals("ROLE_ADMIN")){
             RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
             VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.DELETE,

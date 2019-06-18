@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = findViewById(R.id.email);
 
         progressDialog = new ProgressDialog(this);
         mPasswordView = findViewById(R.id.password);
@@ -56,8 +56,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-        mEmailView.setText("user1");
-        mPasswordView.setText("UserPass1");
+        mEmailView.setText("admin1");
+        mPasswordView.setText("AdminPass1");
 
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -117,14 +117,17 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(JSONObject response) {
-                progressDialog.cancel();
                 try {
+                    JSONObject authority = response.getJSONArray("authorities").getJSONObject(0);
                     SharedOurPreferences.setDefaults("token", response.getString("token"),
+                            LoginActivity.this);
+                    SharedOurPreferences.setDefaults("role", authority.getString("authority"),
                             LoginActivity.this);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                progressDialog.cancel();
                 startActivity(mainIntent);
             }
         }, new Response.ErrorListener() {

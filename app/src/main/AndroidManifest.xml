@@ -17,17 +17,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-
         android:usesCleartextTraffic="true"
-        tools:ignore="GoogleAppIndexingWarning"
-        >
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".client.activity.ViolationActivity"></activity>
         <activity
             android:name=".client.activity.NewPostActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".client.activity.MainActivity"
-            >
-        </activity>
-
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".client.activity.UsersActivity"
             android:theme="@style/AppTheme.NoActionBar" />

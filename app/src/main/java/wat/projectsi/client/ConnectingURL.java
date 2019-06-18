@@ -24,8 +24,8 @@ public class ConnectingURL {
     public static final String URL_Users_Current = getURL()+"/users/current";
     public static final String URL_Users_Profile = getURL()+"/users/profile";
     public static final String URL_Violations = getURL()+"/violations";
-    public static final String URL_ViolationsComments = getURL()+"/violations/comments";
-    public static final String URL_ViolationsPosts = getURL()+"/violations/posts";
+    public static final String URL_ViolationsComments = getURL()+"/violations/admin/comments";
+    public static final String URL_ViolationsPosts = getURL()+"/violations/admin/posts";
     public static final String URL_Comments=getURL()+ "/comments";
     public static final String URL_Pictures=getURL()+ "/pictures/all";
 

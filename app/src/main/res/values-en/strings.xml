@@ -130,5 +130,6 @@
 
     <!-- Strings related to violation-->
     <string name="description">Description</string>
+    <string name="violation">Violations</string>
 
 </resources>
