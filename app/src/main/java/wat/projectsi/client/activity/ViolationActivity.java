@@ -10,9 +10,12 @@ import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,13 +29,14 @@ import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Misc;
 import wat.projectsi.client.adapter.ViolationAdapter;
-import wat.projectsi.client.model.Violation;
+import wat.projectsi.client.model.violation.ViolationPost;
+import wat.projectsi.client.request.VolleyJsonRequest;
 
 public class ViolationActivity extends BasicActivity {
 
     private RecyclerView recyclerView;
     private TextView emptyView;
-    private List<Violation> violationsList = new ArrayList<>();
+    private List<ViolationPost> violationsList = new ArrayList<>();
 
     private ViolationAdapter violationAdapter;
 
@@ -67,8 +71,9 @@ public class ViolationActivity extends BasicActivity {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
                         Log.e("APIResponse", jsonObject.toString());
-                        Violation violation = new Violation(jsonObject.getJSONObject("post").getString("postContent"),
-                                                            jsonObject.getString("violationDescription"));
+                        ViolationPost violation = new ViolationPost(jsonObject.getJSONObject("post").getString("postContent"),
+                                jsonObject.getString("violationDescription"),
+                                jsonObject.getJSONObject("post").getLong("postId"));
 
                         violationsList.add(violation);
                     }
@@ -90,8 +95,7 @@ public class ViolationActivity extends BasicActivity {
                 Log.e("APIResponse", error.toString());
                 System.out.println(error.getMessage());
             }
-        })
-        {
+        }) {
             @Override
             public Map<String, String> getHeaders() {
                 return Misc.getSecureHeaders(getApplicationContext());
@@ -104,7 +108,37 @@ public class ViolationActivity extends BasicActivity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(request);
     }
-    
+
+    public void deleteViolation(View view) {
+        View deleteButton = findViewById(R.id.violation_delete);
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+
+        StringRequest MyJsonRequest = new StringRequest(Request.Method.DELETE,
+                ConnectingURL.URL_Posts + "/admin/" + deleteButton.getTag(), new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(ViolationActivity.this, R.string.done, Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("APIResponse", error.toString());
+                error.printStackTrace();
+                Toast.makeText(ViolationActivity.this,
+                        getApplicationContext().getResources().getString(R.string.message_wrong),
+                        Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return Misc.getSecureHeaders(ViolationActivity.this);
+            }
+        };
+
+        MyRequestQueue.add(MyJsonRequest);
+    }
+
     private void showViolationsComments() {
 
     }

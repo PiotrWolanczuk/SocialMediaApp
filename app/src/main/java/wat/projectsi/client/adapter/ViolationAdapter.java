@@ -6,18 +6,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
 
 import wat.projectsi.R;
-import wat.projectsi.client.model.Violation;
+import wat.projectsi.client.model.violation.ViolationPost;
 
 public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.ViolationViewHolder>{
     private Context context;
-    private List<Violation> violationList;
+    private List<ViolationPost> violationList;
 
-    public ViolationAdapter(List<Violation> violationList, Context context) {
+    public ViolationAdapter(List<ViolationPost> violationList, Context context) {
         this.context = context;
         this.violationList = violationList;
     }
@@ -31,10 +32,12 @@ public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.Viol
 
     @Override
     public void onBindViewHolder(@NonNull ViolationViewHolder violationViewHolder, int i) {
-        Violation violation = violationList.get(i);
+        ViolationPost violation = violationList.get(i);
 
         violationViewHolder.content.setText(violation.getContent());
         violationViewHolder.description.setText(violation.getDescription());
+        View parent= (violationViewHolder.delete);
+        parent.setTag(violation.getPostId());
     }
 
     @Override
@@ -45,11 +48,13 @@ public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.Viol
     public class ViolationViewHolder extends RecyclerView.ViewHolder {
         TextView content;
         TextView description;
+        Button delete;
 
         public ViolationViewHolder(@NonNull View itemView) {
             super(itemView);
             content = itemView.findViewById(R.id.violation_item);
             description = itemView.findViewById(R.id.violation_description);
+            delete = itemView.findViewById(R.id.violation_delete);
         }
     }
 }

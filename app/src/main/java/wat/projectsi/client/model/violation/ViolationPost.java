@@ -1,12 +1,14 @@
-package wat.projectsi.client.model;
+package wat.projectsi.client.model.violation;
 
-public class Violation {
+public class ViolationPost {
     private String content;
     private String description;
+    private long postId;
 
-    public Violation(String content, String description) {
+    public ViolationPost(String content, String description,  long postId) {
         this.content = content;
         this.description = description;
+        this.postId = postId;
     }
 
     public String getContent() {
@@ -15,5 +17,9 @@ public class Violation {
 
     public String getDescription() {
         return description;
+    }
+
+    public long getPostId() {
+        return postId;
     }
 }
