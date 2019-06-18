@@ -32,6 +32,7 @@ import wat.projectsi.client.Misc;
 import wat.projectsi.client.Validator;
 import wat.projectsi.client.model.User;
 import wat.projectsi.client.request.GsonRequest;
+import wat.projectsi.client.request.VolleyJsonRequest;
 
 public class ProfileEditActivity extends BasicActivity {
 
@@ -137,13 +138,13 @@ public class ProfileEditActivity extends BasicActivity {
             data.put("birthday", birthDate);
             data.put("gender", isMan ? Misc.manStr : Misc.womanStr);
             data.put("userId", MainActivity.getCurrentUser().getId());
-            data.put("hashCode", MainActivity.getCurrentUser().getImage().getUrl());
+            data.put("profilePictureId", MainActivity.getCurrentUser().getImage().getId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ConnectingURL.URL_Users, data, new Response.Listener<JSONObject>() {
+        VolleyJsonRequest request = new VolleyJsonRequest(Request.Method.PUT, ConnectingURL.URL_Users, data, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                progressDialog.cancel();
@@ -154,6 +155,7 @@ public class ProfileEditActivity extends BasicActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.cancel();
                 Log.e("APIResponse", error.toString());
                 error.printStackTrace();
                 Toast.makeText(ProfileEditActivity.this, R.string.message_wrong, Toast.LENGTH_LONG).show();
