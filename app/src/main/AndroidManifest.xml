@@ -19,11 +19,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".client.activity.ViolationActivity"></activity>
+        <activity android:name=".client.activity.ChatActivity"></activity>
+        <activity android:name=".client.activity.ViolationActivity" />
         <activity
             android:name=".client.activity.NewPostActivity"
             android:parentActivityName=".client.activity.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".client.activity.UsersActivity"
             android:theme="@style/AppTheme.NoActionBar" />

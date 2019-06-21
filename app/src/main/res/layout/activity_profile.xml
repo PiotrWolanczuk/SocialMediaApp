@@ -51,6 +51,13 @@
                         android:layout_height="wrap_content"
                         android:onClick="profileEdit"
                         android:text="@string/prompt_edit" />
+
+                    <Button
+                        android:id="@+id/new_message_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="messageButton"
+                        android:text="@string/prompt_message" />
                 </LinearLayout>
             </LinearLayout>
 

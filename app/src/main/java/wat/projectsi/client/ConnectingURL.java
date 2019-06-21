@@ -28,6 +28,7 @@ public class ConnectingURL {
     public static final String URL_ViolationsPosts = getURL()+"/violations/admin/posts";
     public static final String URL_Comments=getURL()+ "/comments";
     public static final String URL_Pictures=getURL()+ "/pictures/all";
+    public static final String URL_Message=getURL()+ "/messages";
 
     public static String getURL()
     {

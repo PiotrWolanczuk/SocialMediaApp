@@ -123,6 +123,9 @@
     <string name="prompt_friend_list">Friends list</string>
     <string name="prompt_change_picture">Change profile picture</string>
     <string name="prompt_edit">Edit</string>
+    <string name="prompt_message">Chat</string>
+    <string name="prompt_new_message">Send</string>
+    <string name="sender">Sender</string>
 
     <!-- Strings related to edit profile-->
     <string name="prompt_success_update">Updated profile data</string>

@@ -98,6 +98,10 @@ public class ProfileActivity extends BasicActivity {
         if(mUser.getId()!=MainActivity.getCurrentUser().getId())
             findViewById(R.id.profile_edit_button).setVisibility(View.GONE);
         else findViewById(R.id.profile_edit_button).setVisibility(View.VISIBLE);
+
+        if(mUser.getId()!=MainActivity.getCurrentUser().getId())
+            findViewById(R.id.new_message_button).setVisibility(View.VISIBLE);
+        else findViewById(R.id.new_message_button).setVisibility(View.GONE);
     }
 
     private void showFriends( ) {
@@ -182,5 +186,11 @@ public class ProfileActivity extends BasicActivity {
 
     public void profileEdit(View view) {
         startActivity(new Intent(ProfileActivity.this, ProfileEditActivity.class));
+    }
+
+    public void messageButton(View  view){
+        Intent chatIntent = new Intent(ProfileActivity.this, ChatActivity.class);
+        chatIntent.putExtra("userId",  mUser.getId());
+        startActivity(chatIntent);
     }
 }
