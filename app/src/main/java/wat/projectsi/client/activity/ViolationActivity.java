@@ -121,7 +121,7 @@ public class ViolationActivity extends BasicActivity {
     }
 
     public void deleteViolation(View view) {
-        View deleteButton = findViewById(R.id.violation_delete);
+        final View deleteButton = findViewById(R.id.violation_delete);
         RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
         StringRequest MyJsonRequest = new StringRequest(Request.Method.DELETE,
@@ -130,6 +130,12 @@ public class ViolationActivity extends BasicActivity {
             @Override
             public void onResponse(String response) {
                 Toast.makeText(ViolationActivity.this, R.string.done, Toast.LENGTH_SHORT).show();
+                for(ViolationPost violationPost:violationPostsList)
+                    if(violationPost.getPostId()==(long) deleteButton.getTag()) {
+                        violationPostsList.remove(violationPost);
+                        violationPostsAdapter.notifyDataSetChanged();
+                        return;
+                    }
             }
         }, new Response.ErrorListener() {
             @Override
