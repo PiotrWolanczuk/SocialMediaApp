@@ -68,8 +68,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Ustawienia</string>
     <string name="log_out">Wyloguj</string>
+    <string name="prompt_settings">Ustawienia</string>
+    <string name="prompt_settings_display">Ustawienia wyświetlania</string>
+    <string name="prompt_language">Język</string>
+    <string name="prompt_languages">Języki</string>
     <string name="profile">Profil</string>
     <string name="gallery">Galeria</string>
     <string name="users">Ludzie</string>
@@ -138,5 +141,9 @@
     <string name="comments_violation">Naruszenia komentarzy</string>
     <string name="posts">Posty</string>
     <string name="comments">Komentarze</string>
+
+    <!-- String related to languages -->
+    <string name="polish">polski</string>
+    <string name="english">english</string>
 
 </resources>

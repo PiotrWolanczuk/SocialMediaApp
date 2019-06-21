@@ -147,7 +147,7 @@ public class MainActivity extends BasicActivity
 
         MenuItem adminItem = navigationView.getMenu().findItem(R.id.nav_violation_posts);
         MenuItem adminItem2 = navigationView.getMenu().findItem(R.id.nav_violation_comments);
-        if(SharedOurPreferences.getDefaults("role", MainActivity.this).equals("ROLE_ADMIN")){
+        if(SharedOurPreferences.getDefaults(Misc.preferenceRoleStr, MainActivity.this).equals(Misc.roleAdminStr)){
             adminItem.setVisible(true);
             adminItem2.setVisible(true);
         }
@@ -758,4 +758,7 @@ public class MainActivity extends BasicActivity
         currentUser=user;
     }
 
+    public void settings(MenuItem item) {
+        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+    }
 }

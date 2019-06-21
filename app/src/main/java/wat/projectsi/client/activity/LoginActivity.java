@@ -2,6 +2,7 @@ package wat.projectsi.client.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -26,12 +27,14 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseSettingChangeActivity {
 
 
     private AutoCompleteTextView mEmailView;
@@ -41,6 +44,11 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(SharedOurPreferences.getDefaults(Misc.preferenceLanguageStr, this)==null)
+            SharedOurPreferences.setDefaults(Misc.preferenceLanguageStr, Misc.suportedLocaleCodes[0], this);
+        setLanguage(SharedOurPreferences.getDefaults(Misc.preferenceLanguageStr, this));
+
         setContentView(R.layout.activity_login);
 
         mEmailView = findViewById(R.id.email);
