@@ -39,7 +39,7 @@ import wat.projectsi.client.Misc;
 import wat.projectsi.client.adapter.GalleryAdapter;
 import wat.projectsi.client.request.VolleyJsonRequest;
 
-public class NewPostActivity extends AppCompatActivity {
+public class NewPostActivity extends BaseSettingChangeActivity {
 
     Button sendButton;
     Button addPhoto;

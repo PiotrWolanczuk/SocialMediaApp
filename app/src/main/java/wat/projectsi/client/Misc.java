@@ -19,6 +19,9 @@ public class Misc {
     public static final String roleUserStr = "ROLE_USER";
     public static final String preferenceTokenStr = "token";
     public static final String preferenceRoleStr = "role";
+    public static final String preferenceLanguageStr = "language";
+
+    public static final String[] suportedLocaleCodes={"pl", "en"};
 
     public static final Bitmap defaultAvatar;
     static{

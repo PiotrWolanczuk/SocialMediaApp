@@ -23,7 +23,8 @@ public class SharedOurPreferences implements android.content.SharedPreferences {
     public static void clear(Context context){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
+        editor.remove(Misc.preferenceRoleStr);
+        editor.remove(Misc.preferenceTokenStr);;
         editor.commit();
     }
 

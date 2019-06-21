@@ -42,7 +42,7 @@ import wat.projectsi.client.Misc;
 import wat.projectsi.client.Validator;
 
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends SettingsActivity {
 
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
