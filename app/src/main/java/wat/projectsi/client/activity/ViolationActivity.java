@@ -61,10 +61,9 @@ public class ViolationActivity extends BasicActivity {
         String whichGroupShows = bundle.getString("violations");
 
 
-        if(whichGroupShows.equals("posts")){
+        if (whichGroupShows.equals("posts")) {
             showViolationsPosts();
-        }
-        else if(whichGroupShows.equals("comments"))
+        } else if (whichGroupShows.equals("comments"))
             showViolationsComments();
     }
 
@@ -80,12 +79,14 @@ public class ViolationActivity extends BasicActivity {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
-                        Log.e("APIResponse", jsonObject.toString());
-                        ViolationPost violation = new ViolationPost(jsonObject.getJSONObject("post").getString("postContent"),
-                                jsonObject.getString("violationDescription"),
-                                jsonObject.getJSONObject("post").getLong("postId"));
+                        if(jsonObject.getJSONObject("post").getInt("isDeleted") == 0) {
+                            Log.e("APIResponse", jsonObject.toString());
+                            ViolationPost violation = new ViolationPost(jsonObject.getJSONObject("post").getString("postContent"),
+                                    jsonObject.getString("violationDescription"),
+                                    jsonObject.getJSONObject("post").getLong("postId"));
 
-                        violationPostsList.add(violation);
+                            violationPostsList.add(violation);
+                        }
                     }
 
                     progressDialog.dismiss();

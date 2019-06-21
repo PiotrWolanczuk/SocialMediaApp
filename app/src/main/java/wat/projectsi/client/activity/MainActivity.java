@@ -542,13 +542,13 @@ public class MainActivity extends BasicActivity
             View viewWithId = view.getRootView().findViewById(R.id.delete_button);
             jsonRequest.put("postId",  viewWithId.getTag());
             jsonRequest.put("violationDescription", description);
-            reportRequest(jsonRequest, ConnectingURL.URL_ViolationsPosts);
+            reportRequest(jsonRequest, ConnectingURL.URL_Violations + "/posts");
         }
         else if(commentOrPost == 2){
             View viewWithId = view.getRootView().findViewById(R.id.commentContent);
             jsonRequest.put("commentId",  viewWithId.getTag());
             jsonRequest.put("violationDescription", description);
-            reportRequest(jsonRequest, ConnectingURL.URL_ViolationsComments);
+            reportRequest(jsonRequest, ConnectingURL.URL_Violations + "/comments");
         }
     }
 
