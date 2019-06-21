@@ -147,6 +147,10 @@ public class ViolationActivity extends BasicActivity {
             }
         };
 
+        MyJsonRequest.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MyRequestQueue.add(MyJsonRequest);
     }
 
