@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
 
 public class LoginActivity extends AppCompatActivity {
@@ -119,9 +120,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     JSONObject authority = response.getJSONArray("authorities").getJSONObject(0);
-                    SharedOurPreferences.setDefaults("token", response.getString("token"),
+                    SharedOurPreferences.setDefaults(Misc.preferenceTokenStr, response.getString("token"),
                             LoginActivity.this);
-                    SharedOurPreferences.setDefaults("role", authority.getString("authority"),
+                    SharedOurPreferences.setDefaults(Misc.preferenceRoleStr, authority.getString("authority"),
                             LoginActivity.this);
                 } catch (JSONException e) {
                     e.printStackTrace();

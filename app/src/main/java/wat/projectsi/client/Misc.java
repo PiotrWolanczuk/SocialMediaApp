@@ -6,8 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import java.util.HashMap;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import wat.projectsi.R;
 
 
@@ -17,6 +15,10 @@ public class Misc {
 
     public static final String manStr = "man";
     public static final String womanStr = "woman";
+    public static final String roleAdminStr = "ROLE_ADMIN";
+    public static final String roleUserStr = "ROLE_USER";
+    public static final String preferenceTokenStr = "token";
+    public static final String preferenceRoleStr = "role";
 
     public static final Bitmap defaultAvatar;
     static{
