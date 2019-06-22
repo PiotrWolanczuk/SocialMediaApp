@@ -16,12 +16,13 @@ import java.util.List;
 
 import wat.projectsi.R;
 import wat.projectsi.client.Picture;
+import wat.projectsi.client.model.Image;
 
 public class ImageRecyclerAdapter extends RecyclerView.Adapter<ImageRecyclerAdapter.ImageViewHolder> {
-    private List<String> mImages;
+    private List<Image> mImages;
     private Context mContext;
 
-    public ImageRecyclerAdapter(Context context, List<String> images) {
+    public ImageRecyclerAdapter(Context context, List<Image> images) {
         mImages = images;
         mContext = context;
     }
@@ -35,8 +36,7 @@ public class ImageRecyclerAdapter extends RecyclerView.Adapter<ImageRecyclerAdap
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int i) {
 
-        //holder.mImageView.setImageBitmap(mImages.get(i));
-        new Picture(holder.mImageView).execute(mImages.get(i));
+        new Picture(holder.mImageView).execute(mImages.get(i).getUrl());
         holder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

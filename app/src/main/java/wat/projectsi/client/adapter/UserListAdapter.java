@@ -59,7 +59,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
 
         userListViewHolder.name.setText(user.getName());
         userListViewHolder.surname.setText(user.getSurname());
-        new Picture(userListViewHolder.profile).execute(user.getProfileImage());
+        new Picture(userListViewHolder.profile).execute(user.getImage().getUrl());
         userListViewHolder.profile.setTag(user.getId());
         userListViewHolder.name.setTag(user.getId());
         userListViewHolder.surname.setTag(user.getId());

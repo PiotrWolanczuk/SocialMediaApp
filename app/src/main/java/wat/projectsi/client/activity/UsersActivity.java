@@ -30,6 +30,7 @@ import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.adapter.FriendAdapter;
 import wat.projectsi.client.adapter.UserListAdapter;
+import wat.projectsi.client.model.Image;
 import wat.projectsi.client.model.User;
 
 public class UsersActivity extends BasicActivity {
@@ -81,11 +82,14 @@ public class UsersActivity extends BasicActivity {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
+                        JSONObject imageObject = jsonObject.getJSONObject("pictureId");
+
                         User user = new User(
                                 jsonObject.getString("firstName"),
                                 jsonObject.getString("lastName"),
                                 jsonObject.getInt("userId"),
-                                jsonObject.getJSONObject("pictureId").getString("hashCode"));
+                                new Image(imageObject.getLong("pictureId"), imageObject.getString("hashCode"))
+                                );
 
                         userList.add(user);
                     }
@@ -132,11 +136,12 @@ public class UsersActivity extends BasicActivity {
                         JSONObject jsonObject = response.getJSONObject(i);
                         if(response.getJSONObject(i).getString("state").equals("APPROVED")){
                             JSONObject friend = jsonObject.getJSONObject("friend");
+                            JSONObject imageObject = friend.getJSONObject("pictureId");
                             User user = new User(
                                     friend.getString("firstName"),
                                     friend.getString("lastName"),
                                     friend.getInt("userId"),
-                                    friend.getJSONObject("pictureId").getString("hashCode"));
+                                    new Image(imageObject.getLong("pictureId"), imageObject.getString("hashCode")));
 
                             userList.add(user);
                         }
