@@ -121,7 +121,7 @@
     <string name="friends">Znajomi</string>
 
 
-    <string name="delete_friend">Usunieto znajomego</string>
+    <string name="prompt_deleted_friend">Usunieto znajomego</string>
 
     <!-- Strings related to profile-->
     <string name="prompt_birthday">Data urodzenia</string>
@@ -146,5 +146,8 @@
     <!-- String related to languages -->
     <string name="polish">polski</string>
     <string name="english">english</string>
+
+    <!--String relate to chat -->
+    <string name="prompt_new_message_hint">Napisz nową wiadomość…</string>
 
 </resources>

@@ -120,7 +120,7 @@
     <string name="invite">Invite</string>
     <string name="friends">Friends</string>
 
-    <string name="delete_friend">Friend is deleted</string>
+    <string name="prompt_deleted_friend">Friend is deleted</string>
 
     <!-- Strings related to profile-->
     <string name="prompt_birthday">Birthday</string>
@@ -145,5 +145,8 @@
     <!-- String related to languages -->
     <string name="polish">polski</string>
     <string name="english">english</string>
+
+    <!--String relate to chat -->
+    <string name="prompt_new_message_hint">Write new message…</string>
 
 </resources>

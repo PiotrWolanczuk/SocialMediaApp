@@ -7,18 +7,46 @@
     android:orientation="vertical"
     tools:context=".client.activity.ChatActivity">
 
-    <TextView
-        android:id="@+id/all_message"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top" />
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/newMessageLayout"
+        android:background="@drawable/border"
+        >
 
-    <Button
-        android:id="@+id/send_new_message"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/messageRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            />
+    </LinearLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/newMessageLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/border"
         android:layout_alignParentBottom="true"
-        android:gravity="bottom"
-        android:onClick="newMessage"
-        android:text="@string/prompt_new_message" />
+        android:hint="@string/prompt_new_message_hint"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/newMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <Button
+            android:id="@+id/send_new_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="bottom"
+            android:onClick="newMessage"
+            android:text="@string/prompt_new_message" />
+    </android.support.design.widget.TextInputLayout>
+
 </RelativeLayout>
