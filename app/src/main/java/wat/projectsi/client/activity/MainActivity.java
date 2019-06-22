@@ -3,6 +3,7 @@ package wat.projectsi.client.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -85,7 +86,6 @@ public class MainActivity extends BasicActivity
     private static volatile boolean finished;
     private Handler handler;
     private static Lock lock = new ReentrantLock();
-    private static User currentUser;
     private String nameText;
     private String surnameText;
 
@@ -749,16 +749,22 @@ public class MainActivity extends BasicActivity
             closeNotification();
     }
 
-    public static User getCurrentUser()
-    {
-        return currentUser;
-    }
-    public static void setCurrentUser(User user)
-    {
-        currentUser=user;
-    }
-
     public void settings(MenuItem item) {
         startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(Misc.preferenceLanguageStr))
+            recreate();
+        else if(key.equals(Misc.preferenceUserChangeStr)){
+            new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getImage().getUrl());
+            ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
+
+        }
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
     }
 }

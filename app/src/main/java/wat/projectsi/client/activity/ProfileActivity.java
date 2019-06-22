@@ -3,6 +3,7 @@ package wat.projectsi.client.activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -192,5 +193,20 @@ public class ProfileActivity extends BasicActivity {
         Intent chatIntent = new Intent(ProfileActivity.this, ChatActivity.class);
         chatIntent.putExtra("userId",  mUser.getId());
         startActivity(chatIntent);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(Misc.preferenceLanguageStr))
+            recreate();
+        else if( mUser.getId()==currentUser.getId() && key.equals(Misc.preferenceUserChangeStr)){
+            mUser=currentUser;
+            ((TextView) findViewById(R.id.profileName)).setText(mUser.getName());
+            ((TextView) findViewById(R.id.profileSurname)).setText(mUser.getSurname());
+            new Picture(((ImageView) findViewById(R.id.profilePicture))).execute(mUser.getImage().getUrl());
+            ((TextView) findViewById(R.id.gender)).setText(mUser.getGender().equals("MAN") ? getString(R.string.prompt_gender_man) : getString(R.string.prompt_gender_woman));
+            ((TextView) findViewById(R.id.birthday)).setText(DateFormatter.convertToLocalDate(mUser.getBirthday()));
+
+        }
     }
 }
