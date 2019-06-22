@@ -11,6 +11,7 @@ public class ConnectingURL {
     private static final String DOC_URL = "http://10.0.0.42:8080";      //Docker    //TODO: check if is
     private static final String REAL_DEVICE = "http://192.168.43.20:8080";
     private static final String REAL_DEVICE_HOME = "http://192.168.0.115:8080";
+    private static final String HEROKU_URL = "http://pz-backend.herokuapp.com";
 
     public static final String URL_Signup = getURL() +"/signup";
     public static final String URL_Signin = getURL() +"/signin";
@@ -29,20 +30,23 @@ public class ConnectingURL {
     public static final String URL_Comments=getURL()+ "/comments";
     public static final String URL_Pictures=getURL()+ "/pictures/all";
     public static final String URL_Message=getURL()+ "/messages";
+    public static final String URL_SEND_Picture=getURL()+ "/pictures";
+
 
     public static String getURL()
     {
 //        return REAL_DEVICE;
 //        return REAL_DEVICE_HOME;
-        if(isGenymotion())
-            return GEN_URL;
-        else if(isVirtualBox())
-            return VBX_URL;
-        else if(isNox())
-            return NOX_URL;
-        else if(isOtherEmulator())
-            return AVD_URL;
-        else return DOC_URL;
+        return HEROKU_URL;
+//        if(isGenymotion())
+//            return GEN_URL;
+//        else if(isVirtualBox())
+//            return VBX_URL;
+//        else if(isNox())
+//            return NOX_URL;
+//        else if(isOtherEmulator())
+//            return AVD_URL;
+//        else return DOC_URL;
         //TODO: return on real devices
     }
 

@@ -7,7 +7,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
@@ -26,15 +25,20 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
 
     private Response.Listener<NetworkResponse> mListener;
     private Response.ErrorListener mErrorListener;
-    private JSONObject jsonObject;
+    private Map<String, String> mHeaders;
 
-    public VolleyMultipartRequest(int method, String url, JSONObject jsonRequest,
+
+    public VolleyMultipartRequest(int method, String url,
                                   Response.Listener<NetworkResponse> listener,
                                   Response.ErrorListener errorListener) {
-        super(method, url,  errorListener);
+        super(method, url, errorListener);
         this.mListener = listener;
         this.mErrorListener = errorListener;
-        this.jsonObject = jsonRequest;
+    }
+
+    @Override
+    public Map<String, String> getHeaders() throws AuthFailureError {
+        return (mHeaders != null) ? mHeaders : super.getHeaders();
     }
 
     @Override
@@ -74,8 +78,9 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * Custom method handle data payload.
      *
      * @return Map data part label with data byte
+     * @throws AuthFailureError
      */
-    protected Map<String, DataPart> getByteData() {
+    protected Map<String, DataPart> getByteData() throws AuthFailureError {
         return null;
     }
 

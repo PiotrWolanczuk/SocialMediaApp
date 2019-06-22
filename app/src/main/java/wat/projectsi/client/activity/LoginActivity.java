@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,6 +29,7 @@ import org.json.JSONObject;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
 
 public class LoginActivity extends AppCompatActivity {
@@ -56,8 +58,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-        mEmailView.setText("admin1");
-        mPasswordView.setText("AdminPass1");
+        mEmailView.setText("user1");
+        mPasswordView.setText("UserPass1");
 
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -138,6 +140,10 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
             }
         });
+        MyJsonRequest.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MyRequestQueue.add(MyJsonRequest);
     }
 

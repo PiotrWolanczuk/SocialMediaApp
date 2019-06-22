@@ -22,6 +22,8 @@ public class Post extends ViewModel implements Serializable {
     private String name;
     @SerializedName("surname")
     private  String surname;
+    @SerializedName("pictureEntityList")
+    private List<Image> postImage;
     private String  profilePicture;
     private List<String> images;
     private List<Comment> mCommentList;
@@ -82,5 +84,9 @@ public class Post extends ViewModel implements Serializable {
 
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public List<Image> getPostImage() {
+        return postImage;
     }
 }

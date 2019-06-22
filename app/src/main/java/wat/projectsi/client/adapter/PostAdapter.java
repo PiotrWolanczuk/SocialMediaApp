@@ -49,6 +49,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         View parent= ((View)holder.mPostContentView.getParent().getParent());
         parent.findViewById(R.id.comment_button).setTag(post.getPostId());
         parent.findViewById(R.id.delete_button).setTag(post.getPostId());
+        if(post.getPostImage().size() > 0)
+        new Picture(holder.postImage).execute(post.getPostImage().get(0).getUrl());
 
         holder.mPostImageRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.mPostImageRecyclerView.setAdapter(new ImageRecyclerAdapter(mContext, post.getImages()));
@@ -69,6 +71,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         TextView mNameView;
         TextView mSurnameView;
         ImageView mProfilePictureView;
+        ImageView postImage;
 
         PostViewHolder(View view) {
             super(view);
@@ -79,6 +82,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mNameView = view.findViewById(R.id.profileName);
             mSurnameView = view.findViewById(R.id.profileSurname);
             mProfilePictureView=view.findViewById(R.id.profilePicture);
+            postImage = view.findViewById(R.id.postImage);
         }
     }
 }
