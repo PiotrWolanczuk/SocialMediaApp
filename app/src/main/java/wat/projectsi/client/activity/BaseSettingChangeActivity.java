@@ -10,9 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.Locale;
 
 import wat.projectsi.client.Misc;
+import wat.projectsi.client.model.User;
 
 public abstract class BaseSettingChangeActivity extends AppCompatActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
+
+    protected static User currentUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +43,5 @@ public abstract class BaseSettingChangeActivity extends AppCompatActivity implem
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 
     }
-
 
 }
