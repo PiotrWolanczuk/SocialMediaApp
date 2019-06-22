@@ -3,6 +3,7 @@ package wat.projectsi.client.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -34,6 +35,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -84,7 +86,6 @@ public class MainActivity extends BasicActivity
     private static volatile boolean finished;
     private Handler handler;
     private static Lock lock = new ReentrantLock();
-    private static User currentUser;
     private String nameText;
     private String surnameText;
 
@@ -146,7 +147,7 @@ public class MainActivity extends BasicActivity
 
         MenuItem adminItem = navigationView.getMenu().findItem(R.id.nav_violation_posts);
         MenuItem adminItem2 = navigationView.getMenu().findItem(R.id.nav_violation_comments);
-        if(SharedOurPreferences.getDefaults("role", MainActivity.this).equals("ROLE_ADMIN")){
+        if(SharedOurPreferences.getDefaults(Misc.preferenceRoleStr, MainActivity.this).equals(Misc.roleAdminStr)){
             adminItem.setVisible(true);
             adminItem2.setVisible(true);
         }
@@ -314,6 +315,28 @@ public class MainActivity extends BasicActivity
                     });
                     mPostAdapter.notifyDataSetChanged();
                 }
+                list.clear();
+
+
+                outerLoop:
+                for(Post oldPost:mPostList)
+                {
+                    for(Post post: response)
+                        if(post.getPostId()==oldPost.getPostId())
+                            continue outerLoop;
+                        list.add(oldPost);
+                }
+
+                if(list.size()>0) {
+                    mPostList.removeAll(list);
+                    Collections.sort(mPostList, new Comparator<Post>() {
+                        @Override
+                        public int compare(Post o1, Post o2) {
+                            return o2.getSentDate().compareTo(o1.getSentDate());
+                        }
+                    });
+                    mPostAdapter.notifyDataSetChanged();
+                }
 
                 for (Post post : mPostList) {
                     requestComments(post.getPostId());
@@ -357,6 +380,27 @@ public class MainActivity extends BasicActivity
                                 });
                                 mPostAdapter.notifyDataSetChanged();
                             }
+                            list.clear();
+
+                            outerLoop:
+                            for (Comment oldComment : post.getCommentList()) {
+                                for (Comment comment : response) {
+                                    if (comment.getCommentId() == oldComment.getCommentId())
+                                        continue outerLoop;
+                                }
+                                list.add(oldComment);
+                            }
+                            if (list.size() > 0) {
+                                post.getCommentList().removeAll(list);
+                                Collections.sort(post.getCommentList(), new Comparator<Comment>() {
+                                    @Override
+                                    public int compare(Comment o1, Comment o2) {
+                                        return o1.getSendDate().compareTo(o2.getSendDate());
+                                    }
+                                });
+
+                                mPostAdapter.notifyDataSetChanged();
+                            }
                         }
                         else{
                             post.setCommentList(Arrays.asList(response));
@@ -377,16 +421,14 @@ public class MainActivity extends BasicActivity
 
     public void deleteRequest(View view){
         View parent = view.getRootView().findViewById(R.id.postContent);
-        if(currentUser.getId() == (long)parent.getTag() || SharedOurPreferences.getDefaults("authority", MainActivity.this).equals("ROLE_ADMIN")){
-            RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+        if(currentUser.getId() == (long)parent.getTag() || SharedOurPreferences.getDefaults(Misc.preferenceRoleStr, MainActivity.this).equals(Misc.roleAdminStr)){
 
-            VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.DELETE,
-                    ConnectingURL.URL_Posts + "/" + parent.getTag(), null, new Response.Listener<JSONObject>() {
+            StringRequest MyJsonRequest = new StringRequest(Request.Method.DELETE,
+                    ConnectingURL.URL_Posts + "/" + parent.getTag(), new Response.Listener<String>() {
 
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onResponse(String response) {
                     Toast.makeText(MainActivity.this, R.string.done, Toast.LENGTH_SHORT).show();
-                    finish();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -404,7 +446,7 @@ public class MainActivity extends BasicActivity
                 }
             };
 
-            MyRequestQueue.add(MyJsonRequest);
+            requestQueue.add(MyJsonRequest);
         }
     }
     
@@ -707,13 +749,22 @@ public class MainActivity extends BasicActivity
             closeNotification();
     }
 
-    public static User getCurrentUser()
-    {
-        return currentUser;
-    }
-    public static void setCurrentUser(User user)
-    {
-        currentUser=user;
+    public void settings(MenuItem item) {
+        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(Misc.preferenceLanguageStr))
+            recreate();
+        else if(key.equals(Misc.preferenceUserChangeStr)){
+            new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getImage().getUrl());
+            ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
+
+        }
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
+    }
 }

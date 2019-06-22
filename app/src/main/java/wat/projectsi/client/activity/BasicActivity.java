@@ -32,7 +32,7 @@ import wat.projectsi.client.model.Post;
 import wat.projectsi.client.model.Profile;
 import wat.projectsi.client.request.GsonRequest;
 
-public abstract class BasicActivity extends AppCompatActivity {
+public abstract class BasicActivity extends BaseSettingChangeActivity {
     protected final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {

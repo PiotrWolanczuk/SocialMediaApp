@@ -51,6 +51,7 @@
     <string name="error_used_email">Email is already in use</string>
     <string name="error_no_network_available">No network available</string>
     <string name="error_unknown">Unknown error</string>
+    <string name="error_work">Error, however registered</string>
 
     <!--Terms -->
     <string name="terms_text">
@@ -68,8 +69,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
     <string name="log_out">Log out</string>
+    <string name="prompt_settings">Settings</string>
+    <string name="prompt_settings_display">Display settings</string>
+    <string name="prompt_language">Language</string>
+    <string name="prompt_languages">Languages</string>
     <string name="profile">Profile</string>
     <string name="gallery">Gallery</string>
     <string name="users">Users</string>
@@ -129,13 +133,17 @@
 
     <!-- Strings related to edit profile-->
     <string name="prompt_success_update">Updated profile data</string>
-    <string name="action_updating">Updating danych</string>
+    <string name="action_updating">Data updating</string>
 
     <!-- Strings related to violation-->
     <string name="description">Description</string>
     <string name="posts_violation">Posts violations</string>
     <string name="comments_violation">Comments violations</string>
-    <string name="posts">Posty</string>
-    <string name="comments">Komentarze</string>
+    <string name="posts">Posts</string>
+    <string name="comments">Comments</string>
+
+    <!-- String related to languages -->
+    <string name="polish">polski</string>
+    <string name="english">english</string>
 
 </resources>

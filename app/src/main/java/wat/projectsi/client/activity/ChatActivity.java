@@ -32,7 +32,7 @@ import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.request.VolleyJsonRequest;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends BaseSettingChangeActivity {
 
     TextView allMessages;
     long mUserId;

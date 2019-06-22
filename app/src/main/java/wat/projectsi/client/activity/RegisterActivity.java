@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -42,7 +41,7 @@ import wat.projectsi.client.Misc;
 import wat.projectsi.client.Validator;
 
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends SettingsActivity {
 
     private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
@@ -97,6 +96,10 @@ public class RegisterActivity extends AppCompatActivity {
 //                    break;
 //                case 500://"Fail! -> Cause: User Role not find."
 //                    break;
+                case 500:
+                    if(error.getMessage()!=null && error.getMessage().equals("com.android.volley.ServerError"))
+                        Toast.makeText(RegisterActivity.this, getString(R.string.error_work), Toast.LENGTH_SHORT).show();
+                    break;
                 default:
                     Toast.makeText(RegisterActivity.this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show();
             }
@@ -115,6 +118,8 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
     private TextView mDateView;
     private Switch mGenderView;
+
+    private Calendar c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,20 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
 
-        final Calendar c = Calendar.getInstance(getResources().getConfiguration().locale);
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-
-                c.set(Calendar.YEAR, year);
-                c.set(Calendar.MONTH, monthOfYear);
-                c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-                mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
-            }
-        };
-
+        c = Calendar.getInstance(getResources().getConfiguration().locale);
         mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
     }
 
@@ -315,7 +307,6 @@ public class RegisterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Signup, data, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -329,11 +320,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void showDatePickerDialog(View view) {
-        final Calendar c = Calendar.getInstance(getResources().getConfiguration().locale);
-        final int mYear = c.get(Calendar.YEAR);
-        final int mMonth = c.get(Calendar.MONTH);
-        final int mDay = c.get(Calendar.DAY_OF_MONTH);
-
         // Launch Date Picker Dialog
         DatePickerDialog dpd = new DatePickerDialog(RegisterActivity.this,
                 new DatePickerDialog.OnDateSetListener() {
@@ -341,12 +327,15 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
+                        c.set(Calendar.YEAR, year);
+                        c.set(Calendar.MONTH, monthOfYear);
+                        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
                         mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
                     }
-                }, mYear, mMonth, mDay);
+                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         dpd.getDatePicker().setMinDate(DateFormatter.minDate);
         dpd.getDatePicker().setMaxDate(DateFormatter.maxDate);
         dpd.show();
-
     }
 }
