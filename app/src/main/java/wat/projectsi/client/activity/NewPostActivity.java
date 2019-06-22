@@ -102,6 +102,7 @@ public class NewPostActivity extends BaseSettingChangeActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             postImage.setImageBitmap(imageBitmap);
+            uploadBitmap(imageBitmap);
         }
         try {
             if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK
