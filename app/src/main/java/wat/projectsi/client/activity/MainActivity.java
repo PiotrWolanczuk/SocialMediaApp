@@ -596,7 +596,7 @@ public class MainActivity extends BasicActivity
     public void addCommentRequest(View view) {
 
         TextView newCommentView =((View)(view.getParent().getParent())).findViewById(R.id.postNewComment);
-        if(!newCommentView.getText().equals("")){
+        if(!newCommentView.getText().toString().equals("")){
             JSONObject data = new JSONObject();
             try {
 
