@@ -44,10 +44,6 @@ public class Picture extends AsyncTask<String, String, Bitmap> {
             Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(bmpGrayscale);
             Paint paint = new Paint();
-            ColorMatrix cm = new ColorMatrix();
-            cm.setSaturation(0);
-            ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
-            paint.setColorFilter(f);
             c.drawBitmap(bitmap, 0, 0, paint);
             imageView.setImageBitmap(bmpGrayscale);
         } catch (Exception e) {
