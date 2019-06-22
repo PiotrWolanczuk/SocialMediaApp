@@ -74,7 +74,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     private void showUserDialog(final Context context, final User user) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
-        dialog.setPositiveButton(context.getText(R.string.delete_friend), new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(context.getText(R.string.prompt_delete_friend), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteFromFriends(context, user);
@@ -99,7 +99,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         dialog.show();
     }
 
-    private void deleteFromFriends(final Context context, User user) {
+    private void deleteFromFriends(final Context context, final User user) {
         RequestQueue MyRequestQueue = Volley.newRequestQueue(context);
 
         JSONObject jsonRequest = new JSONObject();
@@ -114,7 +114,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(context, context.getResources().getString(R.string.delete_friend), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.prompt_deleted_friend), Toast.LENGTH_SHORT).show();
+                users.remove(user);
+                notifyDataSetChanged();
             }
         }, new Response.ErrorListener() {
             @Override

@@ -1,139 +1,158 @@
 package wat.projectsi.client.activity;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Misc;
-import wat.projectsi.client.SharedOurPreferences;
+import wat.projectsi.client.adapter.MessageAdapter;
+import wat.projectsi.client.model.Message;
+import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.request.VolleyJsonRequest;
 
-public class ChatActivity extends BaseSettingChangeActivity {
+public class ChatActivity extends BasicActivity {
 
-    TextView allMessages;
+    private RecyclerView mRecyclerMessageView;
+    private MessageAdapter mMessageAdapter;
+    private List<Message> mMessageList;
     long mUserId;
-    StringBuilder messages = new StringBuilder();
+
+    private static volatile boolean finished;
+    private Handler handler;
+    private static Lock lock = new ReentrantLock();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        allMessages = findViewById(R.id.all_message);
+        mMessageList = new ArrayList<>();
+        mMessageAdapter = new MessageAdapter(ChatActivity.this, mMessageList);
+
+        mRecyclerMessageView = findViewById(R.id.messageRecyclerView);
+        mRecyclerMessageView.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
+        mRecyclerMessageView.setAdapter(mMessageAdapter);
 
         Bundle bundle = getIntent().getExtras();
         mUserId = bundle.getLong("userId");
 
-        showChat();
+        handler = new Handler();
+
+        updateChat();
+
+        startTimerThread();
     }
 
-    private void showChat() {
-        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
-
-        JsonArrayRequest MyJsonRequest = new JsonArrayRequest( Request.Method.GET,
-                ConnectingURL.URL_Message+"/"+mUserId,null, new Response.Listener<JSONArray>() {
-
+    private void updateChat() {
+        GsonRequest<Message[]> request= new GsonRequest<>(ConnectingURL.URL_Message+"/"+mUserId, Message[].class,Misc.getSecureHeaders(this), new Response.Listener<Message[]>(){
             @Override
-            public void onResponse(JSONArray response) {
-                System.out.println(response.toString());
-                for(int i =0; i <response.length(); i++){
-                    try {
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        messages.append(getApplicationContext().getString(R.string.sender) + ": ");
-                        messages.append(jsonObject.getJSONObject("sender").getString("firstName") + ":\t");
-                        messages.append(jsonObject.getString("content") + "\n");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+            public void onResponse(Message[] response) {
+                List<Message> list =new ArrayList<>();
+
+                outerLoop:
+                for(Message message: response)
+                {
+                    for(Message oldMessage:mMessageList)
+                    {
+                        if(message.getMessageId().equals(oldMessage.getMessageId()))
+                            continue outerLoop;
                     }
+                    list.add(message);
                 }
-                allMessages.setText(messages);
+
+                if(list.size()>0) {
+                    mMessageList.addAll(list);
+                    Collections.sort(mMessageList, new Comparator<Message>() {
+                        @Override
+                        public int compare(Message o1, Message o2) {
+                            return o2.getDate().compareTo(o1.getDate());
+                        }
+                    });
+                    mMessageAdapter.notifyDataSetChanged();
+                }
+                list.clear();
+
+
+                outerLoop:
+                for(Message oldMessage:mMessageList)
+                {
+                    for(Message message: response)
+                        if(message.getMessageId().equals(oldMessage.getMessageId()))
+                            continue outerLoop;
+                    list.add(oldMessage);
+                }
+
+                if(list.size()>0) {
+                    mMessageList.removeAll(list);
+                    Collections.sort(mMessageList, new Comparator<Message>() {
+                        @Override
+                        public int compare(Message o1, Message o2) {
+                            return o2.getDate().compareTo(o1.getDate());
+                        }
+                    });
+                    mMessageAdapter.notifyDataSetChanged();
+                }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("APIResponse", error.toString());
-                Toast.makeText(ChatActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() {
-                return Misc.getSecureHeaders(ChatActivity.this);
-            }
-        };
-        MyRequestQueue.add(MyJsonRequest);
+        }, errorListener);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        requestQueue.add(request);
     }
 
-    public void  newMessage(final View view){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        final EditText message = new EditText(this);
-        layout.addView(message);
-
-        dialog.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                sendNewMessage(message.getText().toString());
-            }
-        });
-
-        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog.setView(layout);
-        dialog.show();
-    }
-
-    private void sendNewMessage(String content) {
-        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+    public void newMessage(final View view){
+        progressDialog.setMessage(getResources().getString(R.string.message_progress));
+        progressDialog.show();
 
         JSONObject jsonRequest = new JSONObject();
         try {
-            jsonRequest.put("content", content);
+            TextView newMessageView =((View)(view.getParent().getParent())).findViewById(R.id.newMessage);
+            jsonRequest.put("content", newMessageView.getText());
             jsonRequest.put("receiverId", mUserId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest( Request.Method.POST,
+        VolleyJsonRequest request = new VolleyJsonRequest( Request.Method.POST,
                 ConnectingURL.URL_Message,jsonRequest, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 System.out.println(response.toString());
+                progressDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("APIResponse", error.toString());
                 Toast.makeText(ChatActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
             }
         }){
             @Override
@@ -141,6 +160,52 @@ public class ChatActivity extends BaseSettingChangeActivity {
                 return Misc.getSecureHeaders(ChatActivity.this);
             }
         };
-        MyRequestQueue.add(MyJsonRequest);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        requestQueue.add(request);
+    }
+
+    private void startTimerThread() {
+
+        Runnable mTimerThread = new Runnable() {
+            public void run() {
+                lock.lock();
+                try {
+                    if (!ChatActivity.finished) {
+                        refresh();
+                        handler.postDelayed(this, Misc.refreshTime);
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            }
+        };
+
+        handler.postDelayed(mTimerThread, Misc.refreshTime);
+    }
+
+    public void refresh()
+    {
+        updateChat();
+    }
+
+    @Override
+    protected void onDestroy(){
+
+        if(!finished ){
+            lock.lock();
+            try {
+                finished = false;
+                requestQueue.stop();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        super.onDestroy();
     }
 }

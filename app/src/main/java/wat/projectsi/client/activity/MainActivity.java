@@ -143,7 +143,6 @@ public class MainActivity extends BasicActivity
 
         mNotificationAdapter = new NotificationAdapter(mNotificationList, MainActivity.this);
         mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
-        requestQueue = Volley.newRequestQueue(this);
 
         MenuItem adminItem = navigationView.getMenu().findItem(R.id.nav_violation_posts);
         MenuItem adminItem2 = navigationView.getMenu().findItem(R.id.nav_violation_comments);
@@ -720,7 +719,6 @@ public class MainActivity extends BasicActivity
             closeNotification();
 
         super.onDestroy();
-
     }
 
     private void closeNotification()
