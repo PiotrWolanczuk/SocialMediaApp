@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
@@ -35,7 +36,6 @@ import wat.projectsi.client.request.GsonRequest;
 public class ProfileActivity extends BasicActivity {
 
     private RecyclerView mRecyclerPostView;
-    private List<User> mUserList = new ArrayList<>();
 
     private RequestQueue mRequestQueue;
     private PostAdapter mPostAdapter;
@@ -51,7 +51,7 @@ public class ProfileActivity extends BasicActivity {
         mPostList = new ArrayList<>();
 
         mRecyclerPostView= findViewById(R.id.postRecyclerView);
-        mRecyclerPostView.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
+        mRecyclerPostView.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
         mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, ProfileActivity.this));
 
         mRequestQueue = Volley.newRequestQueue(this);
@@ -73,8 +73,8 @@ public class ProfileActivity extends BasicActivity {
             }
 
             for (Post post : mPostList) {
-                requestPostUser(post.getUserId(), post);
                 requestComments(post.getPostId());
+                requestPostUser(post.getUserId(), post);
             }
         }
 
@@ -99,7 +99,6 @@ public class ProfileActivity extends BasicActivity {
 
                             outerLoop:
                             for (Comment comment : response) {
-                                requestCommentUser(comment.getUser().getId(), comment);
                                 for (Comment oldComment : post.getCommentList()) {
                                     if (comment.getCommentId() == oldComment.getCommentId())
                                         continue outerLoop;
@@ -152,5 +151,25 @@ public class ProfileActivity extends BasicActivity {
             ((TextView) findViewById(R.id.birthday)).setText(DateFormatter.convertToLocalDate(mUser.getBirthday()));
 
         }
+    }
+
+    public void requestPostUser(long userID, final Post post)
+    {
+        GsonRequest<Profile> request = new GsonRequest<>(ConnectingURL.URL_Users_Profile+"/"+userID, Profile.class,
+                Misc.getSecureHeaders(this), new Response.Listener<Profile>() {
+            @Override
+            public void onResponse(Profile response) {
+                post.setUser(response.getUser());
+                mPostAdapter.notifyDataSetChanged();
+
+            }
+        }, errorListener);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        requestQueue.add(request);
     }
 }

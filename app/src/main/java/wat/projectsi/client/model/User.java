@@ -21,13 +21,12 @@ public class User implements Serializable {
     @SerializedName("pictureId")
     private Image image;
 
-    private String profileImage;
 
-    public User(String name, String surname, int id, String profileImage) {
+    public User(String name, String surname, int id, Image image) {
         this.name = name;
         this.surname = surname;
         this.id = id;
-        this.profileImage = profileImage;
+        this.image=image;
     }
     public User(String name, String surname, int id) {
         this.name = name;
@@ -42,9 +41,6 @@ public class User implements Serializable {
         return surname;
     }
 
-    public String getProfileImage() {
-        return profileImage;
-    }
 
     public long getId() {
         return id;

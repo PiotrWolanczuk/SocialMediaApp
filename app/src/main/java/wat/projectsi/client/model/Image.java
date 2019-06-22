@@ -10,7 +10,7 @@ public class Image implements Serializable {
     private long id;
     @SerializedName("hashCode")
     private String url;
-    //    @SerializedName("tags")
+    @SerializedName("tags")
     private List<String> tags;
 
     public Image(long id, String url) {

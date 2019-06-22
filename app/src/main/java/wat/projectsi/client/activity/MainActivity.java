@@ -59,6 +59,7 @@ import wat.projectsi.client.adapter.NotificationAdapter;
 import wat.projectsi.client.adapter.PostAdapter;
 import wat.projectsi.client.model.Comment;
 import wat.projectsi.client.model.Post;
+import wat.projectsi.client.model.Profile;
 import wat.projectsi.client.model.User;
 import wat.projectsi.client.model.notification.Notification;
 import wat.projectsi.client.model.notification.NotificationAcquaintance;
@@ -301,6 +302,7 @@ public class MainActivity extends BasicActivity
                         if(post.getPostId()==oldPost.getPostId())
                             continue outerLoop;
                     }
+                    requestPostUser(post.getUserId(), post);
                     list.add(post);
                 }
 
@@ -758,11 +760,30 @@ public class MainActivity extends BasicActivity
         else if(key.equals(Misc.preferenceUserChangeStr)){
             new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getImage().getUrl());
             ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
-
         }
     }
 
     public static User getCurrentUser() {
         return currentUser;
+    }
+
+    public void requestPostUser(long userID, final Post post)
+    {
+        GsonRequest<Profile> request = new GsonRequest<>(ConnectingURL.URL_Users_Profile+"/"+userID, Profile.class,
+                Misc.getSecureHeaders(this), new Response.Listener<Profile>() {
+            @Override
+            public void onResponse(Profile response) {
+                post.setUser(response.getUser());
+                mPostAdapter.notifyDataSetChanged();
+
+            }
+        }, errorListener);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        requestQueue.add(request);
     }
 }
