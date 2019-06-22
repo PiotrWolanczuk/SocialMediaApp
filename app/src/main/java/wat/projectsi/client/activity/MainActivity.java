@@ -420,10 +420,10 @@ public class MainActivity extends BasicActivity
 
     public void deleteRequest(View view){
         View parent = view.getRootView().findViewById(R.id.postContent);
-        if(currentUser.getId() == (long)parent.getTag() || SharedOurPreferences.getDefaults(Misc.preferenceRoleStr, MainActivity.this).equals(Misc.roleAdminStr)){
+        if(currentUser.getId() == (long)parent.getTag()){
 
             StringRequest MyJsonRequest = new StringRequest(Request.Method.DELETE,
-                    ConnectingURL.URL_Posts + "/" + parent.getTag(), new Response.Listener<String>() {
+                    ConnectingURL.URL_Posts + "/" + view.getTag(), new Response.Listener<String>() {
 
                 @Override
                 public void onResponse(String response) {
