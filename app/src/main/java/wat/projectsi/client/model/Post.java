@@ -22,18 +22,21 @@ public class Post extends ViewModel implements Serializable {
     private String name;
     @SerializedName("surname")
     private  String surname;
-    private String  profilePicture;
-    private List<String> images;
+    @SerializedName("pictureEntityList")
+    private List<Image> images;
     private List<Comment> mCommentList;
+    private User user;
 
-    public Post(long postId ,String postContent, Date sentDate, Long userId, String name, String surname, List<String> images) {
+
+    public Post(long postId ,String postContent, Date sentDate, Long userId, String name, String surname) {
+   // public Post(long postId ,String postContent, Date sentDate, Long userId, String name, String surname, List<String> images) {
         this.postId=postId;
         this.postContent = postContent;
         this.sentDate = sentDate;
         this.userId = userId;
         this.name = name;
         this.surname = surname;
-        this.images = images;
+        //this.images = images;
         mCommentList= new ArrayList<>();
     }
 
@@ -61,12 +64,9 @@ public class Post extends ViewModel implements Serializable {
         return surname;
     }
 
-    public List<String> getImages() {
-        return images;
-    }
+    public List<Image> getImages() {
 
-    public String getProfilePicture() {
-        return profilePicture;
+        return images;
     }
 
     public List<Comment> getCommentList() {
@@ -80,7 +80,11 @@ public class Post extends ViewModel implements Serializable {
         mCommentList.addAll(commentList);
     }
 
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

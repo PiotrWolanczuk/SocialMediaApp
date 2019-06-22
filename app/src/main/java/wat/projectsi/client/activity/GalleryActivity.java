@@ -1,9 +1,11 @@
 package wat.projectsi.client.activity;
 
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -19,21 +21,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.Misc;
-import wat.projectsi.client.UniversalImageLoader;
+import wat.projectsi.client.adapter.PictureAdapter;
+import wat.projectsi.client.model.Image;
 
-public class GalleryActivity extends AppCompatActivity {
+public class GalleryActivity extends BasicActivity {
 
     private Long currentUserId;
     private RequestQueue requestQueue;
-    private String[] images;
-    private UniversalImageLoader adapter;
-    private ViewPager viewPager;
-    private long[] imagesId;
+
+    private List<Image> imageList = new ArrayList<>();
+    private PictureAdapter pictureAdapter;
+    private RecyclerView recyclerView;
+    private TextView emptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,25 +49,47 @@ public class GalleryActivity extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
         currentUserId = getIntent().getExtras().getLong("userId");
 
+        recyclerView = findViewById(R.id.my_recycler_view);
+        emptyView = findViewById(R.id.empty_view);
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
         ImageLoader.getInstance().init(config);
-
-        viewPager = findViewById(R.id.viewPager);
         takePicturesFromDB();
     }
 
     private void takePicturesFromDB() {
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
+        progressDialog.setMessage(getResources().getString(R.string.message_progress));
+        progressDialog.show();
+        final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
                 ConnectingURL.URL_Pictures + "/" + currentUserId, null, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray response) {
+                progressDialog.dismiss();
+                recyclerView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
                 Log.e("APIResponse", response.toString());
-                showPhotos(response);
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Image image = new Image(jsonObject.getLong("pictureId"), jsonObject.getString("hashCode"));
+                        imageList.add(image);
+                    }
+                    recyclerView.setAdapter(pictureAdapter = new PictureAdapter(imageList, GalleryActivity.this));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
                 Toast.makeText(GalleryActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
                 Log.e("APIResponse", error.toString());
                 System.out.println(error.getMessage());
@@ -73,22 +101,5 @@ public class GalleryActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(request);
-    }
-
-    private void showPhotos(JSONArray response) {
-        images = new String[response.length()];
-        JSONObject picture = null;
-        if (response.length() > 1)
-            try {
-                for (int i = 1; i < response.length(); i++) {
-                    picture = response.getJSONObject(i);
-                    images[i - 1] = picture.getString("hashCode");
-                    imagesId[i-1] = picture.getLong("pictureId");
-                }
-                adapter = new UniversalImageLoader(GalleryActivity.this, ImageLoader.getInstance(), images, currentUserId, imagesId);
-                viewPager.setAdapter(adapter);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
     }
 }

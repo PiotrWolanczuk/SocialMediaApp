@@ -32,7 +32,7 @@ import wat.projectsi.client.model.Post;
 import wat.projectsi.client.model.Profile;
 import wat.projectsi.client.request.GsonRequest;
 
-public abstract class BasicActivity extends AppCompatActivity {
+public abstract class BasicActivity extends BaseSettingChangeActivity {
     protected final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
@@ -136,75 +136,4 @@ public abstract class BasicActivity extends AppCompatActivity {
 
         requestQueue.add(request);
     }
-
-    public void requestPostUser(long id, final Post post){
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
-                ConnectingURL.URL_Users_Profile+"/"+id, null, new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONObject jsonObject = response.getJSONObject("getUserDTO");
-                    String url = jsonObject.getJSONObject("pictureId").getString("hashCode");
-                    post.setProfilePicture(url);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(BasicActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
-                Log.e("APIResponse", error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return Misc.getSecureHeaders(getApplicationContext());
-            }
-        };
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                Misc.MY_SOCKET_TIMEOUT_MS,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        requestQueue.add(request);
-    }
-
-    public void requestCommentUser(long id, final Comment comment){
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
-                ConnectingURL.URL_Users_Profile+"/"+id, null, new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONObject jsonObject = response.getJSONObject("getUserDTO");
-                    String url = jsonObject.getJSONObject("pictureId").getString("hashCode");
-                    comment.setProfilePicture(url);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(BasicActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
-                Log.e("APIResponse", error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return Misc.getSecureHeaders(getApplicationContext());
-            }
-        };
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                Misc.MY_SOCKET_TIMEOUT_MS,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        requestQueue.add(request);
-    }
-
 }

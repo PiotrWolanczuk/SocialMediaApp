@@ -3,43 +3,41 @@ package wat.projectsi.client.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.app.ActionBar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,25 +52,21 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
-import wat.projectsi.client.Picture;
-import wat.projectsi.client.adapter.GalleryAdapter;
-import wat.projectsi.client.model.Comment;
-import wat.projectsi.client.model.Profile;
-import wat.projectsi.client.model.User;
-import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.Misc;
+import wat.projectsi.client.Picture;
 import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.adapter.NotificationAdapter;
 import wat.projectsi.client.adapter.PostAdapter;
+import wat.projectsi.client.model.Comment;
+import wat.projectsi.client.model.Post;
+import wat.projectsi.client.model.Profile;
+import wat.projectsi.client.model.User;
 import wat.projectsi.client.model.notification.Notification;
 import wat.projectsi.client.model.notification.NotificationAcquaintance;
 import wat.projectsi.client.model.notification.NotificationMessage;
 import wat.projectsi.client.model.notification.NotificationPost;
-import wat.projectsi.client.model.Post;
+import wat.projectsi.client.request.GsonRequest;
 import wat.projectsi.client.request.VolleyJsonRequest;
-
-
-//user1 UserPass1
 
 public class MainActivity extends BasicActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -93,7 +87,6 @@ public class MainActivity extends BasicActivity
     private static volatile boolean finished;
     private Handler handler;
     private static Lock lock = new ReentrantLock();
-    private static User currentUser;
     private String nameText;
     private String surnameText;
 
@@ -151,7 +144,13 @@ public class MainActivity extends BasicActivity
 
         mNotificationAdapter = new NotificationAdapter(mNotificationList, MainActivity.this);
         mRecyclerPostView.setAdapter(mPostAdapter = new PostAdapter(mPostList, MainActivity.this));
-        requestQueue = Volley.newRequestQueue(this);
+
+        MenuItem adminItem = navigationView.getMenu().findItem(R.id.nav_violation_posts);
+        MenuItem adminItem2 = navigationView.getMenu().findItem(R.id.nav_violation_comments);
+        if(SharedOurPreferences.getDefaults(Misc.preferenceRoleStr, MainActivity.this).equals(Misc.roleAdminStr)){
+            adminItem.setVisible(true);
+            adminItem2.setVisible(true);
+        }
 
         handler = new Handler();
         requestCurrentUser();
@@ -176,21 +175,6 @@ public class MainActivity extends BasicActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -211,6 +195,15 @@ public class MainActivity extends BasicActivity
             startActivity(userIntent);
         } else if(id == R.id.nav_statute){
             showStatute();
+        }else if(id == R.id.nav_violation_posts){
+            Intent violationsActivity = new Intent(MainActivity.this, ViolationActivity.class);
+            violationsActivity.putExtra("violations", "posts");
+            startActivity(violationsActivity);
+        }
+        else if(id == R.id.nav_violation_comments){
+            Intent violationsActivity = new Intent(MainActivity.this, ViolationActivity.class);
+            violationsActivity.putExtra("violations", "comments");
+            startActivity(violationsActivity);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -309,11 +302,34 @@ public class MainActivity extends BasicActivity
                         if(post.getPostId()==oldPost.getPostId())
                             continue outerLoop;
                     }
+                    requestPostUser(post.getUserId(), post);
                     list.add(post);
                 }
 
                 if(list.size()>0) {
                     mPostList.addAll(list);
+                    Collections.sort(mPostList, new Comparator<Post>() {
+                        @Override
+                        public int compare(Post o1, Post o2) {
+                            return o2.getSentDate().compareTo(o1.getSentDate());
+                        }
+                    });
+                    mPostAdapter.notifyDataSetChanged();
+                }
+                list.clear();
+
+
+                outerLoop:
+                for(Post oldPost:mPostList)
+                {
+                    for(Post post: response)
+                        if(post.getPostId()==oldPost.getPostId())
+                            continue outerLoop;
+                        list.add(oldPost);
+                }
+
+                if(list.size()>0) {
+                    mPostList.removeAll(list);
                     Collections.sort(mPostList, new Comparator<Post>() {
                         @Override
                         public int compare(Post o1, Post o2) {
@@ -365,6 +381,27 @@ public class MainActivity extends BasicActivity
                                 });
                                 mPostAdapter.notifyDataSetChanged();
                             }
+                            list.clear();
+
+                            outerLoop:
+                            for (Comment oldComment : post.getCommentList()) {
+                                for (Comment comment : response) {
+                                    if (comment.getCommentId() == oldComment.getCommentId())
+                                        continue outerLoop;
+                                }
+                                list.add(oldComment);
+                            }
+                            if (list.size() > 0) {
+                                post.getCommentList().removeAll(list);
+                                Collections.sort(post.getCommentList(), new Comparator<Comment>() {
+                                    @Override
+                                    public int compare(Comment o1, Comment o2) {
+                                        return o1.getSendDate().compareTo(o2.getSendDate());
+                                    }
+                                });
+
+                                mPostAdapter.notifyDataSetChanged();
+                            }
                         }
                         else{
                             post.setCommentList(Arrays.asList(response));
@@ -384,33 +421,34 @@ public class MainActivity extends BasicActivity
     }
 
     public void deleteRequest(View view){
-        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+        View parent = view.getRootView().findViewById(R.id.postContent);
+        if(currentUser.getId() == (long)parent.getTag()){
 
-        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.DELETE,
-                ConnectingURL.URL_Posts + "/" + view.getTag(), null, new Response.Listener<JSONObject>() {
+            StringRequest MyJsonRequest = new StringRequest(Request.Method.DELETE,
+                    ConnectingURL.URL_Posts + "/" + view.getTag(), new Response.Listener<String>() {
 
-            @Override
-            public void onResponse(JSONObject response) {
-                System.out.println(response);
-                finish();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("APIResponse", error.toString());
-                error.printStackTrace();
-                Toast.makeText(MainActivity.this,
-                        getApplicationContext().getResources().getString(R.string.message_wrong),
-                        Toast.LENGTH_LONG).show();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return Misc.getSecureHeaders(MainActivity.this);
-            }
-        };
+                @Override
+                public void onResponse(String response) {
+                    Toast.makeText(MainActivity.this, R.string.done, Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("APIResponse", error.toString());
+                    error.printStackTrace();
+                    Toast.makeText(MainActivity.this,
+                            getApplicationContext().getResources().getString(R.string.message_wrong),
+                            Toast.LENGTH_LONG).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    return Misc.getSecureHeaders(MainActivity.this);
+                }
+            };
 
-        MyRequestQueue.add(MyJsonRequest);
+            requestQueue.add(MyJsonRequest);
+        }
     }
     
     private void requestNotifications()
@@ -476,42 +514,120 @@ public class MainActivity extends BasicActivity
         }
     }
 
-    public void reportRequest(View view) {
-        //TODO: report body
+    public void reportRequestPost(View view){
+        reportRequest(view, 1);
+    }
+    public void reportRequestComment(View view){
+        reportRequest(view, 2);
+    }
+    private void reportRequest(final View view, final int commentOrPost) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText description = new EditText(this);
+        description.setHint(R.string.description);
+        layout.addView(description);
+
+        dialog.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    report(view, description.getText().toString(), commentOrPost);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setView(layout);
+        dialog.show();
     }
 
-    public void addCommentRequest(View view) {
+    public void reportRequest(JSONObject jsonRequest,  String url){
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
-        TextView newCommentView =((View)(view.getParent().getParent())).findViewById(R.id.postNewComment);
-        JSONObject data = new JSONObject();
-        try {
+        VolleyJsonRequest MyJsonRequest = new VolleyJsonRequest(Request.Method.POST,
+                url, jsonRequest, new Response.Listener<JSONObject>() {
 
-            data.put("commentContest", newCommentView.getText());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Comments + "/" + view.getTag(), data,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(MainActivity.this, getString(R.string.prompt_successful_comment), Toast.LENGTH_SHORT).show();
-                    }
-                }, errorListener) {
+            @Override
+            public void onResponse(JSONObject response) {
+                Toast.makeText(MainActivity.this, R.string.done, Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("APIResponse", error.toString());
+                error.printStackTrace();
+                Toast.makeText(MainActivity.this,
+                        getApplicationContext().getResources().getString(R.string.message_wrong),
+                        Toast.LENGTH_LONG).show();
+            }
+        }) {
             @Override
             public Map<String, String> getHeaders() {
                 return Misc.getSecureHeaders(MainActivity.this);
             }
         };
-        requestQueue.add(request);
 
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                Misc.MY_SOCKET_TIMEOUT_MS,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MyRequestQueue.add(MyJsonRequest);
+    }
+    private void report(View view, String description, int commentOrPost) throws JSONException {
+        JSONObject jsonRequest = new JSONObject();
 
-        newCommentView.setText(null);
+        if(commentOrPost == 1){
+            View viewWithId = view.getRootView().findViewById(R.id.delete_button);
+            jsonRequest.put("postId",  viewWithId.getTag());
+            jsonRequest.put("violationDescription", description);
+            reportRequest(jsonRequest, ConnectingURL.URL_Violations + "/posts");
+        }
+        else if(commentOrPost == 2){
+            View viewWithId = view.getRootView().findViewById(R.id.commentContent);
+            jsonRequest.put("commentId",  viewWithId.getTag());
+            jsonRequest.put("violationDescription", description);
+            reportRequest(jsonRequest, ConnectingURL.URL_Violations + "/comments");
+        }
+    }
 
+    public void addCommentRequest(View view) {
+
+        TextView newCommentView =((View)(view.getParent().getParent())).findViewById(R.id.postNewComment);
+        if(!newCommentView.getText().toString().equals("")){
+            JSONObject data = new JSONObject();
+            try {
+
+                data.put("commentContest", newCommentView.getText());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, ConnectingURL.URL_Comments + "/" + view.getTag(), data,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Toast.makeText(MainActivity.this, getString(R.string.prompt_successful_comment), Toast.LENGTH_SHORT).show();
+                        }
+                    }, errorListener) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    return Misc.getSecureHeaders(MainActivity.this);
+                }
+            };
+            requestQueue.add(request);
+
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    Misc.MY_SOCKET_TIMEOUT_MS,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            newCommentView.setText(null);
+        }
     }
 
     public void acceptInvitation(View view) {
@@ -605,7 +721,6 @@ public class MainActivity extends BasicActivity
             closeNotification();
 
         super.onDestroy();
-
     }
 
     private void closeNotification()
@@ -634,13 +749,41 @@ public class MainActivity extends BasicActivity
             closeNotification();
     }
 
-    public static User getCurrentUser()
-    {
-        return currentUser;
-    }
-    public static void setCurrentUser(User user)
-    {
-        currentUser=user;
+    public void settings(MenuItem item) {
+        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(Misc.preferenceLanguageStr))
+            recreate();
+        else if(key.equals(Misc.preferenceUserChangeStr)){
+            new Picture((ImageView)navigationView.findViewById(R.id.profilePicture)).execute(currentUser.getImage().getUrl());
+            ((TextView)navigationView.findViewById(R.id.profileName)).setText(currentUser.getName()+" "+currentUser.getSurname());
+        }
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void requestPostUser(long userID, final Post post)
+    {
+        GsonRequest<Profile> request = new GsonRequest<>(ConnectingURL.URL_Users_Profile+"/"+userID, Profile.class,
+                Misc.getSecureHeaders(this), new Response.Listener<Profile>() {
+            @Override
+            public void onResponse(Profile response) {
+                post.setUser(response.getUser());
+                mPostAdapter.notifyDataSetChanged();
+
+            }
+        }, errorListener);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        requestQueue.add(request);
+    }
 }

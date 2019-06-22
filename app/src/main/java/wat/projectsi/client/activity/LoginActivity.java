@@ -2,6 +2,7 @@ package wat.projectsi.client.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -26,11 +28,14 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
+import wat.projectsi.client.Misc;
 import wat.projectsi.client.SharedOurPreferences;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseSettingChangeActivity {
 
 
     private AutoCompleteTextView mEmailView;
@@ -40,9 +45,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(SharedOurPreferences.getDefaults(Misc.preferenceLanguageStr, this)==null)
+            SharedOurPreferences.setDefaults(Misc.preferenceLanguageStr, Misc.suportedLocaleCodes[0], this);
+        setLanguage(SharedOurPreferences.getDefaults(Misc.preferenceLanguageStr, this));
+
         setContentView(R.layout.activity_login);
 
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = findViewById(R.id.email);
 
         progressDialog = new ProgressDialog(this);
         mPasswordView = findViewById(R.id.password);
@@ -117,14 +127,17 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(JSONObject response) {
-                progressDialog.cancel();
                 try {
-                    SharedOurPreferences.setDefaults("token", response.getString("token"),
+                    JSONObject authority = response.getJSONArray("authorities").getJSONObject(0);
+                    SharedOurPreferences.setDefaults(Misc.preferenceTokenStr, response.getString("token"),
+                            LoginActivity.this);
+                    SharedOurPreferences.setDefaults(Misc.preferenceRoleStr, authority.getString("authority"),
                             LoginActivity.this);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                progressDialog.cancel();
                 startActivity(mainIntent);
             }
         }, new Response.ErrorListener() {
@@ -135,6 +148,10 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_wrong), Toast.LENGTH_SHORT).show();
             }
         });
+        MyJsonRequest.setRetryPolicy(new DefaultRetryPolicy(
+                Misc.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MyRequestQueue.add(MyJsonRequest);
     }
 

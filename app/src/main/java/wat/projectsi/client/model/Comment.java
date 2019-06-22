@@ -18,7 +18,6 @@ public class Comment extends ViewModel implements Serializable {
     private String commentContest;
     @SerializedName("sendDate")
     private Date sendDate;
-    private String  profilePicture;
 
     public Comment(long commentId, Long postId, User user, String commentContest, Date sendDate) {
         this.commentId = commentId;
@@ -48,11 +47,4 @@ public class Comment extends ViewModel implements Serializable {
         return sendDate;
     }
 
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
 }

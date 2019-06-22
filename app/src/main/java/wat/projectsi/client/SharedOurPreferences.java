@@ -13,6 +13,8 @@ public class SharedOurPreferences implements android.content.SharedPreferences {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(key, value);
         editor.commit();
+        if(key.equals(Misc.preferenceUserChangeStr))
+            removeDefaults(key, context);
     }
 
     public static String getDefaults(String key, Context context) {
@@ -20,10 +22,18 @@ public class SharedOurPreferences implements android.content.SharedPreferences {
         return preferences.getString(key, null);
     }
 
+    public static void removeDefaults(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(key);
+        editor.commit();
+    }
+
     public static void clear(Context context){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
+        editor.remove(Misc.preferenceRoleStr);
+        editor.remove(Misc.preferenceTokenStr);;
         editor.commit();
     }
 

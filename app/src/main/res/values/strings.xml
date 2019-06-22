@@ -4,6 +4,7 @@
     <string name="message_wrong">Cos poszlo nie tak</string>
     <string name="message_progress">W toku</string>
     <string name="cancel">Anuluj</string>
+    <string name="done">Zrobione</string>
     <!-- Strings related to login and register-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
@@ -50,6 +51,7 @@
     <string name="error_used_email">Email już wykorzystywany</string>
     <string name="error_no_network_available">Sieć nie dostępna</string>
     <string name="error_unknown">Nieznany błąd</string>
+    <string name="error_work">Błąd, ale zarejestrowano</string>
 
     <!--Terms -->
     <string name="terms_text">
@@ -67,8 +69,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Ustawienia</string>
     <string name="log_out">Wyloguj</string>
+    <string name="prompt_settings">Ustawienia</string>
+    <string name="prompt_settings_display">Ustawienia wyświetlania</string>
+    <string name="prompt_language">Język</string>
+    <string name="prompt_languages">Języki</string>
     <string name="profile">Profil</string>
     <string name="gallery">Galeria</string>
     <string name="users">Ludzie</string>
@@ -116,16 +121,33 @@
     <string name="friends">Znajomi</string>
 
 
-    <string name="delete_friend">Usunieto znajomego</string>
+    <string name="prompt_deleted_friend">Usunieto znajomego</string>
 
     <!-- Strings related to profile-->
     <string name="prompt_birthday">Data urodzenia</string>
     <string name="prompt_friend_list">Lista znajomych</string>
     <string name="prompt_change_picture">Zmien profilowe</string>
     <string name="prompt_edit">Edytuj</string>
+    <string name="prompt_message">Czat</string>
+    <string name="prompt_new_message">Wyslij</string>
+    <string name="sender">Nadawca</string>
 
     <!-- Strings related to edit profile-->
     <string name="prompt_success_update">Zaktualizowano dane</string>
     <string name="action_updating">Aktualizowanie danych</string>
+
+    <!-- Strings related to violation-->
+    <string name="description">Opis</string>
+    <string name="posts_violation">Naruszenia postow</string>
+    <string name="comments_violation">Naruszenia komentarzy</string>
+    <string name="posts">Posty</string>
+    <string name="comments">Komentarze</string>
+
+    <!-- String related to languages -->
+    <string name="polish">polski</string>
+    <string name="english">english</string>
+
+    <!--String relate to chat -->
+    <string name="prompt_new_message_hint">Napisz nową wiadomość…</string>
 
 </resources>

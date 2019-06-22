@@ -16,6 +16,8 @@ import java.util.List;
 import wat.projectsi.R;
 import wat.projectsi.client.DateFormatter;
 import wat.projectsi.client.Picture;
+import wat.projectsi.client.activity.MainActivity;
+import wat.projectsi.client.model.Image;
 import wat.projectsi.client.model.Post;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder>{
@@ -36,20 +38,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int i) {
         Post post=mPostItemList.get(i);
-        new Picture(holder.mProfilePictureView).execute(post.getProfilePicture());
+        if(post.getUser()!=null){
+            new Picture(holder.mProfilePictureView).execute(post.getUser().getImage().getUrl());}
         holder.mProfilePictureView.setTag(post.getUserId());
         holder.mNameView.setText(post.getName());
         holder.mNameView.setTag(post.getUserId());
         holder.mSurnameView.setText(post.getSurname());
         holder.mSurnameView.setTag(post.getUserId());
         holder.mPostContentView.setText(post.getPostContent());
+        holder.mPostContentView.setTag(post.getUserId());
         holder.mPostDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(post.getSentDate()));
         View parent= ((View)holder.mPostContentView.getParent().getParent());
         parent.findViewById(R.id.comment_button).setTag(post.getPostId());
         parent.findViewById(R.id.delete_button).setTag(post.getPostId());
+        if(post.getImages().size()>0) new Picture(holder.mImageView).execute(post.getImages().get(0).getUrl());
 
         holder.mPostImageRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
-        holder.mPostImageRecyclerView.setAdapter(new ImageRecyclerAdapter(mContext, post.getImages()));
+//        holder.mPostImageRecyclerView.setAdapter(new ImageRecyclerAdapter(mContext, post.getImages()));
+        holder.mPostImageRecyclerView.setAdapter(new ImageRecyclerAdapter(mContext, null));
         holder.mPostCommentRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.VERTICAL, false));
         holder.mPostCommentRecyclerView.setAdapter( new CommentAdapter(mContext, post.getCommentList()));
     }
@@ -67,6 +73,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         TextView mNameView;
         TextView mSurnameView;
         ImageView mProfilePictureView;
+        ImageView mImageView;
 
         PostViewHolder(View view) {
             super(view);
@@ -77,6 +84,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mNameView = view.findViewById(R.id.profileName);
             mSurnameView = view.findViewById(R.id.profileSurname);
             mProfilePictureView=view.findViewById(R.id.profilePicture);
+            mImageView=view.findViewById(R.id.postImage);
         }
     }
 }

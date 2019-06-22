@@ -10,8 +10,8 @@
         android:id="@+id/postImages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
         app:layout_constraintTop_toTopOf="parent"
-        android:maxHeight="200dp"
         android:background="@drawable/border"
-        android:scaleType="centerCrop" />
+        />
 </android.support.constraint.ConstraintLayout>

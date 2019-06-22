@@ -14,55 +14,54 @@ import java.util.List;
 import wat.projectsi.R;
 import wat.projectsi.client.DateFormatter;
 import wat.projectsi.client.Picture;
-import wat.projectsi.client.model.Comment;
+import wat.projectsi.client.model.Message;
 import wat.projectsi.client.model.User;
 
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder>{
-    private List<Comment> mCommentList;
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder>{
+    private List<Message> mMessageList;
     private Context mContext;
 
-    CommentAdapter(Context context, List<Comment> commentItemList) {
-        mCommentList = commentItemList;
+    public MessageAdapter(Context context, List<Message> messageItemList) {
+        mMessageList = messageItemList;
         mContext = context;
     }
 
     @NonNull
     @Override
-    public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new CommentViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.comments_card_main, viewGroup, false));
+    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        return new MessageViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.messages_card_chat, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CommentViewHolder holder, int i) {
-        Comment comment =mCommentList.get(i);
-        User user =comment.getUser();
+    public void onBindViewHolder(@NonNull MessageViewHolder holder, int i) {
+        Message message = mMessageList.get(i);
+        User user =message.getSender();
         new Picture(holder.mProfilePictureView).execute(user.getImage().getUrl());
         holder.mProfilePictureView.setTag(user.getId());
         holder.mNameView.setText(user.getName());
         holder.mNameView.setTag(user.getId());
         holder.mSurnameView.setTag(user.getId());
         holder.mSurnameView.setText(user.getSurname());
-        holder.mCommentContentView.setText(comment.getCommentContest());
-        holder.mCommentContentView.setTag(comment.getCommentId());
-        holder.mCommentDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(comment.getSendDate()));
+        holder.mMessageContentView.setText(message.getContent());
+        holder.mMessageDateView.setText(DateFormatter.viewDateTimeFormat(mContext).format(message.getDate()));
     }
 
     @Override
     public int getItemCount() {
-        return mCommentList==null? 0: mCommentList.size();
+        return mMessageList ==null? 0: mMessageList.size();
     }
 
-    class CommentViewHolder extends RecyclerView.ViewHolder {
-        TextView mCommentContentView;
-        TextView mCommentDateView;
+    class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView mMessageContentView;
+        TextView mMessageDateView;
         TextView mNameView;
         TextView mSurnameView;
         ImageView mProfilePictureView;
 
-        CommentViewHolder(View view) {
+        MessageViewHolder(View view) {
             super(view);
-            mCommentContentView = view.findViewById(R.id.commentContent);
-            mCommentDateView = view.findViewById(R.id.sendCommentDate);
+            mMessageContentView = view.findViewById(R.id.messageContent);
+            mMessageDateView = view.findViewById(R.id.messageDate);
             mNameView = view.findViewById(R.id.profileName);
             mSurnameView = view.findViewById(R.id.profileSurname);
             mProfilePictureView=view.findViewById(R.id.profilePicture);

@@ -2,6 +2,7 @@ package wat.projectsi.client.activity;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -14,7 +15,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -27,9 +28,11 @@ import wat.projectsi.R;
 import wat.projectsi.client.ConnectingURL;
 import wat.projectsi.client.DateFormatter;
 import wat.projectsi.client.Misc;
+import wat.projectsi.client.SharedOurPreferences;
 import wat.projectsi.client.Validator;
 import wat.projectsi.client.model.User;
 import wat.projectsi.client.request.GsonRequest;
+import wat.projectsi.client.request.VolleyJsonRequest;
 
 public class ProfileEditActivity extends BasicActivity {
 
@@ -37,6 +40,8 @@ public class ProfileEditActivity extends BasicActivity {
     private EditText mSurnameView;
     private TextView mDateView;
     private Switch mGenderView;
+
+    private Calendar c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +54,6 @@ public class ProfileEditActivity extends BasicActivity {
         mSurnameView = findViewById(R.id.surname);
         mDateView = findViewById(R.id.birthdayNew);
 
-        final Calendar c = Calendar.getInstance(getResources().getConfiguration().locale);
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-
-                c.set(Calendar.YEAR, year);
-                c.set(Calendar.MONTH, monthOfYear);
-                c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-                mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
-            }
-        };
-
         mGenderView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -74,13 +65,14 @@ public class ProfileEditActivity extends BasicActivity {
             }
         });
 
-        User user=MainActivity.getCurrentUser();
+        mGenderView.setChecked(currentUser.getGender().equals(Misc.womanStr));
 
-        mGenderView.setChecked(user.getGender().equals(Misc.womanStr));
+        mNameView.setText(currentUser.getName());
+        mSurnameView.setText(currentUser.getSurname());
 
-        mNameView.setText(user.getName());
-        mSurnameView.setText(user.getSurname());
-        mDateView.setText(DateFormatter.convertToLocalDate(user.getBirthday()));
+        c = Calendar.getInstance(getResources().getConfiguration().locale);
+
+        mDateView.setText(DateFormatter.convertToLocalDate(currentUser.getBirthday()));
     }
 
     public void updateProfile(View view) {
@@ -132,55 +124,57 @@ public class ProfileEditActivity extends BasicActivity {
         try {
             data.put("firstName", name);
             data.put("lastName", surname);
-            data.put("birthDate", birthDate);
+            data.put("birthday", birthDate);
             data.put("gender", isMan ? Misc.manStr : Misc.womanStr);
-            data.put("userId", MainActivity.getCurrentUser().getId());
-            data.put("hashCode", MainActivity.getCurrentUser().getProfileImage());
+            data.put("userId", currentUser.getId());
+            data.put("profilePictureId", currentUser.getImage().getId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, ConnectingURL.URL_Users, data, new Response.Listener<JSONObject>() {
+        VolleyJsonRequest request = new VolleyJsonRequest(Request.Method.PUT, ConnectingURL.URL_Users, data, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                progressDialog.cancel();
-                Toast.makeText(ProfileEditActivity.this, getText(R.string.prompt_register_success), Toast.LENGTH_LONG).show();
-
+                Toast.makeText(ProfileEditActivity.this, R.string.done, Toast.LENGTH_SHORT).show();
                 requestCurrentUser();
-
                 finish();
             }
-        }
-        , errorListener){
+        }, new Response.ErrorListener() {
             @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.cancel();
+                Log.e("APIResponse", error.toString());
+                error.printStackTrace();
+                Toast.makeText(ProfileEditActivity.this, R.string.message_wrong, Toast.LENGTH_LONG).show();
+            }
+        }){
+        @Override
             public Map<String, String> getHeaders() {
-                return Misc.getSecureHeaders(getApplicationContext());
+                return Misc.getSecureHeaders(ProfileEditActivity.this);
             }
         };
         requestQueue.add(request);
     }
 
     public void showDatePickerDialog(View view) {
-        final Calendar c = Calendar.getInstance(getResources().getConfiguration().locale);
-        final int mYear = c.get(Calendar.YEAR);
-        final int mMonth = c.get(Calendar.MONTH);
-        final int mDay = c.get(Calendar.DAY_OF_MONTH);
-
-        // Launch Date Picker Dialog
         DatePickerDialog dpd = new DatePickerDialog(ProfileEditActivity.this,
                 new DatePickerDialog.OnDateSetListener() {
 
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
+                        c.set(Calendar.YEAR, year);
+                        c.set(Calendar.MONTH, monthOfYear);
+                        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
                         mDateView.setText(DateFormatter.convertToLocalDate(c.getTime()));
                     }
-                }, mYear, mMonth, mDay);
+                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         dpd.getDatePicker().setMinDate(DateFormatter.minDate);
         dpd.getDatePicker().setMaxDate(DateFormatter.maxDate);
         dpd.show();
-
     }
 
     private void requestCurrentUser(){
@@ -188,7 +182,14 @@ public class ProfileEditActivity extends BasicActivity {
                 Misc.getSecureHeaders(this), new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
-                MainActivity.setCurrentUser(response);
+                currentUser=response;
+
+                mGenderView.setChecked(currentUser.getGender().equals(Misc.womanStr));
+                mNameView.setText(currentUser.getName());
+                mSurnameView.setText(currentUser.getSurname());
+                mDateView.setText(DateFormatter.convertToLocalDate(currentUser.getBirthday()));
+
+                SharedOurPreferences.setDefaults(Misc.preferenceUserChangeStr, "true", ProfileEditActivity.this);
             }
         }, errorListener);
 

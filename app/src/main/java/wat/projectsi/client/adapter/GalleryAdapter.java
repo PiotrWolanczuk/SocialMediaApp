@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 
 import wat.projectsi.R;
+import wat.projectsi.client.Picture;
 
 public class GalleryAdapter extends BaseAdapter {
 
@@ -48,6 +49,7 @@ public class GalleryAdapter extends BaseAdapter {
         ImageView ivGallery =  itemView.findViewById(R.id.single_photo);
 
         ivGallery.setImageURI(mArrayUri.get(position));
+        new Picture(ivGallery).execute(mArrayUri.get(position).toString());
 
         return itemView;
     }
